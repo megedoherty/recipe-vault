@@ -1,5 +1,3 @@
-import { Recipe } from '@/types';
-
 export type Json =
   | string
   | number
@@ -43,27 +41,37 @@ export type Database = {
     Tables: {
       recipe: {
         Row: {
-          [K in keyof Recipe]: Recipe[K];
+          created_at: string;
+          has_made: boolean;
+          id: number;
+          image_url: string | null;
+          ingredients: Json | null;
+          instructions: Json | null;
+          name: string;
+          rating: number | null;
+          source_url: string | null;
         };
         Insert: {
           created_at?: string;
-          hasMade?: boolean | null;
+          has_made?: boolean;
           id?: number;
-          imageUrl?: string | null;
-          ingredients?: string | null;
-          instructions?: string | null;
+          image_url?: string | null;
+          ingredients?: Json | null;
+          instructions?: Json | null;
           name: string;
-          sourceUrl?: string | null;
+          rating?: number | null;
+          source_url?: string | null;
         };
         Update: {
           created_at?: string;
-          hasMade?: boolean | null;
+          has_made?: boolean;
           id?: number;
-          imageUrl?: string | null;
-          ingredients?: string | null;
-          instructions?: string | null;
+          image_url?: string | null;
+          ingredients?: Json | null;
+          instructions?: Json | null;
           name?: string;
-          sourceUrl?: string | null;
+          rating?: number | null;
+          source_url?: string | null;
         };
         Relationships: [];
       };

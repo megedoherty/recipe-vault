@@ -1,4 +1,6 @@
-import { createClient } from '@/lib/supabase/server';
+import Image from 'next/image';
+
+import { getRecipe } from '@/lib/supabase/recipes';
 
 import styles from './page.module.css';
 
@@ -8,22 +10,38 @@ interface RecipePageProps {
 
 export default async function RecipePage({ params }: RecipePageProps) {
   const { id } = await params;
+  const recipe = await getRecipe(Number(id));
 
-  const supabase = await createClient();
-  const { data: recipe } = await supabase
-    .from('recipe')
-    .select('*')
-    .eq('id', Number(id));
-
-  if (recipe === null || recipe.length === 0) {
+  if (recipe === null) {
     return <div>Recipe not found</div>;
   }
 
-  const { name, ingredients, instructions } = recipe[0];
+  const {
+    name,
+    ingredients,
+    instructions,
+    hasMade,
+    imageUrl,
+    sourceUrl,
+    rating,
+  } = recipe;
 
   return (
     <div>
       <h1>Recipe for {name}</h1>
+      {imageUrl && <Image src={imageUrl} alt={name} width={100} height={100} />}
+      <p>Has made: {hasMade ? 'Yes' : 'No'}</p>
+      <p>Rating: {rating ? rating : 'Not rated'}</p>
+      <p>
+        Source:{' '}
+        {sourceUrl ? (
+          <a target="_blank" rel="noopener noreferrer" href={sourceUrl}>
+            {sourceUrl}
+          </a>
+        ) : (
+          'No source'
+        )}
+      </p>
       <h2>Ingredients</h2>
       <ul className={styles.ingredients}>
         {ingredients?.map((ingredient) => (
