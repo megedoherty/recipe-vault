@@ -7,3 +7,7 @@
   list-style: decimal;
   padding-left: 1rem;
 }
+
+.image {
+  object-fit: cover;
+}

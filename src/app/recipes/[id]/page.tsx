@@ -29,7 +29,15 @@ export default async function RecipePage({ params }: RecipePageProps) {
   return (
     <div>
       <h1>Recipe for {name}</h1>
-      {imageUrl && <Image src={imageUrl} alt={name} width={100} height={100} />}
+      {imageUrl && (
+        <Image
+          src={imageUrl}
+          alt={name}
+          width={100}
+          height={100}
+          className={styles.image}
+        />
+      )}
       <p>Has made: {hasMade ? 'Yes' : 'No'}</p>
       <p>Rating: {rating ? rating : 'Not rated'}</p>
       <p>

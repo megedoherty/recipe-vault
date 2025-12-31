@@ -1,7 +1,4 @@
 .page {
-  --background: #fafafa;
-  --foreground: #fff;
-
   --text-primary: #000;
   --text-secondary: #666;
 
@@ -12,13 +9,10 @@
   display: flex;
   min-height: 100vh;
   font-family: var(--font-geist-sans);
-  background-color: var(--background);
 }
+
 @media (prefers-color-scheme: dark) {
   .page {
-    --background: #000;
-    --foreground: #000;
-
     --text-primary: #ededed;
     --text-secondary: #999;
 

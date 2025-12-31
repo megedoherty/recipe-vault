@@ -1,19 +1,17 @@
 import RecipeCard from '@/components/RecipeCard/RecipeCard.component';
-import { createClient } from '@/lib/supabase/server';
+import { getAllRecipes } from '@/lib/supabase/recipes';
 
 import styles from './page.module.css';
 
 export default async function Home() {
-  const supabase = await createClient();
-
-  const { data: recipes } = await supabase.from('recipe').select('*');
+  const recipes = await getAllRecipes();
 
   return (
     <div className={styles.page}>
       <main className={styles.main}>
         <h1>Recipe Vault</h1>
         <ul>
-          {recipes?.map((recipe) => (
+          {recipes.map((recipe) => (
             <li key={recipe.id}>
               <RecipeCard recipe={recipe} />
             </li>

@@ -1,5 +1,7 @@
 import Link from 'next/link';
 
+import { getUser } from '@/lib/supabase/user';
+
 import styles from './Navbar.module.css';
 
 const links = [
@@ -13,7 +15,9 @@ const links = [
   },
 ];
 
-export default function Navbar() {
+export default async function Navbar() {
+  const user = await getUser();
+
   return (
     <nav className={styles.navbar}>
       <ul className={styles.links}>
@@ -22,6 +26,11 @@ export default function Navbar() {
             <Link href={link.href}>{link.label}</Link>
           </li>
         ))}
+        {!user && (
+          <li className={styles.link}>
+            <Link href="/auth/login">Login</Link>
+          </li>
+        )}
       </ul>
     </nav>
   );
