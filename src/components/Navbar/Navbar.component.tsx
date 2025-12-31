@@ -1,15 +1,15 @@
-import Link from "next/link";
+import Link from 'next/link';
 
-import styles from "./Navbar.module.css";
+import styles from './Navbar.module.css';
 
 const links = [
   {
-    label: "Home",
-    href: "/",
+    label: 'Home',
+    href: '/',
   },
   {
-    label: "Add Recipe",
-    href: "/add-recipe",
+    label: 'Add Recipe',
+    href: '/recipes/add',
   },
 ];
 
