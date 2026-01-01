@@ -1,3 +1,5 @@
+import { Metadata } from 'next';
+
 import RecipeCard from '@/components/RecipeCard/RecipeCard.component';
 import { getAllRecipes } from '@/lib/supabase/recipes';
 
@@ -21,3 +23,7 @@ export default async function Home() {
     </div>
   );
 }
+
+export const metadata: Metadata = {
+  title: 'All Recipes | Recipe Vault',
+};

@@ -1,11 +1,11 @@
+import { Metadata } from 'next';
+
 import UpdateRecipeForm from '@/components/UpdateRecipeForm/UpdateRecipeForm.component';
 import { getRecipe } from '@/lib/supabase/recipes';
 
-interface EditRecipePageProps {
-  params: Promise<{ id: string }>;
-}
-
-export default async function EditRecipePage({ params }: EditRecipePageProps) {
+export default async function EditRecipePage({
+  params,
+}: PageProps<'/recipes/[id]/edit'>) {
   const { id } = await params;
   const recipe = await getRecipe(Number(id));
 
@@ -19,4 +19,17 @@ export default async function EditRecipePage({ params }: EditRecipePageProps) {
       <UpdateRecipeForm recipe={recipe} />
     </div>
   );
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const recipe = await getRecipe(Number(id));
+
+  return {
+    title: `Edit ${recipe?.name} | Recipe Vault`,
+  };
 }

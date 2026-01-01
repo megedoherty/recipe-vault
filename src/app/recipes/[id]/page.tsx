@@ -1,3 +1,4 @@
+import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -7,11 +8,9 @@ import { getRecipe } from '@/lib/supabase/recipes';
 
 import styles from './page.module.css';
 
-interface RecipePageProps {
-  params: Promise<{ id: string }>;
-}
-
-export default async function RecipePage({ params }: RecipePageProps) {
+export default async function RecipePage({
+  params,
+}: PageProps<'/recipes/[id]'>) {
   const { id } = await params;
   const recipe = await getRecipe(Number(id));
 
@@ -68,4 +67,17 @@ export default async function RecipePage({ params }: RecipePageProps) {
       </ol>
     </div>
   );
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const recipe = await getRecipe(Number(id));
+
+  return {
+    title: `${recipe?.name} | Recipe Vault`,
+  };
 }
