@@ -53,7 +53,7 @@
 }
 
 .made, .rating {
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0.95);
   width: fit-content;
     border-radius: 0.5rem;
     padding-inline: 0.25rem;
