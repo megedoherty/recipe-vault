@@ -98,3 +98,20 @@ export async function toggleRecipeHasMade(
     throw new Error(error?.message ?? 'Failed to toggle recipe has made');
   }
 }
+
+export async function updateRecipeRating(
+  recipeId: number,
+  rating: number,
+): Promise<void> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('recipe')
+    .update({ rating: rating })
+    .eq('id', recipeId)
+    .select()
+    .single();
+
+  if (error || !data) {
+    throw new Error(error?.message ?? 'Failed to update recipe rating');
+  }
+}

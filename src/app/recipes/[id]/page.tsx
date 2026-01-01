@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import HasMadeCheckbox from '@/components/HasMadeCheckbox/HasMadeCheckbox.compoent';
+import RatingInput from '@/components/RatingInput/RatingInput.component';
 import { getRecipe } from '@/lib/supabase/recipes';
 
 import styles from './page.module.css';
@@ -42,7 +43,7 @@ export default async function RecipePage({ params }: RecipePageProps) {
         />
       )}
       <HasMadeCheckbox recipeId={Number(id)} initialChecked={hasMade} />
-      <p>Rating: {rating ? rating : 'Not rated'}</p>
+      <RatingInput recipeId={Number(id)} initialRating={rating} />
       <p>
         Source:{' '}
         {sourceUrl ? (

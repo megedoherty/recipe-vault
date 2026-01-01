@@ -1,0 +1,51 @@
+.ratingSelect {
+  display: flex;
+  flex-direction: row;
+}
+
+.itemWrapper:focus-within {
+  outline: 5px auto Highlight;
+  outline: 5px auto -webkit-focus-ring-color;
+}
+
+.label {
+  cursor: pointer;
+}
+
+.starIcon {
+  width: 1.5rem;
+  height: 1.5rem;
+  transition: color 0.2s ease, fill 0.2s ease;
+  color: currentColor;
+}
+
+.starIconPath {
+  fill: var(--star-icon-fill);
+  color: var(--star-icon-color);
+
+  &:hover {
+    --star-icon-color: #fbbf24;
+    --star-icon-fill: #fbbf24;
+  }
+}
+
+.starFilled {
+  --star-icon-color: currentColor;
+  --star-icon-fill: currentColor;
+}
+
+/* When hovering over or focusing any rating item, make all stars gold */
+.ratingSelect:has(.itemWrapper:hover),
+.ratingSelect:has(.itemWrapper:focus-within) {
+  .starIconPath {
+    --star-icon-color: #fbbf24;
+    --star-icon-fill: #fbbf24;
+  }
+}
+    
+/* When a rating item is hovered or focused, make all following siblings (to the right) white/empty */
+.ratingSelect:has(.itemWrapper:hover) .itemWrapper:hover ~ .itemWrapper .starIconPath,
+.ratingSelect:has(.itemWrapper:focus-within) .itemWrapper:focus-within ~ .itemWrapper .starIconPath {
+  --star-icon-color: currentColor;
+  --star-icon-fill: transparent;
+}
