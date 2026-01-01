@@ -4,6 +4,8 @@ import { ChangeEvent, useState, useTransition } from 'react';
 
 import { toggleRecipeMade } from '@/lib/actions/recipes';
 
+import styles from './MadeCheckbox.module.css';
+
 interface MadeCheckboxProps {
   recipeId: number;
   initialChecked: boolean;
@@ -29,7 +31,7 @@ export default function MadeCheckbox({
   };
 
   return (
-    <div>
+    <div className={styles.container}>
       <input
         type="checkbox"
         name="made"

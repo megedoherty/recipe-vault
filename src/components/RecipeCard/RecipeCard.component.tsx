@@ -31,7 +31,7 @@ export default function RecipeCard({ recipe }: RecipeCardProps) {
         <p>{name}</p>
       </div>
       <div className={styles.info}>
-        {made && <div className={styles.made}>✓</div>}
+        {made && <div className={styles.made}>✔</div>}
         {rating && (
           <div className={styles.rating}>
             {Array.from({ length: rating }, (_, index) => (

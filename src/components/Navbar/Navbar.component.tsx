@@ -22,13 +22,17 @@ export default async function Navbar() {
     <nav className={styles.navbar}>
       <ul className={styles.links}>
         {links.map((link) => (
-          <li key={link.href} className={styles.link}>
-            <Link href={link.href}>{link.label}</Link>
+          <li key={link.href} className={styles.item}>
+            <Link href={link.href} className={styles.link}>
+              {link.label}
+            </Link>
           </li>
         ))}
         {!user && (
-          <li className={styles.link}>
-            <Link href="/auth/login">Login</Link>
+          <li className={styles.item}>
+            <Link href="/auth/login" className={styles.link}>
+              Login
+            </Link>
           </li>
         )}
       </ul>

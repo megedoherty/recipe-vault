@@ -1,19 +1,19 @@
-import './globals.css';
 import './variables.css';
+import './globals.css';
 
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Inter, Lora } from 'next/font/google';
 import { ReactNode } from 'react';
 
 import Navbar from '@/components/Navbar/Navbar.component';
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+const inter = Inter({
+  variable: '--font-inter',
   subsets: ['latin'],
 });
 
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
+const lora = Lora({
+  variable: '--font-lora',
   subsets: ['latin'],
 });
 
@@ -28,10 +28,12 @@ export default function RootLayout({
   children: ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <Navbar />
-        {children}
+    <html lang="en" className={`${inter.variable} ${lora.variable}`}>
+      <body>
+        <header>
+          <Navbar />
+        </header>
+        <main>{children}</main>
       </body>
     </html>
   );

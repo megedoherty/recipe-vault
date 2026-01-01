@@ -1,11 +1,4 @@
 .page {
-  display: flex;
-  min-height: 100vh;
-  font-family: var(--font-geist-sans);
-}
-
-.main {
-  width: 100%;
 }
 
 .recipeGrid {

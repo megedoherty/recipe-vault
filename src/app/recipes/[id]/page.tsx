@@ -2,6 +2,8 @@ import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { EditIcon } from '@/components/icons/EditIcon';
+import { TrashIcon } from '@/components/icons/TrashIcon';
 import MadeCheckbox from '@/components/MadeCheckbox/MadeCheckbox.component';
 import RatingInput from '@/components/RatingInput/RatingInput.component';
 import { getRecipe } from '@/lib/supabase/recipes';
@@ -22,9 +24,26 @@ export default async function RecipePage({
     recipe;
 
   return (
-    <div>
-      <h1>Recipe for {name}</h1>
-      <Link href={`/recipes/${id}/edit`}>Edit</Link>
+    <div className={styles.page}>
+      <header className={styles.header}>
+        <h1>{name} Recipe</h1>
+        <div className={styles.headerButtons}>
+          <Link
+            href={`/recipes/${id}/edit`}
+            aria-label="Edit recipe"
+            className={styles.headerButton}
+          >
+            <EditIcon />
+          </Link>
+          <Link
+            href={`/recipes/${id}/delete`}
+            aria-label="Delete recipe"
+            className={styles.headerButton}
+          >
+            <TrashIcon />
+          </Link>
+        </div>
+      </header>
       {imageUrl && (
         <Image
           src={imageUrl}

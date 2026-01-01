@@ -1,24 +1,84 @@
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fbf8f4;
+  --background-card: #ffffff;
+  --background-elevated: #ffffff;
+
+  --text-primary: #3b2f25;
+  --text-secondary: #7a6f66;
+  --text-muted: #a39a91;
+  --text-inverse: #ffffff;
+
+  --accent: #d8a25a;
+  --accent-muted: #f2e4cc;
+
+  --border-default: #e3ddd5;
+  --divider: #ece6df;
+
+  --hover-surface: #f1ece6;
+  --active-surface: #e9e2da;
+
+  --button-primary-background: #d8a25a;
+  --button-primary-hover: #c08b46;
+  --button-primary-active: #a36f30
+  --button-secondary-hover: #f1ece6;
+  --button-secondary-active: #e5ded5
+  --button-secondary-border: #e3ddd5;
+
+  --success: #7c9a6d;
+  --warning: #d4a017;
+  --error: #b24a3b;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
+
+  /* Unique colors */
   --star-gold: #fbbf24;
-  --background-card: #f5f5f5;
-  --text-primary: #000;
-  --text-secondary: #666;
-  --button-primary-hover: #383838;
-  --button-secondary-hover: #f2f2f2;
-  --button-secondary-border: #ebebeb;
+
+  /* Typography */
+  --font-family-body: var(--font-inter), sans-serif;
+  --font-family-heading: var(--font-lora), serif;
+
+  --font-size-base: 1rem;
+  --line-height-base: 1.6;
+
+  --font-size-h1: 2rem;             /* recipe titles */
+  --font-size-h2: 1.5rem;           /* section headers (ingredients, steps) */
+  --font-size-h3: 1.25rem;          /* subheaders, notes */
+  --font-size-small: 0.875rem;      /* footnotes, meta info */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --background-card: #1a1a1a;
-    --foreground: #ededed;
-    --text-primary: #ededed;
-    --text-secondary: #999;
-    --button-primary-hover: #ccc;
-    --button-secondary-hover: #1a1a1a;
-    --button-secondary-border: #1a1a1a;
+    --background: #141210;
+    --background-card: #1f1c19;
+    --background-elevated: #26221e;
+  
+    --text-primary: #f5f3ef;
+    --text-secondary: #c2bdb4;
+    --text-muted: #9b948a;
+    --text-inverse: #1a1714;
+  
+    --accent: #d8a25a;
+    --accent-muted: #3a2f1e;
+  
+    --border-default: #3a342e;
+    --divider: #2b2622;
+  
+    --hover-surface: #2a2622;
+    --active-surface: #332e29;
+  
+    --button-primary-background: #d8a25a;
+    --button-primary-hover: #c08b46;
+    --button-primary-active: #b9733f;
+    --button-secondary-hover: #2a2622;
+    --button-secondary-active: #2a2520
+    --button-secondary-border: #3a342e;
+  
+    --success: #8fb28a;
+    --warning: #e0b84a;
+    --error: #d06a5c;
+  
+    --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.5);
   }
 }

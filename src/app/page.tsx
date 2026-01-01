@@ -10,16 +10,14 @@ export default async function Home() {
 
   return (
     <div className={styles.page}>
-      <main className={styles.main}>
-        <h1>Recipes</h1>
-        <ul className={styles.recipeGrid}>
-          {recipes.map((recipe) => (
-            <li key={recipe.id} className={styles.recipeCard}>
-              <RecipeCard recipe={recipe} />
-            </li>
-          ))}
-        </ul>
-      </main>
+      <h1>Recipes</h1>
+      <ul className={styles.recipeGrid}>
+        {recipes.map((recipe) => (
+          <li key={recipe.id} className={styles.recipeCard}>
+            <RecipeCard recipe={recipe} />
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

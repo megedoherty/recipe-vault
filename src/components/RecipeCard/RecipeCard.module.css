@@ -1,14 +1,19 @@
 .card {
   --image-height: 12.5rem;
+
   position: relative;
-  background-color: var(--background-card);
-  border: 1px solid #ccc;
+  background-color: var(--card-background, var(--background-card));
+  border: 1px solid var(--card-border, var(--border-default));
   border-radius: 0.5rem;
   height: 100%;
-  transition: transform 0.15s ease;
+  transition: all 0.2s ease;
 
   &:hover {
+    --card-background: var(--hover-surface);
+    --card-border: var(--accent-muted);
+
     transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
   }
 }
 
@@ -55,12 +60,12 @@
 .made, .rating {
   background-color: rgba(255, 255, 255, 0.95);
   width: fit-content;
-    border-radius: 0.5rem;
-    padding-inline: 0.25rem;
+  border-radius: 0.5rem;
+  padding-inline: 0.25rem;
 }
 
 .made {
-  color: green;
+  color: var(--success);
   font-size: 1rem;
 }
 
