@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import HasMadeCheckbox from '@/components/HasMadeCheckbox/HasMadeCheckbox.compoent';
+import MadeCheckbox from '@/components/MadeCheckbox/MadeCheckbox.component';
 import RatingInput from '@/components/RatingInput/RatingInput.component';
 import { getRecipe } from '@/lib/supabase/recipes';
 
@@ -18,15 +18,8 @@ export default async function RecipePage({
     return <div>Recipe not found</div>;
   }
 
-  const {
-    name,
-    ingredients,
-    instructions,
-    hasMade,
-    imageUrl,
-    sourceUrl,
-    rating,
-  } = recipe;
+  const { name, ingredients, instructions, made, imageUrl, sourceUrl, rating } =
+    recipe;
 
   return (
     <div>
@@ -41,7 +34,7 @@ export default async function RecipePage({
           className={styles.image}
         />
       )}
-      <HasMadeCheckbox recipeId={Number(id)} initialChecked={hasMade} />
+      <MadeCheckbox recipeId={Number(id)} initialChecked={made} />
       <RatingInput recipeId={Number(id)} initialRating={rating} />
       <p>
         Source:{' '}

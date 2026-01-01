@@ -82,20 +82,20 @@ export async function updateRecipe(
   return { success: false, error: 'Recipe updated but could not retrieve ID' };
 }
 
-export async function toggleRecipeHasMade(
+export async function toggleRecipeMade(
   recipeId: number,
-  hasMade: boolean,
+  made: boolean,
 ): Promise<void> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('recipe')
-    .update({ has_made: hasMade })
+    .update({ made: made })
     .eq('id', recipeId)
     .select()
     .single();
 
   if (error || !data) {
-    throw new Error(error?.message ?? 'Failed to toggle recipe has made');
+    throw new Error(error?.message ?? 'Failed to toggle recipe made');
   }
 }
 

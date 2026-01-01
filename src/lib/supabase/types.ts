@@ -42,7 +42,7 @@ export type Database = {
       recipe: {
         Row: {
           created_at: string;
-          has_made: boolean;
+          made: boolean;
           id: number;
           image_url: string | null;
           ingredients: Json | null;
@@ -53,7 +53,7 @@ export type Database = {
         };
         Insert: {
           created_at?: string;
-          has_made?: boolean;
+          made?: boolean;
           id?: number;
           image_url?: string | null;
           ingredients?: Json | null;
@@ -64,7 +64,7 @@ export type Database = {
         };
         Update: {
           created_at?: string;
-          has_made?: boolean;
+          made?: boolean;
           id?: number;
           image_url?: string | null;
           ingredients?: Json | null;

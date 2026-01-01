@@ -1,4 +1,4 @@
-import { Recipe, RecipeDb } from '@/types';
+import { Recipe, RecipeCardInfo, RecipeDb } from '@/types';
 
 import { createClient } from './server';
 
@@ -20,7 +20,7 @@ function transformRecipe(recipe: RecipeDb): Recipe {
     id: recipe.id,
     name: recipe.name,
     createdAt: recipe.created_at,
-    hasMade: recipe.has_made,
+    made: recipe.made,
     imageUrl: recipe.image_url,
     sourceUrl: recipe.source_url,
     ingredients,
@@ -40,9 +40,19 @@ export async function getRecipe(id: number): Promise<Recipe | null> {
   return data ? transformRecipe(data) : null;
 }
 
-export async function getAllRecipes(): Promise<Recipe[]> {
+export async function getAllRecipes(): Promise<RecipeCardInfo[]> {
   const supabase = await createClient();
-  const { data } = await supabase.from('recipe').select('*');
+  const { data } = await supabase
+    .from('recipe')
+    .select('id, name, image_url, rating, made');
 
-  return data ? data.map(transformRecipe) : [];
+  return data
+    ? data.map((recipe) => ({
+        id: recipe.id,
+        name: recipe.name,
+        imageUrl: recipe.image_url,
+        rating: recipe.rating,
+        made: recipe.made,
+      }))
+    : [];
 }

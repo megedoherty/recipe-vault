@@ -2,17 +2,17 @@
 
 import { ChangeEvent, useState, useTransition } from 'react';
 
-import { toggleRecipeHasMade } from '@/lib/actions/recipes';
+import { toggleRecipeMade } from '@/lib/actions/recipes';
 
-interface HasMadeCheckboxProps {
+interface MadeCheckboxProps {
   recipeId: number;
   initialChecked: boolean;
 }
 
-export default function HasMadeCheckbox({
+export default function MadeCheckbox({
   recipeId,
   initialChecked,
-}: HasMadeCheckboxProps) {
+}: MadeCheckboxProps) {
   const [isPending, startTransition] = useTransition();
   const [checked, setChecked] = useState(initialChecked);
 
@@ -20,7 +20,7 @@ export default function HasMadeCheckbox({
     const newChecked = e.target.checked;
     startTransition(async () => {
       try {
-        await toggleRecipeHasMade(recipeId, newChecked);
+        await toggleRecipeMade(recipeId, newChecked);
         setChecked(newChecked);
       } catch (error) {
         console.error(error);
@@ -32,13 +32,13 @@ export default function HasMadeCheckbox({
     <div>
       <input
         type="checkbox"
-        name="hasMade"
-        id="hasMade"
+        name="made"
+        id="made"
         checked={checked}
         onChange={handleChange}
         disabled={isPending}
       />
-      <label htmlFor="hasMade">Has made</label>
+      <label htmlFor="made">I made this</label>
       {isPending && <span>Updating...</span>}
     </div>
   );

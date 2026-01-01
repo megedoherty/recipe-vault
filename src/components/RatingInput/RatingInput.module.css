@@ -24,8 +24,8 @@
   color: var(--star-icon-color);
 
   &:hover {
-    --star-icon-color: #fbbf24;
-    --star-icon-fill: #fbbf24;
+    --star-icon-color: var(--star-gold);
+    --star-icon-fill: var(--star-gold);
   }
 }
 
@@ -38,8 +38,8 @@
 .ratingSelect:has(.itemWrapper:hover),
 .ratingSelect:has(.itemWrapper:focus-within) {
   .starIconPath {
-    --star-icon-color: #fbbf24;
-    --star-icon-fill: #fbbf24;
+    --star-icon-color: var(--star-gold);
+    --star-icon-fill: var(--star-gold);
   }
 }
     

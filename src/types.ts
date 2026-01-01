@@ -20,3 +20,7 @@ export type Recipe = Omit<
   ingredients: string[];
   instructions: string[];
 };
+export type RecipeCardInfo = Pick<
+  Recipe,
+  'id' | 'name' | 'imageUrl' | 'rating' | 'made'
+>;

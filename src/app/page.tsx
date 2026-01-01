@@ -11,10 +11,10 @@ export default async function Home() {
   return (
     <div className={styles.page}>
       <main className={styles.main}>
-        <h1>Recipe Vault</h1>
-        <ul>
+        <h1>Recipes</h1>
+        <ul className={styles.recipeGrid}>
           {recipes.map((recipe) => (
-            <li key={recipe.id}>
+            <li key={recipe.id} className={styles.recipeCard}>
               <RecipeCard recipe={recipe} />
             </li>
           ))}
