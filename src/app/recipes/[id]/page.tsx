@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
+import HasMadeCheckbox from '@/components/HasMadeCheckbox/HasMadeCheckbox.compoent';
 import { getRecipe } from '@/lib/supabase/recipes';
 
 import styles from './page.module.css';
@@ -40,7 +41,7 @@ export default async function RecipePage({ params }: RecipePageProps) {
           className={styles.image}
         />
       )}
-      <p>Has made: {hasMade ? 'Yes' : 'No'}</p>
+      <HasMadeCheckbox recipeId={Number(id)} initialChecked={hasMade} />
       <p>Rating: {rating ? rating : 'Not rated'}</p>
       <p>
         Source:{' '}

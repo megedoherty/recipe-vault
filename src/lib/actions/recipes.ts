@@ -81,3 +81,20 @@ export async function updateRecipe(
 
   return { success: false, error: 'Recipe updated but could not retrieve ID' };
 }
+
+export async function toggleRecipeHasMade(
+  recipeId: number,
+  hasMade: boolean,
+): Promise<void> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('recipe')
+    .update({ has_made: hasMade })
+    .eq('id', recipeId)
+    .select()
+    .single();
+
+  if (error || !data) {
+    throw new Error(error?.message ?? 'Failed to toggle recipe has made');
+  }
+}
