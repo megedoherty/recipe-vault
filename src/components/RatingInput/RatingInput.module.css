@@ -10,11 +10,13 @@
 
 .label {
   cursor: pointer;
+  display: block;
+  height: 1.5rem;
 }
 
 .starIcon {
   width: 1.5rem;
-  height: 1.5rem;
+  height: 100%;
   transition: color 0.2s ease, fill 0.2s ease;
   color: currentColor;
 }

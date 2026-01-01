@@ -26,55 +26,63 @@ export default async function RecipePage({
 
   return (
     <div className={styles.page}>
-      <header className={styles.header}>
-        <h1>{name} Recipe</h1>
-        <div className={styles.headerButtons}>
-          <Button
-            href={`/recipes/${id}/edit`}
-            aria-label="Edit recipe"
-            className={styles.headerButton}
-            iconOnly
+      <div className={styles.headerContainer}>
+        <header className={styles.header}>
+          <h1>{name} Recipe</h1>
+          <div className={styles.headerButtons}>
+            <Button
+              href={`/recipes/${id}/edit`}
+              aria-label="Edit recipe"
+              className={styles.headerButton}
+              iconOnly
+            >
+              <EditIcon />
+            </Button>
+            <Button
+              aria-label="Delete recipe"
+              className={styles.headerButton}
+              iconOnly
+            >
+              <TrashIcon />
+            </Button>
+          </div>
+        </header>
+        {sourceUrl && (
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href={sourceUrl}
+            className={styles.source}
           >
-            <EditIcon />
-          </Button>
-          <Button aria-label="Delete recipe" className={styles.headerButton}>
-            <TrashIcon />
-          </Button>
-        </div>
-      </header>
-      {imageUrl && (
-        <Image
-          src={imageUrl}
-          alt={name}
-          width={100}
-          height={100}
-          className={styles.image}
-        />
-      )}
-      <MadeCheckbox recipeId={Number(id)} initialChecked={made} />
-      <RatingInput recipeId={Number(id)} initialRating={rating} />
-      <p>
-        Source:{' '}
-        {sourceUrl ? (
-          <a target="_blank" rel="noopener noreferrer" href={sourceUrl}>
             {sourceUrl}
           </a>
-        ) : (
-          'No source'
         )}
-      </p>
-      <h2>Ingredients</h2>
-      <ul className={styles.ingredients}>
-        {ingredients?.map((ingredient) => (
-          <li key={ingredient}>{ingredient}</li>
-        ))}
-      </ul>
-      <h2>Instructions</h2>
-      <ol className={styles.instructions}>
-        {instructions?.map((instruction) => (
-          <li key={instruction}>{instruction}</li>
-        ))}
-      </ol>
+        <div className={styles.personalInfo}>
+          <MadeCheckbox recipeId={Number(id)} initialChecked={made} />
+          <RatingInput recipeId={Number(id)} initialRating={rating} />
+        </div>
+      </div>
+      {imageUrl && (
+        <div className={styles.imageContainer}>
+          <Image src={imageUrl} alt={name} className={styles.image} fill />
+        </div>
+      )}
+      <div className={styles.ingredientsContainer}>
+        <h2>Ingredients</h2>
+        <ul className={styles.ingredients}>
+          {ingredients?.map((ingredient) => (
+            <li key={ingredient}>{ingredient}</li>
+          ))}
+        </ul>
+      </div>
+      <div className={styles.instructionsContainer}>
+        <h2>Instructions</h2>
+        <ol className={styles.instructions}>
+          {instructions?.map((instruction) => (
+            <li key={instruction}>{instruction}</li>
+          ))}
+        </ol>
+      </div>
     </div>
   );
 }

@@ -40,8 +40,9 @@ export default function MadeCheckbox({
         onChange={handleChange}
         disabled={isPending}
       />
-      <label htmlFor="made">I made this</label>
-      {isPending && <span>Updating...</span>}
+      <label htmlFor="made" className={styles.label}>
+        I made this
+      </label>
     </div>
   );
 }
