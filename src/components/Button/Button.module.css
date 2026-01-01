@@ -1,0 +1,42 @@
+.button {
+  border: none;
+  background-color: var(--button-background, transparent);
+  padding: 0.4rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+}
+
+.primary {
+  --button-background: var(--button-primary-background);
+  &:hover {
+    --button-background: var(--button-primary-hover);
+  }
+
+  &:active {
+    --button-background: var(--button-primary-active);
+  }
+}
+
+.secondary {
+  border: 1px solid var(--button-secondary-border);
+
+  &:hover {
+    --button-background: var(--button-secondary-hover);
+  }
+
+  &:active {
+    --button-background: var(--button-secondary-active);
+  }
+}
+
+.iconButton {
+  width: 2rem;
+}
+
+.iconButton svg {
+  height: 100%;
+  width: 100%;
+}

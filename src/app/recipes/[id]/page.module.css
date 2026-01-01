@@ -31,22 +31,3 @@
 .image {
   object-fit: cover;
 }
-
-.headerButton {
-  background-color: var(--header-button-background, var(--button-primary-background));
-  padding: 0.4rem;
-  border-radius: 0.5rem;
-  transition: all 0.2s ease;
-  height: 2rem;
-  width: 2rem;
-  display: flex;
-  align-items: center;
-
-  &:hover {
-    --header-button-background: var(--button-primary-hover);
-  }
-
-  &:active {
-    --header-button-background: var(--button-primary-active);
-  }
-}
