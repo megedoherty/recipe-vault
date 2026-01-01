@@ -2,7 +2,8 @@
 
 import { redirect } from 'next/navigation';
 
-import { createClient } from './supabase/server';
+import { createClient } from '@/lib/supabase/server';
+import { parseTextareaToArray } from '@/lib/utils';
 
 interface ActionsResponse {
   success: boolean;
@@ -31,8 +32,8 @@ export async function addRecipe(
     .insert({
       user_id: user.id,
       name,
-      ingredients: ingredients.split(/\r?\n/).filter(Boolean),
-      instructions: instructions.split(/\r?\n/).filter(Boolean),
+      ingredients: parseTextareaToArray(ingredients),
+      instructions: parseTextareaToArray(instructions),
     })
     .select('id')
     .single();
@@ -49,40 +50,34 @@ export async function addRecipe(
   return { success: false, error: 'Recipe created but could not retrieve ID' };
 }
 
-export async function signUp(formData: FormData) {
-  const email = formData.get('email') as string;
-  const password = formData.get('password') as string;
+export async function updateRecipe(
+  recipeId: number,
+  prevState: ActionsResponse | null,
+  formData: FormData,
+): Promise<ActionsResponse> {
+  const rawFormData = Object.fromEntries(formData);
+  const name = rawFormData.name as string;
+  const ingredients = parseTextareaToArray(rawFormData.ingredients as string);
+  const instructions = parseTextareaToArray(rawFormData.instructions as string);
+  const image_url = rawFormData.imageUrl as string;
+  const source_url = rawFormData.sourceUrl as string;
 
   const supabase = await createClient();
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-  });
+  const { data, error } = await supabase
+    .from('recipe')
+    .update({ name, ingredients, instructions, image_url, source_url })
+    .eq('id', recipeId)
+    .select()
+    .single();
 
-  if (error) {
+  if (error || !data) {
     console.error(error);
+    return { success: false, error: error.message };
   }
 
-  if (data.user) {
-    redirect('/');
-  }
-}
-
-export async function signIn(formData: FormData) {
-  const email = formData.get('email') as string;
-  const password = formData.get('password') as string;
-
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
-
-  if (error) {
-    console.error(error);
+  if (data && data.id) {
+    redirect(`/recipes/${data.id}`);
   }
 
-  if (data.user) {
-    redirect('/');
-  }
+  return { success: false, error: 'Recipe updated but could not retrieve ID' };
 }

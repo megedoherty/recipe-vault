@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 
 import { getRecipe } from '@/lib/supabase/recipes';
 
@@ -29,6 +30,7 @@ export default async function RecipePage({ params }: RecipePageProps) {
   return (
     <div>
       <h1>Recipe for {name}</h1>
+      <Link href={`/recipes/${id}/edit`}>Edit</Link>
       {imageUrl && (
         <Image
           src={imageUrl}

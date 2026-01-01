@@ -3,9 +3,9 @@
 import Form from 'next/form';
 import { useActionState } from 'react';
 
-import { addRecipe } from '@/lib/actions';
+import { addRecipe } from '@/lib/actions/recipes';
 
-export default function AddRecipeFormComponent() {
+export default function CreateRecipeForm() {
   const [state, formAction, isPending] = useActionState(addRecipe, null);
 
   return (

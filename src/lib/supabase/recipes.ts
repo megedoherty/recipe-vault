@@ -1,5 +1,3 @@
-import { User } from '@supabase/supabase-js';
-
 import { Recipe, RecipeDb } from '@/types';
 
 import { createClient } from './server';

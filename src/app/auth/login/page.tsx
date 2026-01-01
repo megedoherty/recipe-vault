@@ -1,4 +1,4 @@
-import { signIn, signUp } from '@/lib/actions';
+import { signIn, signUp } from '@/lib/actions/auth';
 
 export default function LoginPage() {
   return (
