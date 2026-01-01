@@ -23,7 +23,7 @@
   transition: all 0.2s ease;
   text-decoration: none;
   color: var(--text-primary);
-  
+
   &:hover {
     background-color: var(--hover-surface);
     color: var(--text-primary);

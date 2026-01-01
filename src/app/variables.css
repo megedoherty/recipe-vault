@@ -1,37 +1,30 @@
 :root {
   --background: #fbf8f4;
-  --background-card: #ffffff;
-  --background-elevated: #ffffff;
-
+  --background-card: #fff;
+  --background-elevated: #fff;
   --text-primary: #3b2f25;
   --text-secondary: #7a6f66;
   --text-muted: #a39a91;
-  --text-inverse: #ffffff;
-
+  --text-inverse: #fff;
   --accent: #d8a25a;
   --accent-muted: #f2e4cc;
-
   --border-default: #e3ddd5;
   --divider: #ece6df;
-
   --hover-surface: #f1ece6;
   --active-surface: #e9e2da;
-
   --button-primary-text: #3b2f25;
   --button-secondary-hover: #f1ece6;
   --button-secondary-active: #e5ded5;
   --button-secondary-border: #e3ddd5;
-
   --success: #7c9a6d;
   --warning: #d4a017;
   --error: #b24a3b;
-
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
+  --shadow-sm: 0 1px 3px rgb(0 0 0 / 8%);
+  --shadow-md: 0 4px 12px rgb(0 0 0 / 12%);
 
   /* Unique colors */
   --star-gold: #fbbf24;
-  --backdrop: rgba(20, 18, 16, 0.55);
+  --backdrop: rgb(20 18 16 / 55%);
 
   /* Shared colors */
   --button-primary-background: #d8a25a;
@@ -41,14 +34,12 @@
   /* Typography */
   --font-family-body: var(--font-inter), sans-serif;
   --font-family-heading: var(--font-lora), serif;
-
   --font-size-base: 1rem;
   --line-height-base: 1.6;
-
-  --font-size-h1: 2rem;             /* recipe titles */
-  --font-size-h2: 1.5rem;           /* section headers (ingredients, steps) */
-  --font-size-h3: 1.25rem;          /* subheaders, notes */
-  --font-size-small: 0.875rem;      /* footnotes, meta info */
+  --font-size-h1: 2rem; /* recipe titles */
+  --font-size-h2: 1.5rem; /* section headers (ingredients, steps) */
+  --font-size-h3: 1.25rem; /* subheaders, notes */
+  --font-size-small: 0.875rem; /* footnotes, meta info */
 }
 
 @media (prefers-color-scheme: dark) {
@@ -56,31 +47,24 @@
     --background: #141210;
     --background-card: #1f1c19;
     --background-elevated: #26221e;
-  
     --text-primary: #f5f3ef;
     --text-secondary: #c2bdb4;
     --text-muted: #9b948a;
     --text-inverse: #1a1714;
-  
     --accent: #d8a25a;
     --accent-muted: #3a2f1e;
-  
     --border-default: #3a342e;
     --divider: #2b2622;
-  
     --hover-surface: #2a2622;
     --active-surface: #332e29;
-  
     --button-primary-text: #1a1714;
     --button-secondary-hover: #3a342e;
     --button-secondary-active: #352f27;
     --button-secondary-border: #3a342e;
-  
     --success: #8fb28a;
     --warning: #e0b84a;
     --error: #d06a5c;
-  
-    --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.4);
-    --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.5);
+    --shadow-sm: 0 1px 4px rgb(0 0 0 / 40%);
+    --shadow-md: 0 6px 20px rgb(0 0 0 / 50%);
   }
 }

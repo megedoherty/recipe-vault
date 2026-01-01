@@ -7,7 +7,9 @@ body {
 body {
   color: var(--text-primary);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -40,7 +42,6 @@ a {
 }
 
 .sr-only {
-  clip: rect(1px, 1px, 1px, 1px);
   clip-path: inset(50%);
   height: 1px;
   width: 1px;
@@ -48,13 +49,6 @@ a {
   overflow: hidden;
   padding: 0;
   position: absolute;
-}
-
-body {
-  font-family: var(--font-family-body);
-  font-size: var(--font-size-base);
-  line-height: var(--line-height-base);
-  color: var(--text-primary);
 }
 
 h1 {
@@ -85,10 +79,9 @@ input[type="checkbox"] {
   cursor: pointer;
   display: inline-block;
   position: relative;
-  transition: background-color 0.2s, border-color 0.2s;
-
-  -webkit-appearance: none;
-  -moz-appearance: none;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s;
   appearance: none;
 }
 
@@ -98,7 +91,7 @@ input[type="checkbox"]:checked {
 }
 
 input[type="checkbox"]:checked::after {
-  content: '✔';
+  content: "✔";
   color: var(--text-inverse);
   position: absolute;
   top: 50%;

@@ -57,7 +57,11 @@ export default function Button(props: ButtonProps) {
   }
 
   return (
-    <button className={classes} {...(restProps as ButtonAsButton)}>
+    <button
+      type="button"
+      className={classes}
+      {...(restProps as ButtonAsButton)}
+    >
       {children}
     </button>
   );

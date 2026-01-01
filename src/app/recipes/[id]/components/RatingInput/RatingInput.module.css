@@ -17,8 +17,10 @@
 .starIcon {
   width: 1.5rem;
   height: 100%;
-  transition: color 0.2s ease, fill 0.2s ease;
-  color: currentColor;
+  transition:
+    color 0.2s ease,
+    fill 0.2s ease;
+  color: currentcolor;
 }
 
 .starIconPath {
@@ -32,8 +34,8 @@
 }
 
 .starFilled {
-  --star-icon-color: currentColor;
-  --star-icon-fill: currentColor;
+  --star-icon-color: currentcolor;
+  --star-icon-fill: currentcolor;
 }
 
 /* When hovering over or focusing any rating item, make all stars gold */
@@ -44,10 +46,16 @@
     --star-icon-fill: var(--star-gold);
   }
 }
-    
+
 /* When a rating item is hovered or focused, make all following siblings (to the right) white/empty */
-.ratingSelect:has(.itemWrapper:hover) .itemWrapper:hover ~ .itemWrapper .starIconPath,
-.ratingSelect:has(.itemWrapper:focus-within) .itemWrapper:focus-within ~ .itemWrapper .starIconPath {
-  --star-icon-color: currentColor;
+.ratingSelect:has(.itemWrapper:hover)
+  .itemWrapper:hover
+  ~ .itemWrapper
+  .starIconPath,
+.ratingSelect:has(.itemWrapper:focus-within)
+  .itemWrapper:focus-within
+  ~ .itemWrapper
+  .starIconPath {
+  --star-icon-color: currentcolor;
   --star-icon-fill: transparent;
 }
