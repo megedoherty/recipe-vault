@@ -7,10 +7,15 @@
   height: 2rem;
   display: flex;
   align-items: center;
+  font-weight: 600;
+  font-size: var(--font-size-base);
+  cursor: pointer;
 }
 
 .primary {
   --button-background: var(--button-primary-background);
+  color: var(--button-primary-text);
+
   &:hover {
     --button-background: var(--button-primary-hover);
   }

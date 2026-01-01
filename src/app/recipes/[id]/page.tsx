@@ -1,14 +1,13 @@
 import { Metadata } from 'next';
 import Image from 'next/image';
-import Link from 'next/link';
 
 import Button from '@/components/Button/Button';
 import { EditIcon } from '@/components/icons/EditIcon';
-import { TrashIcon } from '@/components/icons/TrashIcon';
-import MadeCheckbox from '@/components/MadeCheckbox/MadeCheckbox.component';
-import RatingInput from '@/components/RatingInput/RatingInput.component';
 import { getRecipe } from '@/lib/supabase/recipes';
 
+import DeleteButton from './components/DeleteButton/DeleteButton.component';
+import MadeCheckbox from './components/MadeCheckbox/MadeCheckbox.component';
+import RatingInput from './components/RatingInput/RatingInput.component';
 import styles from './page.module.css';
 
 export default async function RecipePage({
@@ -33,18 +32,11 @@ export default async function RecipePage({
             <Button
               href={`/recipes/${id}/edit`}
               aria-label="Edit recipe"
-              className={styles.headerButton}
               iconOnly
             >
               <EditIcon />
             </Button>
-            <Button
-              aria-label="Delete recipe"
-              className={styles.headerButton}
-              iconOnly
-            >
-              <TrashIcon />
-            </Button>
+            <DeleteButton recipeId={Number(id)} />
           </div>
         </header>
         {sourceUrl && (
