@@ -12,7 +12,7 @@
   --divider: #ece6df;
   --hover-surface: #f1ece6;
   --active-surface: #e9e2da;
-  --button-primary-text: #3b2f25;
+  --button-primary-text: var(--text-primary);
   --button-secondary-hover: #f1ece6;
   --button-secondary-active: #e5ded5;
   --button-secondary-border: #e3ddd5;
@@ -57,7 +57,7 @@
     --divider: #2b2622;
     --hover-surface: #2a2622;
     --active-surface: #332e29;
-    --button-primary-text: #1a1714;
+    --button-primary-text: var(--text-inverse);
     --button-secondary-hover: #3a342e;
     --button-secondary-active: #352f27;
     --button-secondary-border: #3a342e;

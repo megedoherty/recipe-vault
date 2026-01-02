@@ -1,10 +1,9 @@
 .button {
   border: none;
   background-color: var(--button-background, transparent);
-  padding: 0.4rem;
+  padding: var(--button-padding, 0.5rem 0.75rem);
   border-radius: 0.5rem;
   transition: all 0.2s ease;
-  height: 2rem;
   display: flex;
   align-items: center;
   font-weight: 600;
@@ -39,6 +38,9 @@
 }
 
 .iconButton {
+  --button-padding: 0.5rem;
+
+  height: 2rem;
   width: 2rem;
 }
 

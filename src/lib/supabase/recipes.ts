@@ -40,11 +40,23 @@ export async function getRecipe(id: number): Promise<Recipe | null> {
   return data ? transformRecipe(data) : null;
 }
 
-export async function getAllRecipes(): Promise<RecipeCardInfo[]> {
+interface GetAllRecipesParams {
+  name?: string;
+}
+
+export async function getAllRecipes({
+  name,
+}: GetAllRecipesParams = {}): Promise<RecipeCardInfo[]> {
   const supabase = await createClient();
-  const { data } = await supabase
+  let query = supabase
     .from('recipe')
     .select('id, name, image_url, rating, made');
+
+  if (name) {
+    query = query.ilike('name', `%${name}%`);
+  }
+
+  const { data } = await query;
 
   return data
     ? data.map((recipe) => ({

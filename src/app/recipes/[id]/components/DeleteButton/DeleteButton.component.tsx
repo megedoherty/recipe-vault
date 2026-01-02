@@ -2,7 +2,7 @@
 
 import { useRef } from 'react';
 
-import Button from '@/components/Button/Button';
+import Button from '@/components/Button/Button.component';
 import { TrashIcon } from '@/components/icons/TrashIcon';
 import { deleteRecipe } from '@/lib/actions/recipes';
 
@@ -30,7 +30,12 @@ export default function DeleteButton({ recipeId }: DeleteButtonProps) {
           <p>Are you sure you want to delete this recipe?</p>
           <div className={styles.buttons}>
             <Button onClick={() => deleteRecipe(recipeId)}>Delete</Button>
-            <Button onClick={() => dialogRef.current?.close()}>Cancel</Button>
+            <Button
+              variant="secondary"
+              onClick={() => dialogRef.current?.close()}
+            >
+              Cancel
+            </Button>
           </div>
         </div>
       </dialog>
