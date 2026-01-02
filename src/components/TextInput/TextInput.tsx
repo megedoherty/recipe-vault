@@ -11,6 +11,7 @@ interface TextInputProps extends InputHTMLAttributes<
   type: 'text' | 'url' | 'textarea';
   defaultValue?: string;
   fullWidth?: boolean;
+  hideLabel?: boolean;
 }
 
 export default function TextInput({
@@ -20,11 +21,14 @@ export default function TextInput({
   type,
   defaultValue,
   fullWidth,
+  hideLabel,
   ...props
 }: TextInputProps) {
   return (
     <div className={`${styles.container} ${fullWidth ? styles.fullWidth : ''}`}>
-      <label htmlFor={id}>{label}</label>
+      <label htmlFor={id} className={hideLabel ? 'sr-only' : ''}>
+        {label}
+      </label>
       {type === 'textarea' ? (
         <textarea
           id={id}

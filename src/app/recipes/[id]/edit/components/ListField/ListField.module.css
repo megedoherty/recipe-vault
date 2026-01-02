@@ -5,11 +5,6 @@
   width: 100%;
 }
 
-.warning {
-  color: var(--text-secondary);
-  font-size: var(--font-size-small);
-}
-
 .item {
   display: flex;
   flex-direction: row;

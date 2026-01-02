@@ -3,7 +3,7 @@ import Image from 'next/image';
 
 import Button from '@/components/Button/Button';
 import EditIcon from '@/components/icons/EditIcon';
-import { getRecipe } from '@/lib/supabase/recipes';
+import { getRecipe, getRecipeIngredients } from '@/lib/supabase/recipes';
 
 import DeleteButton from './components/DeleteButton/DeleteButton';
 import MadeCheckbox from './components/MadeCheckbox/MadeCheckbox';
@@ -14,14 +14,14 @@ export default async function RecipePage({
   params,
 }: PageProps<'/recipes/[id]'>) {
   const { id } = await params;
-  const recipe = await getRecipe(Number(id));
+  const recipe = await getRecipe(id);
+  const ingredientSections = await getRecipeIngredients(id);
 
   if (recipe === null) {
     return <div>Recipe not found</div>;
   }
 
-  const { name, ingredients, instructions, made, imageUrl, sourceUrl, rating } =
-    recipe;
+  const { name, instructions, made, imageUrl, sourceUrl, rating } = recipe;
 
   return (
     <div className={styles.page}>
@@ -61,11 +61,20 @@ export default async function RecipePage({
       )}
       <div className={styles.ingredientsContainer}>
         <h2>Ingredients</h2>
-        <ul className={styles.ingredients}>
-          {ingredients?.map((ingredient) => (
-            <li key={ingredient}>{ingredient}</li>
-          ))}
-        </ul>
+        {ingredientSections?.map((ingredientSection) => (
+          <div key={ingredientSection.sectionName}>
+            {ingredientSection.sectionName && (
+              <h3>{ingredientSection.sectionName}</h3>
+            )}
+            <ul className={styles.ingredients}>
+              {ingredientSection.ingredients.map((ingredient) => (
+                <li key={ingredient.id}>
+                  {ingredient.quantity} {ingredient.name}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
       </div>
       <div className={styles.instructionsContainer}>
         <h2>Instructions</h2>
@@ -85,7 +94,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const recipe = await getRecipe(Number(id));
+  const recipe = await getRecipe(id);
 
   return {
     title: `${recipe?.name} | Recipe Vault`,

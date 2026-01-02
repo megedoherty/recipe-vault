@@ -15,12 +15,22 @@ export type KeysToCamelCase<T> = {
 export type RecipeDb = Database['public']['Tables']['recipe']['Row'];
 export type Recipe = Omit<
   KeysToCamelCase<RecipeDb>,
-  'ingredients' | 'instructions'
+  'ingredients' | 'instructions' | 'updatedAt' | 'userId'
 > & {
-  ingredients: string[];
   instructions: string[];
 };
 export type RecipeCardInfo = Pick<
   Recipe,
   'id' | 'name' | 'imageUrl' | 'rating' | 'made'
 >;
+
+// Ingredient types
+export type IngredientDb = Database['public']['Tables']['ingredient']['Row'];
+export type Ingredient = Omit<KeysToCamelCase<IngredientDb>, 'recipeId'>;
+export type IngredientInsert =
+  Database['public']['Tables']['ingredient']['Insert'];
+export type ParsedIngredient = Pick<Ingredient, 'name' | 'quantity'>;
+export type IngredientSections = {
+  sectionName: string | null;
+  ingredients: Ingredient[];
+};

@@ -9,7 +9,7 @@ export default async function EditRecipePage({
   params,
 }: PageProps<'/recipes/[id]/edit'>) {
   const { id } = await params;
-  const recipe = await getRecipe(Number(id));
+  const recipe = await getRecipe(id);
 
   if (recipe === null) {
     return <div>Recipe not found</div>;
@@ -29,7 +29,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const recipe = await getRecipe(Number(id));
+  const recipe = await getRecipe(id);
 
   return {
     title: `Edit ${recipe?.name} | Recipe Vault`,

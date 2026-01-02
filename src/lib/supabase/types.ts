@@ -39,39 +39,80 @@ export type Database = {
   };
   public: {
     Tables: {
+      ingredient: {
+        Row: {
+          id: string;
+          name: string;
+          position: number | null;
+          quantity: string | null;
+          recipe_id: string | null;
+          section: string | null;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          position?: number | null;
+          quantity?: string | null;
+          recipe_id?: string | null;
+          section?: string | null;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          position?: number | null;
+          quantity?: string | null;
+          recipe_id?: string | null;
+          section?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'ingredien_recipe_id_fkey';
+            columns: ['recipe_id'];
+            isOneToOne: false;
+            referencedRelation: 'recipe';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       recipe: {
         Row: {
           created_at: string;
-          made: boolean;
-          id: number;
+          id: string;
           image_url: string | null;
           ingredients: Json | null;
           instructions: Json | null;
+          made: boolean;
           name: string;
           rating: number | null;
           source_url: string | null;
+          updated_at: string | null;
+          user_id: string | null;
         };
         Insert: {
           created_at?: string;
-          made?: boolean;
-          id?: number;
+          id?: string;
           image_url?: string | null;
           ingredients?: Json | null;
           instructions?: Json | null;
+          made?: boolean;
           name: string;
           rating?: number | null;
           source_url?: string | null;
+          updated_at?: string | null;
+          user_id?: string | null;
         };
         Update: {
           created_at?: string;
-          made?: boolean;
-          id?: number;
+          id?: string;
           image_url?: string | null;
           ingredients?: Json | null;
           instructions?: Json | null;
+          made?: boolean;
           name?: string;
           rating?: number | null;
           source_url?: string | null;
+          updated_at?: string | null;
+          user_id?: string | null;
         };
         Relationships: [];
       };

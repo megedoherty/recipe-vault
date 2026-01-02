@@ -45,6 +45,12 @@
   width: fit-content;
 }
 
+.ingredientsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
 .ingredients {
   list-style: disc;
   padding-left: 1rem;

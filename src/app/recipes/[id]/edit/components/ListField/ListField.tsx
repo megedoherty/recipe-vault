@@ -1,6 +1,7 @@
 import { SetStateAction } from 'react';
 
 import Button from '@/components/Button/Button';
+import Hint from '@/components/Hint/Hint';
 import PlusIcon from '@/components/icons/PlusIcon';
 import XIcon from '@/components/icons/XIcon';
 
@@ -33,7 +34,7 @@ export default function ListField({
     <div className={styles.container}>
       <div>
         <p>Ingredients</p>
-        {extraInfo && <small className={styles.warning}>{extraInfo}</small>}
+        {extraInfo && <Hint>{extraInfo}</Hint>}
       </div>
       {items.map((item, index) => (
         <div key={item || index} className={styles.item}>

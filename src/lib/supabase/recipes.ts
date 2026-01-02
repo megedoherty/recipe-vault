@@ -1,35 +1,9 @@
-import { Recipe, RecipeCardInfo, RecipeDb } from '@/types';
+import { IngredientSections, Recipe, RecipeCardInfo } from '@/types';
 
 import { createClient } from './server';
+import { transformIngredients, transformRecipe } from './transforms';
 
-function isStringArray(value: unknown): value is string[] {
-  return (
-    Array.isArray(value) && value.every((item) => typeof item === 'string')
-  );
-}
-
-function transformRecipe(recipe: RecipeDb): Recipe {
-  const ingredients = isStringArray(recipe.ingredients)
-    ? recipe.ingredients
-    : [];
-  const instructions = isStringArray(recipe.instructions)
-    ? recipe.instructions
-    : [];
-
-  return {
-    id: recipe.id,
-    name: recipe.name,
-    createdAt: recipe.created_at,
-    made: recipe.made,
-    imageUrl: recipe.image_url,
-    sourceUrl: recipe.source_url,
-    ingredients,
-    instructions,
-    rating: recipe.rating,
-  };
-}
-
-export async function getRecipe(id: number): Promise<Recipe | null> {
+export async function getRecipe(id: string): Promise<Recipe | null> {
   const supabase = await createClient();
   const { data } = await supabase
     .from('recipe')
@@ -38,6 +12,17 @@ export async function getRecipe(id: number): Promise<Recipe | null> {
     .single();
 
   return data ? transformRecipe(data) : null;
+}
+
+export async function getRecipeIngredients(
+  id: string,
+): Promise<IngredientSections[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from('ingredient')
+    .select('id, name, quantity, position, section')
+    .eq('recipe_id', id);
+  return data ? transformIngredients(data) : [];
 }
 
 interface GetAllRecipesParams {

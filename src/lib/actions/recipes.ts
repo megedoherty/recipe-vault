@@ -3,20 +3,26 @@
 import { redirect } from 'next/navigation';
 
 import { createClient } from '@/lib/supabase/server';
-import { parseTextareaToArray } from '@/lib/utils';
+import { parseTextareaToArray } from '@/lib/utils/parse';
+import { IngredientInsert } from '@/types';
+
+import { DEFAULT_SECTION_NAME } from '../utils/constants';
 
 interface ActionsResponse {
   success: boolean;
   error?: string;
 }
 
+const sectionIngredientRegex = /^section-(.+?)-ingredient-(\d+)$/;
+const SECTION_NAME = 1;
+const POSITION = 2;
+
 export async function addRecipe(
   prevState: ActionsResponse | null,
   formData: FormData,
 ): Promise<ActionsResponse> {
   const rawFormData = Object.fromEntries(formData);
-  const name = rawFormData.name as string;
-  const ingredients = rawFormData.ingredients as string;
+  const recipeName = rawFormData.name as string;
   const instructions = rawFormData.instructions as string;
 
   const supabase = await createClient();
@@ -31,27 +37,64 @@ export async function addRecipe(
     .from('recipe')
     .insert({
       user_id: user.id,
-      name,
-      ingredients: parseTextareaToArray(ingredients),
+      name: recipeName,
       instructions: parseTextareaToArray(instructions),
     })
     .select('id')
     .single();
 
-  if (error || !data) {
+  if (error || !data || !data.id) {
     console.error(error);
-    return { success: false, error: error.message };
+    return {
+      success: false,
+      error: error?.message ?? 'Failed to create recipe',
+    };
   }
 
-  if (data && data.id) {
-    redirect(`/recipes/${data.id}`);
+  // Process all the ingredients and insert them
+  const recipe_id = data.id;
+  const ingredients: IngredientInsert[] = [];
+
+  for (const [key, value] of Object.entries(rawFormData)) {
+    if (!value || value.toString().trim() === '') continue;
+
+    const match = key.match(sectionIngredientRegex);
+    if (match) {
+      const quantity = rawFormData[
+        key.replace('ingredient', 'quantity')
+      ] as string;
+      const section =
+        match[SECTION_NAME] === DEFAULT_SECTION_NAME
+          ? null
+          : match[SECTION_NAME];
+
+      ingredients.push({
+        name: value as string,
+        position: Number(match[POSITION]),
+        quantity,
+        recipe_id,
+        section,
+      });
+    }
   }
 
-  return { success: false, error: 'Recipe created but could not retrieve ID' };
+  const { error: ingredientError } = await supabase
+    .from('ingredient')
+    .insert(ingredients);
+
+  if (ingredientError) {
+    console.error(ingredientError);
+    return {
+      success: false,
+      error: ingredientError?.message ?? 'Failed to create ingredients',
+    };
+  }
+
+  redirect(`/recipes/${data.id}`);
 }
 
 export async function updateRecipe(
-  recipeId: number,
+  recipeId: string,
   prevState: ActionsResponse | null,
   formData: FormData,
 ): Promise<ActionsResponse> {
@@ -92,7 +135,7 @@ export async function updateRecipe(
 }
 
 export async function toggleRecipeMade(
-  recipeId: number,
+  recipeId: string,
   made: boolean,
 ): Promise<void> {
   const supabase = await createClient();
@@ -109,7 +152,7 @@ export async function toggleRecipeMade(
 }
 
 export async function updateRecipeRating(
-  recipeId: number,
+  recipeId: string,
   rating: number,
 ): Promise<void> {
   const supabase = await createClient();
@@ -125,7 +168,7 @@ export async function updateRecipeRating(
   }
 }
 
-export async function deleteRecipe(recipeId: number): Promise<void> {
+export async function deleteRecipe(recipeId: string): Promise<void> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('recipe')
