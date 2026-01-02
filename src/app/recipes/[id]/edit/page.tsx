@@ -3,6 +3,7 @@ import { Metadata } from 'next';
 import { getRecipe } from '@/lib/supabase/recipes';
 
 import UpdateRecipeForm from './components/UpdateRecipeForm/UpdateRecipeForm.component';
+import styles from './page.module.css';
 
 export default async function EditRecipePage({
   params,
@@ -15,7 +16,7 @@ export default async function EditRecipePage({
   }
 
   return (
-    <div>
+    <div className={styles.page}>
       <h1>Edit Recipe</h1>
       <UpdateRecipeForm recipe={recipe} />
     </div>

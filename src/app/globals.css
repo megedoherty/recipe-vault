@@ -71,14 +71,18 @@ h3 {
 
 /* Inputs */
 input[type="text"],
-input[type="checkbox"] {
+input[type="checkbox"],
+input[type="url"],
+textarea {
   border: 1px solid var(--border-default);
   border-radius: 0.25rem;
   background-color: var(--background-card);
 }
 
 /* Text inputs */
-input[type="text"] {
+input[type="text"],
+input[type="url"],
+textarea {
   padding: 0.5rem;
 
   &:focus {

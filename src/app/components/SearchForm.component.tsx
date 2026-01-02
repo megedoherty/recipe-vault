@@ -11,8 +11,8 @@ export default function SearchForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const termParam = searchParams.get('term');
-  const term = typeof termParam === 'string' ? termParam : undefined;
+  const nameParam = searchParams.get('name');
+  const name = typeof nameParam === 'string' ? nameParam : undefined;
 
   return (
     <search>
@@ -22,7 +22,7 @@ export default function SearchForm() {
           id="name"
           name="name"
           placeholder="Search recipe name"
-          defaultValue={term}
+          defaultValue={name}
         />
         <label htmlFor="name" className="sr-only">
           Recipe name

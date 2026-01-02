@@ -1,0 +1,43 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.inputContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  width: 100%;
+}
+
+.input {
+  width: 100%;
+}
+
+.textarea {
+  width: 100%;
+  resize: none;
+}
+
+.ingredientsContainer,
+.instructionsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.ingredient {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.instruction {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+}

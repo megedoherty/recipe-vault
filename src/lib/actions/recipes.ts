@@ -57,10 +57,18 @@ export async function updateRecipe(
 ): Promise<ActionsResponse> {
   const rawFormData = Object.fromEntries(formData);
   const name = rawFormData.name as string;
-  const ingredients = parseTextareaToArray(rawFormData.ingredients as string);
-  const instructions = parseTextareaToArray(rawFormData.instructions as string);
   const image_url = rawFormData.imageUrl as string;
   const source_url = rawFormData.sourceUrl as string;
+
+  const ingredients = formData
+    .getAll('ingredient')
+    .map((ing) => ing.toString().trim())
+    .filter(Boolean);
+
+  const instructions = formData
+    .getAll('instruction')
+    .map((inst) => inst.toString().trim())
+    .filter(Boolean);
 
   const supabase = await createClient();
   const { data, error } = await supabase
