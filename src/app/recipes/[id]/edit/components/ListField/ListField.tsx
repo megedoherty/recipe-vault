@@ -14,7 +14,7 @@ interface ListFieldProps {
   fieldType: 'input' | 'textarea';
 }
 
-export default function ListField<T>({
+export default function ListField({
   items,
   setItems,
   itemLabel,

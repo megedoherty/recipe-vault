@@ -4,8 +4,7 @@ import Form from 'next/form';
 import { useActionState, useState } from 'react';
 
 import Button from '@/components/Button/Button';
-import PlusIcon from '@/components/icons/PlusIcon';
-import XIcon from '@/components/icons/XIcon';
+import TextInput from '@/components/TextInput/TextInput';
 import { updateRecipe } from '@/lib/actions/recipes';
 import { Recipe } from '@/types';
 
@@ -32,37 +31,30 @@ export default function UpdateRecipeForm({
 
   return (
     <Form action={formAction} className={styles.form}>
-      <div className={styles.inputContainer}>
-        <label htmlFor="name">Name</label>
-        <input
-          type="text"
-          id="name"
-          name="name"
-          required
-          defaultValue={recipe.name}
-          className={styles.input}
-        />
-      </div>
-      <div className={styles.inputContainer}>
-        <label htmlFor="imageUrl">Image URL</label>
-        <input
-          type="url"
-          id="imageUrl"
-          name="imageUrl"
-          defaultValue={recipe.imageUrl ?? ''}
-          className={styles.input}
-        />
-      </div>
-      <div className={styles.inputContainer}>
-        <label htmlFor="sourceUrl">Source URL</label>
-        <input
-          type="url"
-          id="sourceUrl"
-          name="sourceUrl"
-          defaultValue={recipe.sourceUrl ?? ''}
-          className={styles.input}
-        />
-      </div>
+      <TextInput
+        label="Name"
+        name="name"
+        id="name"
+        type="text"
+        defaultValue={recipe.name}
+        fullWidth
+      />
+      <TextInput
+        label="Image URL"
+        name="imageUrl"
+        id="imageUrl"
+        type="url"
+        defaultValue={recipe.imageUrl ?? ''}
+        fullWidth
+      />
+      <TextInput
+        label="Source URL"
+        name="sourceUrl"
+        id="sourceUrl"
+        type="url"
+        defaultValue={recipe.sourceUrl ?? ''}
+        fullWidth
+      />
       <ListField
         items={ingredients}
         setItems={setIngredients}

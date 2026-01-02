@@ -3,30 +3,48 @@
 import Form from 'next/form';
 import { useActionState } from 'react';
 
+import Button from '@/components/Button/Button';
+import TextInput from '@/components/TextInput/TextInput';
 import { addRecipe } from '@/lib/actions/recipes';
+
+import styles from './CreateRecipeForm.module.css';
 
 export default function CreateRecipeForm() {
   const [state, formAction, isPending] = useActionState(addRecipe, null);
 
   return (
-    <Form action={formAction}>
+    <Form action={formAction} className={styles.form}>
       {state?.error && <p>{state.error}</p>}
-      {state?.success && <p>Recipe added successfully</p>}
-      <div>
-        <label htmlFor="name">Name</label>
-        <input type="text" id="name" name="name" required />
-      </div>
-      <div>
-        <label htmlFor="ingredients">Ingredients</label>
-        <textarea id="ingredients" name="ingredients" />
-      </div>
-      <div>
-        <label htmlFor="instructions">Instructions</label>
-        <textarea id="instructions" name="instructions" />
-      </div>
-      <button type="submit" disabled={isPending}>
+      <TextInput
+        label="Name"
+        name="name"
+        id="name"
+        type="text"
+        required
+        fullWidth
+      />
+      <TextInput
+        label="Ingredients"
+        name="ingredients"
+        id="ingredients"
+        type="textarea"
+        fullWidth
+      />
+      <TextInput
+        label="Instructions"
+        name="instructions"
+        id="instructions"
+        type="textarea"
+        fullWidth
+      />
+      <Button
+        variant="primary"
+        type="submit"
+        disabled={isPending}
+        className={styles.submitButton}
+      >
         {isPending ? 'Adding...' : 'Add Recipe'}
-      </button>
+      </Button>
     </Form>
   );
 }
