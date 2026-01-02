@@ -5,7 +5,7 @@ import type { Metadata } from 'next';
 import { Inter, Lora } from 'next/font/google';
 import { ReactNode } from 'react';
 
-import Navbar from '@/components/Navbar/Navbar.component';
+import Navbar from '@/components/Navbar/Navbar';
 
 const inter = Inter({
   variable: '--font-inter',

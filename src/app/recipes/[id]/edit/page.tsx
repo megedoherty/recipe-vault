@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 
 import { getRecipe } from '@/lib/supabase/recipes';
 
-import UpdateRecipeForm from './components/UpdateRecipeForm/UpdateRecipeForm.component';
+import UpdateRecipeForm from './components/UpdateRecipeForm/UpdateRecipeForm';
 import styles from './page.module.css';
 
 export default async function EditRecipePage({

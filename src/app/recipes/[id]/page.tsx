@@ -1,13 +1,13 @@
 import { Metadata } from 'next';
 import Image from 'next/image';
 
-import Button from '@/components/Button/Button.component';
-import { EditIcon } from '@/components/icons/EditIcon';
+import Button from '@/components/Button/Button';
+import EditIcon from '@/components/icons/EditIcon';
 import { getRecipe } from '@/lib/supabase/recipes';
 
-import DeleteButton from './components/DeleteButton/DeleteButton.component';
-import MadeCheckbox from './components/MadeCheckbox/MadeCheckbox.component';
-import RatingInput from './components/RatingInput/RatingInput.component';
+import DeleteButton from './components/DeleteButton/DeleteButton';
+import MadeCheckbox from './components/MadeCheckbox/MadeCheckbox';
+import RatingInput from './components/RatingInput/RatingInput';
 import styles from './page.module.css';
 
 export default async function RecipePage({

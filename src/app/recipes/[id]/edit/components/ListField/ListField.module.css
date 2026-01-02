@@ -1,0 +1,35 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.warning {
+  color: var(--text-secondary);
+  font-size: var(--font-size-small);
+}
+
+.item {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+
+  &:has(input) {
+    align-items: center;
+  }
+}
+
+.input {
+  width: 100%;
+}
+
+.textarea {
+  width: 100%;
+  resize: none;
+  field-sizing: content;
+}
+
+.addButton {
+  width: fit-content;
+}

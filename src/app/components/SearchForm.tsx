@@ -3,7 +3,7 @@
 import Form from 'next/form';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-import Button from '@/components/Button/Button.component';
+import Button from '@/components/Button/Button';
 
 import styles from './SearchForm.module.css';
 

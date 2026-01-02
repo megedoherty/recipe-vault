@@ -1,9 +1,9 @@
 import { Metadata } from 'next';
 
-import RecipeCard from '@/components/RecipeCard/RecipeCard.component';
+import RecipeCard from '@/components/RecipeCard/RecipeCard';
 import { getAllRecipes } from '@/lib/supabase/recipes';
 
-import SearchForm from './components/SearchForm.component';
+import SearchForm from './components/SearchForm';
 import styles from './page.module.css';
 
 export default async function Home({ searchParams }: PageProps<'/'>) {

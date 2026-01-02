@@ -16,28 +16,6 @@
   width: 100%;
 }
 
-.textarea {
-  width: 100%;
-  resize: none;
-}
-
-.ingredientsContainer,
-.instructionsContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  width: 100%;
-}
-
-.ingredient {
-  display: flex;
-  flex-direction: row;
-  gap: 0.5rem;
-  align-items: center;
-}
-
-.instruction {
-  display: flex;
-  flex-direction: row;
-  gap: 0.5rem;
+.submitButton {
+  align-self: center;
 }

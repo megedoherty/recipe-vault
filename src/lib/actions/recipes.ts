@@ -67,7 +67,8 @@ export async function updateRecipe(
 
   const instructions = formData
     .getAll('instruction')
-    .map((inst) => inst.toString().trim())
+    .flatMap((inst) => inst.toString().split(/\r?\n/))
+    .map((inst) => inst.trim())
     .filter(Boolean);
 
   const supabase = await createClient();

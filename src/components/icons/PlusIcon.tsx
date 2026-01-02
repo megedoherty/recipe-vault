@@ -1,6 +1,6 @@
 import { IconProps } from './icons.types';
 
-export default function EditIcon({ className }: IconProps) {
+export default function PlusIcon({ className }: IconProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -14,7 +14,8 @@ export default function EditIcon({ className }: IconProps) {
       strokeLinejoin="round"
       className={className}
     >
-      <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+      <line x1="12" y1="5" x2="12" y2="19"></line>
+      <line x1="5" y1="12" x2="19" y2="12"></line>
     </svg>
   );
 }

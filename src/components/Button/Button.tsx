@@ -11,6 +11,7 @@ interface BaseButtonProps extends PropsWithChildren {
   variant?: 'primary' | 'secondary';
   className?: string;
   iconOnly?: boolean;
+  size?: 'small' | 'medium';
 }
 
 type ButtonAsButton = ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -34,6 +35,7 @@ export default function Button(props: ButtonProps) {
   const {
     children,
     variant = 'primary',
+    size = 'medium',
     className,
     iconOnly = false,
     ...restProps
@@ -44,6 +46,7 @@ export default function Button(props: ButtonProps) {
     styles[variant],
     className,
     iconOnly && styles.iconButton,
+    size === 'small' && styles.small,
   ]
     .filter(Boolean)
     .join(' ');
