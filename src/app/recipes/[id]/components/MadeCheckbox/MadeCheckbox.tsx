@@ -39,6 +39,7 @@ export default function MadeCheckbox({
         checked={checked}
         onChange={handleChange}
         disabled={isPending}
+        className={styles.checkbox}
       />
       <label htmlFor="made" className={styles.label}>
         I made this

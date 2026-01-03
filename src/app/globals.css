@@ -100,14 +100,9 @@ textarea {
 
 /* Checkboxes */
 input[type="checkbox"] {
-  width: 1.25rem;
-  height: 1.25rem;
   cursor: pointer;
   display: inline-block;
   position: relative;
-  transition:
-    background-color 0.2s,
-    border-color 0.2s;
   appearance: none;
 }
 

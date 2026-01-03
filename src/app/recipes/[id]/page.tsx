@@ -6,6 +6,7 @@ import EditIcon from '@/components/icons/EditIcon';
 import { getRecipe, getRecipeIngredients } from '@/lib/supabase/recipes';
 
 import DeleteButton from './components/DeleteButton/DeleteButton';
+import IngredientsList from './components/IngredientsList/IngredientsList';
 import MadeCheckbox from './components/MadeCheckbox/MadeCheckbox';
 import RatingInput from './components/RatingInput/RatingInput';
 import styles from './page.module.css';
@@ -64,13 +65,7 @@ export default async function RecipePage({
         {ingredientSections?.map((ingredientSection) => (
           <div key={ingredientSection.title}>
             {ingredientSection.title && <h3>{ingredientSection.title}</h3>}
-            <ul className={styles.ingredients}>
-              {ingredientSection.ingredients.map((ingredient) => (
-                <li key={ingredient.id}>
-                  {ingredient.quantity} {ingredient.name}
-                </li>
-              ))}
-            </ul>
+            <IngredientsList ingredients={ingredientSection.ingredients} />
           </div>
         ))}
       </div>

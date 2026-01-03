@@ -4,6 +4,11 @@
   gap: 0.25rem;
 }
 
+.checkbox {
+  height: 1.25rem;
+  width: 1.25rem;
+}
+
 .label {
   cursor: pointer;
 }
