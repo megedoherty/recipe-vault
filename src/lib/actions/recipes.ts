@@ -102,6 +102,12 @@ export async function updateRecipe(
     return { success: false, error: error.message };
   }
 
+  // Check if we need to delete any ingredients
+  const { data: currentIngredientIds } = await supabase
+    .from('ingredient')
+    .select('id')
+    .eq('recipe_id', recipeId);
+
   const ingredients: IngredientInsert[] = ingredientSections.flatMap(
     (section) =>
       section.ingredients.map((ingredient, index) => ({
@@ -113,6 +119,28 @@ export async function updateRecipe(
       })),
   );
 
+  if (currentIngredientIds) {
+    const ingredientsToDelete = currentIngredientIds.filter(
+      (ingredient) => !ingredients.some((i) => i.id === ingredient.id),
+    );
+
+    if (ingredientsToDelete.length > 0) {
+      const { error: deleteError } = await supabase
+        .from('ingredient')
+        .delete()
+        .in(
+          'id',
+          ingredientsToDelete.map((i) => i.id),
+        );
+
+      if (deleteError) {
+        console.error(deleteError);
+        return { success: false, error: deleteError.message };
+      }
+    }
+  }
+
+  // Update the rest of the ingredients
   const { error: ingredientError } = await supabase
     .from('ingredient')
     .upsert(ingredients);

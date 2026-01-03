@@ -20,7 +20,7 @@ export async function getRecipeIngredients(
   const supabase = await createClient();
   const { data } = await supabase
     .from('ingredient')
-    .select('id, name, quantity, position, section')
+    .select('id, name, quantity, position, section, position')
     .eq('recipe_id', id);
   return data ? transformIngredients(data) : [];
 }

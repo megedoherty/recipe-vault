@@ -2,6 +2,7 @@ import { Dispatch, Fragment, SetStateAction } from 'react';
 
 import Button from '@/components/Button/Button';
 import PlusIcon from '@/components/icons/PlusIcon';
+import XIcon from '@/components/icons/XIcon';
 import TextInput from '@/components/TextInput/TextInput';
 import { IngredientSections } from '@/types';
 
@@ -59,6 +60,24 @@ export default function IngredientsInput({
     );
   };
 
+  const handleDeleteIngredient = (
+    sectionIndex: number,
+    ingredientIndex: number,
+  ) => {
+    setIngredientSections((prev) =>
+      prev.map((section, sIdx) =>
+        sIdx === sectionIndex
+          ? {
+              ...section,
+              ingredients: section.ingredients.filter(
+                (_, i) => i !== ingredientIndex,
+              ),
+            }
+          : section,
+      ),
+    );
+  };
+
   return (
     <div className={styles.container}>
       {ingredientSections.map((section, sectionIndex) => {
@@ -100,6 +119,17 @@ export default function IngredientsInput({
                     }
                     hideLabel
                   />
+                  <Button
+                    variant="secondary"
+                    iconOnly
+                    size="small"
+                    onClick={() =>
+                      handleDeleteIngredient(sectionIndex, ingredientIndex)
+                    }
+                    aria-label="Delete ingredient"
+                  >
+                    <XIcon />
+                  </Button>
                 </Fragment>
               ))}
             </div>

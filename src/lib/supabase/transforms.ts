@@ -26,7 +26,9 @@ export function transformRecipe(recipe: RecipeDb): Recipe {
 export function transformIngredients(
   ingredients: Ingredient[],
 ): IngredientSections[] {
-  return ingredients.reduce(
+  const sortedIngredients = ingredients.sort((a, b) => a.position - b.position);
+
+  return sortedIngredients.reduce(
     (acc: IngredientSections[], ingredient: Ingredient) => {
       const section = acc.find(
         (section) => section.title === ingredient.section,
