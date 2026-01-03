@@ -36,7 +36,7 @@ export default async function RecipePage({
             >
               <EditIcon />
             </Button>
-            <DeleteButton recipeId={Number(id)} />
+            <DeleteButton recipeId={id} />
           </div>
         </header>
         {sourceUrl && (
@@ -50,8 +50,8 @@ export default async function RecipePage({
           </a>
         )}
         <div className={styles.personalInfo}>
-          <MadeCheckbox recipeId={Number(id)} initialChecked={made} />
-          <RatingInput recipeId={Number(id)} initialRating={rating} />
+          <MadeCheckbox recipeId={id} initialChecked={made} />
+          <RatingInput recipeId={id} initialRating={rating} />
         </div>
       </div>
       {imageUrl && (
@@ -62,10 +62,8 @@ export default async function RecipePage({
       <div className={styles.ingredientsContainer}>
         <h2>Ingredients</h2>
         {ingredientSections?.map((ingredientSection) => (
-          <div key={ingredientSection.sectionName}>
-            {ingredientSection.sectionName && (
-              <h3>{ingredientSection.sectionName}</h3>
-            )}
+          <div key={ingredientSection.title}>
+            {ingredientSection.title && <h3>{ingredientSection.title}</h3>}
             <ul className={styles.ingredients}>
               {ingredientSection.ingredients.map((ingredient) => (
                 <li key={ingredient.id}>

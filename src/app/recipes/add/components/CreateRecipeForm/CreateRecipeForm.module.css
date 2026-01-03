@@ -5,6 +5,13 @@
   align-items: flex-start;
 }
 
+.ingredientsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
 .submitButton {
   align-self: center;
 }

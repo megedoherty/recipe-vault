@@ -7,7 +7,7 @@ import { updateRecipeRating } from '@/lib/actions/recipes';
 import styles from './RatingInput.module.css';
 
 interface RatingInputProps {
-  recipeId: number;
+  recipeId: string;
   initialRating: number | null;
 }
 

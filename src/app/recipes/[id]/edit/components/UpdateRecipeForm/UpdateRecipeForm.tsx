@@ -4,29 +4,32 @@ import Form from 'next/form';
 import { useActionState, useState } from 'react';
 
 import Button from '@/components/Button/Button';
+import IngredientsInput from '@/components/IngredientsInput/IngredientsInput';
 import TextInput from '@/components/TextInput/TextInput';
 import { updateRecipe } from '@/lib/actions/recipes';
-import { Recipe } from '@/types';
+import { IngredientSections, Recipe } from '@/types';
 
 import ListField from '../ListField/ListField';
 import styles from './UpdateRecipeForm.module.css';
 
 interface UpdateRecipeFormComponentProps {
   recipe: Recipe;
+  ingredientSections: IngredientSections[];
 }
 
 export default function UpdateRecipeForm({
   recipe,
+  ingredientSections,
 }: UpdateRecipeFormComponentProps) {
-  const [state, formAction, isPending] = useActionState(
-    updateRecipe.bind(null, recipe.id),
-    null,
-  );
-
-  const [ingredients, setIngredients] = useState<string[]>(recipe.ingredients);
-
+  const [formIngredientSections, setFormIngredientSections] =
+    useState<IngredientSections[]>(ingredientSections);
   const [instructions, setInstructions] = useState<string[]>(
     recipe.instructions,
+  );
+
+  const [state, formAction, isPending] = useActionState(
+    updateRecipe.bind(null, recipe.id, formIngredientSections),
+    null,
   );
 
   return (
@@ -55,13 +58,15 @@ export default function UpdateRecipeForm({
         defaultValue={recipe.sourceUrl ?? ''}
         fullWidth
       />
+      <div className={styles.ingredientsContainer}>
+        <p>Ingredients</p>
+        <IngredientsInput
+          ingredientSections={formIngredientSections}
+          setIngredientSections={setFormIngredientSections}
+        />
+      </div>
       <ListField
-        items={ingredients}
-        setItems={setIngredients}
-        itemLabel="ingredient"
-        fieldType="input"
-      />
-      <ListField
+        heading="Instructions"
         items={instructions}
         setItems={setInstructions}
         itemLabel="instruction"

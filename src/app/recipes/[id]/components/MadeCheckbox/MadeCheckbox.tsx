@@ -7,7 +7,7 @@ import { toggleRecipeMade } from '@/lib/actions/recipes';
 import styles from './MadeCheckbox.module.css';
 
 interface MadeCheckboxProps {
-  recipeId: number;
+  recipeId: string;
   initialChecked: boolean;
 }
 

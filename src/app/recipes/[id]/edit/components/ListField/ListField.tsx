@@ -8,6 +8,7 @@ import XIcon from '@/components/icons/XIcon';
 import styles from './ListField.module.css';
 
 interface ListFieldProps {
+  heading: string;
   items: string[];
   setItems: (value: SetStateAction<string[]>) => void;
   itemLabel: string;
@@ -16,6 +17,7 @@ interface ListFieldProps {
 }
 
 export default function ListField({
+  heading,
   items,
   setItems,
   itemLabel,
@@ -33,7 +35,7 @@ export default function ListField({
   return (
     <div className={styles.container}>
       <div>
-        <p>Ingredients</p>
+        <p>{heading}</p>
         {extraInfo && <Hint>{extraInfo}</Hint>}
       </div>
       {items.map((item, index) => (

@@ -25,12 +25,17 @@ export type RecipeCardInfo = Pick<
 >;
 
 // Ingredient types
+// The exact row that comes from the database
 export type IngredientDb = Database['public']['Tables']['ingredient']['Row'];
+// The type used in recipes on the FE - all the fields except the recipe_id
 export type Ingredient = Omit<KeysToCamelCase<IngredientDb>, 'recipeId'>;
+// The type used when inserting a new ingredient
 export type IngredientInsert =
   Database['public']['Tables']['ingredient']['Insert'];
-export type ParsedIngredient = Pick<Ingredient, 'name' | 'quantity'>;
+// The type used when editing an ingredient
+export type EditableIngredient = Omit<Ingredient, 'position'>;
+// The type used when ingredients are grouped on the FE
 export type IngredientSections = {
-  sectionName: string | null;
-  ingredients: Ingredient[];
+  title: string | null;
+  ingredients: EditableIngredient[];
 };

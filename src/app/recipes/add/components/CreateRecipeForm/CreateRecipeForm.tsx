@@ -4,15 +4,32 @@ import Form from 'next/form';
 import { useActionState, useState } from 'react';
 
 import Button from '@/components/Button/Button';
+import Hint from '@/components/Hint/Hint';
+import IngredientsInput from '@/components/IngredientsInput/IngredientsInput';
 import TextInput from '@/components/TextInput/TextInput';
 import { addRecipe } from '@/lib/actions/recipes';
+import { parseIngredients } from '@/lib/utils/parse';
+import { IngredientSections } from '@/types';
 
-import IngredientsInput from '../IngredientsInput/IngredientsInput';
 import styles from './CreateRecipeForm.module.css';
 
 export default function CreateRecipeForm() {
-  const [state, formAction, isPending] = useActionState(addRecipe, null);
   const [ingredientsProcessed, setIngredientsProcessed] = useState(false);
+  const [ingredientsInput, setIngredientsInput] = useState('');
+  const [ingredientSections, setIngredientSections] = useState<
+    IngredientSections[]
+  >([]);
+
+  const [state, formAction, isPending] = useActionState(
+    addRecipe.bind(null, ingredientSections),
+    null,
+  );
+
+  const onProcessIngredients = () => {
+    const parsedSections = parseIngredients(ingredientsInput);
+    setIngredientSections(parsedSections);
+    setIngredientsProcessed(true);
+  };
 
   return (
     <Form action={formAction} className={styles.form}>
@@ -25,10 +42,35 @@ export default function CreateRecipeForm() {
         required
         fullWidth
       />
-      <IngredientsInput
-        hasProcessed={ingredientsProcessed}
-        setHasProcessed={setIngredientsProcessed}
-      />
+      <div className={styles.ingredientsContainer}>
+        <p>Ingredients</p>
+        <Hint>
+          Enter your ingredients one per line. If a section applies, end it with
+          a colon. We&apos;ll turn your list into editable rows so you can
+          review, edit, and add to before saving.
+        </Hint>
+        {!ingredientsProcessed ? (
+          <>
+            <TextInput
+              label="Ingredients"
+              name="ingredients"
+              id="ingredients"
+              value={ingredientsInput}
+              onChange={(e) => setIngredientsInput(e.target.value)}
+              type="textarea"
+              fullWidth
+            />
+            <Button size="small" onClick={onProcessIngredients}>
+              Process Ingredients
+            </Button>
+          </>
+        ) : (
+          <IngredientsInput
+            ingredientSections={ingredientSections}
+            setIngredientSections={setIngredientSections}
+          />
+        )}
+      </div>
       {!ingredientsProcessed ? (
         <p>Please add and process your ingredients before adding the recipe.</p>
       ) : (

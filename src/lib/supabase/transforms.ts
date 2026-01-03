@@ -29,13 +29,13 @@ export function transformIngredients(
   return ingredients.reduce(
     (acc: IngredientSections[], ingredient: Ingredient) => {
       const section = acc.find(
-        (section) => section.sectionName === ingredient.section,
+        (section) => section.title === ingredient.section,
       );
       if (section) {
         section.ingredients.push(ingredient);
       } else {
         acc.push({
-          sectionName: ingredient.section,
+          title: ingredient.section,
           ingredients: [ingredient],
         });
       }

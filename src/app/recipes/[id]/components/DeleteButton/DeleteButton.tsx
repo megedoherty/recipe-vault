@@ -9,7 +9,7 @@ import { deleteRecipe } from '@/lib/actions/recipes';
 import styles from './DeleteButton.module.css';
 
 interface DeleteButtonProps {
-  recipeId: number;
+  recipeId: string;
 }
 
 export default function DeleteButton({ recipeId }: DeleteButtonProps) {

@@ -4,20 +4,15 @@ import { redirect } from 'next/navigation';
 
 import { createClient } from '@/lib/supabase/server';
 import { parseTextareaToArray } from '@/lib/utils/parse';
-import { IngredientInsert } from '@/types';
-
-import { DEFAULT_SECTION_NAME } from '../utils/constants';
+import { IngredientInsert, IngredientSections } from '@/types';
 
 interface ActionsResponse {
   success: boolean;
   error?: string;
 }
 
-const sectionIngredientRegex = /^section-(.+?)-ingredient-(\d+)$/;
-const SECTION_NAME = 1;
-const POSITION = 2;
-
 export async function addRecipe(
+  ingredientSections: IngredientSections[],
   prevState: ActionsResponse | null,
   formData: FormData,
 ): Promise<ActionsResponse> {
@@ -51,32 +46,16 @@ export async function addRecipe(
     };
   }
 
-  // Process all the ingredients and insert them
-  const recipe_id = data.id;
-  const ingredients: IngredientInsert[] = [];
-
-  for (const [key, value] of Object.entries(rawFormData)) {
-    if (!value || value.toString().trim() === '') continue;
-
-    const match = key.match(sectionIngredientRegex);
-    if (match) {
-      const quantity = rawFormData[
-        key.replace('ingredient', 'quantity')
-      ] as string;
-      const section =
-        match[SECTION_NAME] === DEFAULT_SECTION_NAME
-          ? null
-          : match[SECTION_NAME];
-
-      ingredients.push({
-        name: value as string,
-        position: Number(match[POSITION]),
-        quantity,
-        recipe_id,
-        section,
-      });
-    }
-  }
+  const ingredients: IngredientInsert[] = ingredientSections.flatMap(
+    (section) =>
+      section.ingredients.map((ingredient, index) => ({
+        name: ingredient.name,
+        quantity: ingredient.quantity,
+        section: section.title,
+        recipe_id: data.id,
+        position: index,
+      })),
+  );
 
   const { error: ingredientError } = await supabase
     .from('ingredient')
@@ -95,6 +74,7 @@ export async function addRecipe(
 
 export async function updateRecipe(
   recipeId: string,
+  ingredientSections: IngredientSections[],
   prevState: ActionsResponse | null,
   formData: FormData,
 ): Promise<ActionsResponse> {
@@ -102,11 +82,6 @@ export async function updateRecipe(
   const name = rawFormData.name as string;
   const image_url = rawFormData.imageUrl as string;
   const source_url = rawFormData.sourceUrl as string;
-
-  const ingredients = formData
-    .getAll('ingredient')
-    .map((ing) => ing.toString().trim())
-    .filter(Boolean);
 
   const instructions = formData
     .getAll('instruction')
@@ -117,7 +92,7 @@ export async function updateRecipe(
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('recipe')
-    .update({ name, ingredients, instructions, image_url, source_url })
+    .update({ name, instructions, image_url, source_url })
     .eq('id', recipeId)
     .select()
     .single();
@@ -127,11 +102,30 @@ export async function updateRecipe(
     return { success: false, error: error.message };
   }
 
-  if (data && data.id) {
-    redirect(`/recipes/${data.id}`);
+  const ingredients: IngredientInsert[] = ingredientSections.flatMap(
+    (section) =>
+      section.ingredients.map((ingredient, index) => ({
+        id: ingredient.id,
+        name: ingredient.name,
+        quantity: ingredient.quantity,
+        section: section.title,
+        position: index,
+      })),
+  );
+
+  const { error: ingredientError } = await supabase
+    .from('ingredient')
+    .upsert(ingredients);
+
+  if (ingredientError) {
+    console.error(ingredientError);
+    return {
+      success: false,
+      error: ingredientError?.message ?? 'Failed to update ingredients',
+    };
   }
 
-  return { success: false, error: 'Recipe updated but could not retrieve ID' };
+  redirect(`/recipes/${data.id}`);
 }
 
 export async function toggleRecipeMade(

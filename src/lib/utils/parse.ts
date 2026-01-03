@@ -1,4 +1,4 @@
-import { ParsedIngredient } from '@/types';
+import { EditableIngredient, IngredientSections } from '@/types';
 
 import {
   anythingInParenthesesRegex,
@@ -54,6 +54,8 @@ export function standardizeQuantity(quantity: string): string {
 
   return replaceFractions(normalized);
 }
+
+type ParsedIngredient = Pick<EditableIngredient, 'name' | 'quantity'>;
 
 function parseNameWithQuantity(
   line: string,
@@ -132,33 +134,35 @@ function parseIngredientLine(line: string): ParsedIngredient {
   return { name: line, quantity: null };
 }
 
-export interface ParsedSection {
-  name?: string;
-  ingredients: ParsedIngredient[];
-}
-
-export function parseIngredients(text: string | undefined): ParsedSection[] {
+export function parseIngredients(
+  text: string | undefined,
+): IngredientSections[] {
   if (!text) return [];
 
   const lines = text.split(/\r?\n/).filter(Boolean);
-  const sections = lines.reduce((acc: ParsedSection[], line) => {
+  const sections = lines.reduce((acc: IngredientSections[], line) => {
     // Check if this line is a section header (ends with colon)
     if (line.trim().endsWith(':')) {
       const sectionName = line.replace(':', '').trim();
       acc.push({
-        name: sectionName,
+        title: sectionName,
         ingredients: [],
       });
     } else {
       // This is an ingredient line - add it to the current section
       // If no section exists yet, create a default one
       if (acc.length === 0) {
-        acc.push({ ingredients: [] });
+        acc.push({ title: null, ingredients: [] });
       }
 
       // Parse the ingredient and add it to the last section
       const parsed = parseIngredientLine(line);
-      acc[acc.length - 1].ingredients.push(parsed);
+      acc[acc.length - 1].ingredients.push({
+        name: parsed.name,
+        quantity: parsed.quantity,
+        id: crypto.randomUUID(),
+        section: null,
+      });
     }
 
     return acc;

@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 
-import { getRecipe } from '@/lib/supabase/recipes';
+import { getRecipe, getRecipeIngredients } from '@/lib/supabase/recipes';
 
 import UpdateRecipeForm from './components/UpdateRecipeForm/UpdateRecipeForm';
 import styles from './page.module.css';
@@ -10,6 +10,7 @@ export default async function EditRecipePage({
 }: PageProps<'/recipes/[id]/edit'>) {
   const { id } = await params;
   const recipe = await getRecipe(id);
+  const ingredientSections = await getRecipeIngredients(id);
 
   if (recipe === null) {
     return <div>Recipe not found</div>;
@@ -18,7 +19,10 @@ export default async function EditRecipePage({
   return (
     <div className={styles.page}>
       <h1>Edit Recipe</h1>
-      <UpdateRecipeForm recipe={recipe} />
+      <UpdateRecipeForm
+        recipe={recipe}
+        ingredientSections={ingredientSections}
+      />
     </div>
   );
 }
