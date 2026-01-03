@@ -1,14 +1,14 @@
 import Button from '@/components/Button/Button';
 import TextInput from '@/components/TextInput/TextInput';
-import { signIn } from '@/lib/actions/auth';
+import { signUp } from '@/lib/actions/auth';
 
 import styles from './page.module.css';
 
 export default function LoginPage() {
   return (
     <div className={styles.page}>
-      <h1>Log In</h1>
-      <form action={signIn} className={styles.form}>
+      <h1>Sign Up</h1>
+      <form action={signUp} className={styles.form}>
         <TextInput
           label="Email"
           id="email"

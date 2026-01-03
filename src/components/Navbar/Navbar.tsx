@@ -29,11 +29,18 @@ export default async function Navbar() {
           </li>
         ))}
         {!user && (
-          <li className={styles.item}>
-            <Link href="/auth/login" className={styles.link}>
-              Login
-            </Link>
-          </li>
+          <>
+            <li className={styles.item}>
+              <Link href="/auth/login" className={styles.link}>
+                Log In
+              </Link>
+            </li>
+            <li className={styles.item}>
+              <Link href="/auth/signup" className={styles.link}>
+                Sign Up
+              </Link>
+            </li>
+          </>
         )}
       </ul>
     </nav>
