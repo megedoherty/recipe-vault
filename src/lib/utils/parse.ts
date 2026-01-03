@@ -1,4 +1,8 @@
-import { EditableIngredient, IngredientSections } from '@/types';
+import {
+  EditableIngredient,
+  IngredientSections,
+  InstructionSection,
+} from '@/types';
 
 import {
   anythingInParenthesesRegex,
@@ -11,12 +15,6 @@ import {
   simpleQuantityAndUnitLineRegex,
   twoQuantitiesAndUnitsWithMathLineRegex,
 } from './regex';
-
-export function parseTextareaToArray(text: string | undefined): string[] {
-  if (!text) return [];
-
-  return text.split(/\r?\n/).filter(Boolean);
-}
 
 const FRACTION_MAP: Record<string, string> = {
   '1/2': '½',
@@ -47,10 +45,9 @@ function replaceFractions(text: string): string {
 export function standardizeQuantity(quantity: string): string {
   // Remove "and" from mixed fractions (e.g., "1 and 1/2" -> "1 1/2")
   // Only match "and" when it's between a number and a fraction
-  const normalized = quantity.replace(
-    /(\d+)\s+and\s+(\d+\s*\/\s*\d+)/gi,
-    '$1 $2',
-  );
+  const normalized = quantity
+    .replace(/(\d+)\s+and\s+(\d+\s*\/\s*\d+)/gi, '$1 $2')
+    .toLowerCase();
 
   return replaceFractions(normalized);
 }
@@ -163,6 +160,36 @@ export function parseIngredients(
         quantity: parsed.quantity,
         id: crypto.randomUUID(),
         section: null,
+      });
+    }
+
+    return acc;
+  }, []);
+
+  return sections;
+}
+
+export function parseInstructions(text: string): InstructionSection[] {
+  if (!text) return [];
+
+  const lines = text.split(/\r?\n/).filter(Boolean);
+  const sections = lines.reduce((acc: InstructionSection[], line) => {
+    if (line.trim().endsWith(':')) {
+      const sectionName = line.replace(':', '').trim();
+      acc.push({
+        id: crypto.randomUUID(),
+        title: sectionName,
+        steps: [],
+      });
+    } else {
+      // Create empty section if none exists
+      if (acc.length === 0) {
+        acc.push({ id: crypto.randomUUID(), title: null, steps: [] });
+      }
+
+      acc[acc.length - 1].steps.push({
+        text: line,
+        id: crypto.randomUUID(),
       });
     }
 

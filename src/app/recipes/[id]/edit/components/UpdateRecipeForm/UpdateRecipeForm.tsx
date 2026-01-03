@@ -5,11 +5,11 @@ import { useActionState, useState } from 'react';
 
 import Button from '@/components/Button/Button';
 import IngredientSectionsEditor from '@/components/IngredientSectionsEditor/IngredientSectionsEditor';
+import InstructionsSectionsEditor from '@/components/InstructionsSectionsEditor/InstructionsSectionsEditor';
 import TextInput from '@/components/TextInput/TextInput';
 import { updateRecipe } from '@/lib/actions/recipes';
-import { IngredientSections, Recipe } from '@/types';
+import { IngredientSections, InstructionSection, Recipe } from '@/types';
 
-import ListField from '../ListField/ListField';
 import styles from './UpdateRecipeForm.module.css';
 
 interface UpdateRecipeFormComponentProps {
@@ -23,12 +23,17 @@ export default function UpdateRecipeForm({
 }: UpdateRecipeFormComponentProps) {
   const [formIngredientSections, setFormIngredientSections] =
     useState<IngredientSections[]>(ingredientSections);
-  const [instructions, setInstructions] = useState<string[]>(
-    recipe.instructions,
-  );
+  const [formInstructionSections, setFormInstructionSections] = useState<
+    InstructionSection[]
+  >(recipe.instructions);
 
   const [state, formAction, isPending] = useActionState(
-    updateRecipe.bind(null, recipe.id, formIngredientSections),
+    updateRecipe.bind(
+      null,
+      recipe.id,
+      formIngredientSections,
+      formInstructionSections,
+    ),
     null,
   );
 
@@ -44,19 +49,19 @@ export default function UpdateRecipeForm({
         fullWidth
       />
       <TextInput
-        label="Image URL"
-        name="imageUrl"
-        id="imageUrl"
-        type="url"
-        defaultValue={recipe.imageUrl ?? ''}
-        fullWidth
-      />
-      <TextInput
         label="Source URL"
         name="sourceUrl"
         id="sourceUrl"
         type="url"
         defaultValue={recipe.sourceUrl ?? ''}
+        fullWidth
+      />
+      <TextInput
+        label="Image URL"
+        name="imageUrl"
+        id="imageUrl"
+        type="url"
+        defaultValue={recipe.imageUrl ?? ''}
         fullWidth
       />
       <div className={styles.ingredientsContainer}>
@@ -66,13 +71,9 @@ export default function UpdateRecipeForm({
           setIngredientSections={setFormIngredientSections}
         />
       </div>
-      <ListField
-        heading="Instructions"
-        items={instructions}
-        setItems={setInstructions}
-        itemLabel="instruction"
-        fieldType="textarea"
-        extraInfo="Warning: Any instructions with new lines will be split and treated as separate instructions."
+      <InstructionsSectionsEditor
+        instructionSections={formInstructionSections}
+        setInstructionSections={setFormInstructionSections}
       />
       {state?.error && <p>{state.error}</p>}
       <Button

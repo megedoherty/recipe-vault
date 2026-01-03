@@ -71,11 +71,16 @@ export default async function RecipePage({
       </div>
       <div className={styles.instructionsContainer}>
         <h2>Instructions</h2>
-        <ol className={styles.instructions}>
-          {instructions?.map((instruction) => (
-            <li key={instruction}>{instruction}</li>
-          ))}
-        </ol>
+        {instructions?.map((instructionSection) => (
+          <div key={instructionSection.id}>
+            {instructionSection.title && <h3>{instructionSection.title}</h3>}
+            <ol className={styles.instructionsList}>
+              {instructionSection.steps.map((step) => (
+                <li key={step.id}>{step.text}</li>
+              ))}
+            </ol>
+          </div>
+        ))}
       </div>
     </div>
   );

@@ -11,13 +11,26 @@ export type KeysToCamelCase<T> = {
   [K in keyof T as SnakeToCamelCase<string & K>]: T[K];
 };
 
+// Instruction Section
+export interface InstructionSection {
+  id: string;
+  title: string | null;
+  steps: Step[];
+}
+
+export interface Step {
+  text: string;
+  id: string;
+  ingredientIds?: string[];
+}
+
 // Recipe types
 export type RecipeDb = Database['public']['Tables']['recipe']['Row'];
 export type Recipe = Omit<
   KeysToCamelCase<RecipeDb>,
   'ingredients' | 'instructions' | 'updatedAt' | 'userId'
 > & {
-  instructions: string[];
+  instructions: InstructionSection[];
 };
 export type RecipeCardInfo = Pick<
   Recipe,
@@ -34,7 +47,7 @@ export type IngredientInsert =
   Database['public']['Tables']['ingredient']['Insert'];
 // The type used when editing an ingredient
 export type EditableIngredient = Omit<Ingredient, 'position'>;
-// The type used when ingredients are grouped on the FE
+// The type used when ingredients are grouped on the FE. Id is used for the key in the UI.
 export type IngredientSections = {
   title: string | null;
   id: string;

@@ -13,7 +13,7 @@ export default function IngredientsList({ ingredients }: IngredientsListProps) {
       {ingredients.map((ingredient) => (
         <li key={ingredient.id} className={styles.item}>
           <Checkbox
-            label={`${ingredient.quantity} ${ingredient.name}`}
+            label={`${ingredient.quantity ?? ''} ${ingredient.name}`.trim()}
             sizeVariant="small"
             id={ingredient.id}
             checkboxClassName={styles.checkbox}

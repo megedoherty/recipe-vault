@@ -51,7 +51,7 @@ export type Database = {
         Insert: {
           id?: string;
           name: string;
-          position: number | null;
+          position: number;
           quantity?: string | null;
           recipe_id?: string | null;
           section?: string | null;
@@ -59,7 +59,7 @@ export type Database = {
         Update: {
           id?: string;
           name?: string;
-          position?: number | null;
+          position?: number;
           quantity?: string | null;
           recipe_id?: string | null;
           section?: string | null;

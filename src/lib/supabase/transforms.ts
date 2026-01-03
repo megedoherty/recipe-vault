@@ -1,16 +1,12 @@
-import { Ingredient, IngredientSections, Recipe, RecipeDb } from '@/types';
-
-function isStringArray(value: unknown): value is string[] {
-  return (
-    Array.isArray(value) && value.every((item) => typeof item === 'string')
-  );
-}
+import {
+  Ingredient,
+  IngredientSections,
+  InstructionSection,
+  Recipe,
+  RecipeDb,
+} from '@/types';
 
 export function transformRecipe(recipe: RecipeDb): Recipe {
-  const instructions = isStringArray(recipe.instructions)
-    ? recipe.instructions
-    : [];
-
   return {
     id: recipe.id,
     name: recipe.name,
@@ -18,7 +14,7 @@ export function transformRecipe(recipe: RecipeDb): Recipe {
     made: recipe.made,
     imageUrl: recipe.image_url,
     sourceUrl: recipe.source_url,
-    instructions,
+    instructions: recipe.instructions as unknown as InstructionSection[],
     rating: recipe.rating,
   };
 }

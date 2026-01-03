@@ -3,13 +3,35 @@
 import { redirect } from 'next/navigation';
 
 import { createClient } from '@/lib/supabase/server';
-import { parseTextareaToArray } from '@/lib/utils/parse';
-import { IngredientInsert, IngredientSections } from '@/types';
+import {
+  IngredientInsert,
+  IngredientSections,
+  InstructionSection,
+} from '@/types';
+
+import { Json } from '../supabase/types';
 
 interface ActionsResponse {
   success: boolean;
   error?: string;
 }
+
+/**
+ * Removes empty steps from instruction sections and removes sections
+ * that have only empty steps.
+ *
+ * Also cast to Json type for convenience.
+ */
+const cleanInstructionSections = (
+  instructionSections: InstructionSection[],
+): Json => {
+  return instructionSections
+    .map((section) => ({
+      ...section,
+      steps: section.steps.filter((step) => step.text.trim() !== ''),
+    }))
+    .filter((section) => section.steps.length > 0) as unknown as Json;
+};
 
 /**
  * Creates the ingredients insert object for the recipe based on the FE sections object.
@@ -39,12 +61,12 @@ const createIngredientsInsert = (
  */
 export async function addRecipe(
   ingredientSections: IngredientSections[],
+  instructionSections: InstructionSection[],
   prevState: ActionsResponse | null,
   formData: FormData,
 ): Promise<ActionsResponse> {
   const rawFormData = Object.fromEntries(formData);
   const recipeName = rawFormData.name as string;
-  const instructions = rawFormData.instructions as string;
 
   const supabase = await createClient();
   const { data: userData } = await supabase.auth.getUser();
@@ -59,7 +81,7 @@ export async function addRecipe(
     .insert({
       user_id: user.id,
       name: recipeName,
-      instructions: parseTextareaToArray(instructions),
+      instructions: cleanInstructionSections(instructionSections),
     })
     .select('id')
     .single();
@@ -102,6 +124,7 @@ export async function addRecipe(
 export async function updateRecipe(
   recipeId: string,
   ingredientSections: IngredientSections[],
+  instructionSections: InstructionSection[],
   prevState: ActionsResponse | null,
   formData: FormData,
 ): Promise<ActionsResponse> {
@@ -110,16 +133,15 @@ export async function updateRecipe(
   const image_url = rawFormData.imageUrl as string;
   const source_url = rawFormData.sourceUrl as string;
 
-  const instructions = formData
-    .getAll('instruction')
-    .flatMap((inst) => inst.toString().split(/\r?\n/))
-    .map((inst) => inst.trim())
-    .filter(Boolean);
-
   const supabase = await createClient();
   const { data: recipeData, error } = await supabase
     .from('recipe')
-    .update({ name, instructions, image_url, source_url })
+    .update({
+      name,
+      instructions: cleanInstructionSections(instructionSections),
+      image_url,
+      source_url,
+    })
     .eq('id', recipeId)
     .select()
     .single();
