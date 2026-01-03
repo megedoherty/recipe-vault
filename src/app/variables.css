@@ -1,8 +1,7 @@
 :root {
   --background: #fff;
   --background-card: #fbf8f4;
-  --background-elevated: #f4ece1;
-  --input-background: #f7f5f1;
+  --background-elevated: #fff;
   --text-primary: #3b2f25;
   --text-secondary: #7a6f66;
   --text-muted: #a39a91;
@@ -51,7 +50,6 @@
     --background: #141210;
     --background-card: #221f1b;
     --background-elevated: #302c27;
-    --input-background: #292522;
     --text-primary: #f5f3ef;
     --text-secondary: #c2bdb4;
     --text-muted: #9b948a;

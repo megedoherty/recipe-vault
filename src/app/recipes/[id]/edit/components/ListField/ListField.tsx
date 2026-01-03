@@ -35,7 +35,7 @@ export default function ListField({
   return (
     <div className={styles.container}>
       <div>
-        <p>{heading}</p>
+        <h2>{heading}</h2>
         {extraInfo && <Hint>{extraInfo}</Hint>}
       </div>
       {items.map((item, index) => (
