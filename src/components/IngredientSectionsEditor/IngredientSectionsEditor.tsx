@@ -3,21 +3,21 @@ import { Dispatch, SetStateAction } from 'react';
 import Button from '@/components/Button/Button';
 import PlusIcon from '@/components/icons/PlusIcon';
 import TrashIcon from '@/components/icons/TrashIcon';
-import XIcon from '@/components/icons/XIcon';
 import TextInput from '@/components/TextInput/TextInput';
 import { IngredientSections } from '@/types';
 
-import styles from './IngredientsInput.module.css';
+import DraggableIngredientEditor from '../IngredientListEditor/IngredientListEditor';
+import styles from './IngredientSectionsEditor.module.css';
 
-interface IngredientsInputProps {
+interface IngredientSectionsEditorProps {
   ingredientSections: IngredientSections[];
   setIngredientSections: Dispatch<SetStateAction<IngredientSections[]>>;
 }
 
-export default function IngredientsInput({
+export default function IngredientSectionsEditor({
   ingredientSections,
   setIngredientSections,
-}: IngredientsInputProps) {
+}: IngredientSectionsEditorProps) {
   const handleAddIngredient = (sectionIndex: number) => {
     setIngredientSections((prev) =>
       prev.map((section, i) =>
@@ -33,46 +33,6 @@ export default function IngredientsInput({
                   section: section.title,
                 },
               ],
-            }
-          : section,
-      ),
-    );
-  };
-
-  const handleFieldChange = (
-    sectionIndex: number,
-    ingredientIndex: number,
-    field: 'name' | 'quantity',
-    value: string,
-  ) => {
-    setIngredientSections((prev) =>
-      prev.map((section, sIdx) =>
-        sIdx === sectionIndex
-          ? {
-              ...section,
-              ingredients: section.ingredients.map((ingredient, iIdx) =>
-                iIdx === ingredientIndex
-                  ? { ...ingredient, [field]: value }
-                  : ingredient,
-              ),
-            }
-          : section,
-      ),
-    );
-  };
-
-  const handleDeleteIngredient = (
-    sectionIndex: number,
-    ingredientIndex: number,
-  ) => {
-    setIngredientSections((prev) =>
-      prev.map((section, sIdx) =>
-        sIdx === sectionIndex
-          ? {
-              ...section,
-              ingredients: section.ingredients.filter(
-                (_, i) => i !== ingredientIndex,
-              ),
             }
           : section,
       ),
@@ -137,53 +97,12 @@ export default function IngredientsInput({
             />
             <div className={styles.ingredients}>
               <p>Ingredients</p>
-              {section.ingredients.map((ingredient, ingredientIndex) => (
-                <div key={ingredient.id} className={styles.ingredient}>
-                  <TextInput
-                    label="Quantity"
-                    name={`${section.title}-quantity-${ingredientIndex}`}
-                    id={`${section.title}-quantity-${ingredientIndex}`}
-                    type="text"
-                    value={ingredient.quantity || ''}
-                    onChange={(e) =>
-                      handleFieldChange(
-                        sectionIndex,
-                        ingredientIndex,
-                        'quantity',
-                        e.target.value,
-                      )
-                    }
-                    hideLabel
-                  />
-                  <TextInput
-                    label="Ingredient"
-                    name={`section-${section.title}-ingredient-${ingredientIndex}`}
-                    id={`${section.title}-ingredient-${ingredientIndex}`}
-                    type="text"
-                    value={ingredient.name}
-                    onChange={(e) =>
-                      handleFieldChange(
-                        sectionIndex,
-                        ingredientIndex,
-                        'name',
-                        e.target.value,
-                      )
-                    }
-                    hideLabel
-                  />
-                  <Button
-                    variant="secondary"
-                    iconOnly
-                    size="small"
-                    onClick={() =>
-                      handleDeleteIngredient(sectionIndex, ingredientIndex)
-                    }
-                    aria-label="Delete ingredient"
-                  >
-                    <XIcon />
-                  </Button>
-                </div>
-              ))}
+              <DraggableIngredientEditor
+                sectionId={section.id}
+                sectionIndex={sectionIndex}
+                setIngredientSections={setIngredientSections}
+                section={section}
+              />
             </div>
             <Button
               onClick={() => handleAddIngredient(sectionIndex)}

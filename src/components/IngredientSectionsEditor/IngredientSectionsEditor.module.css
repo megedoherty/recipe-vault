@@ -28,13 +28,6 @@
   gap: 0.25rem;
 }
 
-.ingredient {
-  display: grid;
-  grid-template-columns: min-content 1fr min-content;
-  gap: 0.25rem;
-  align-items: center;
-}
-
 .addButton,
 .addSectionButton {
   width: fit-content;

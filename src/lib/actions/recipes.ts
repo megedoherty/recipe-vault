@@ -11,6 +11,32 @@ interface ActionsResponse {
   error?: string;
 }
 
+/**
+ * Creates the ingredients insert object for the recipe based on the FE sections object.
+ */
+const createIngredientsInsert = (
+  ingredientSections: IngredientSections[],
+  recipeId: string,
+) => {
+  return ingredientSections
+    .flatMap((section) =>
+      section.ingredients.map((ingredient, index) => ({
+        name: ingredient.name,
+        quantity: ingredient.quantity,
+        section: section.title,
+        recipe_id: recipeId,
+        position: index,
+      })),
+    )
+    .filter((ingredient) => ingredient.name.trim() !== '');
+};
+
+/**
+ * Add a new recipe to the database.
+ *
+ * Inserts the recipe info into the recipe table.
+ * Inserts the ingredients into the ingredient table with the new recipe ID.
+ */
 export async function addRecipe(
   ingredientSections: IngredientSections[],
   prevState: ActionsResponse | null,
@@ -46,15 +72,9 @@ export async function addRecipe(
     };
   }
 
-  const ingredients: IngredientInsert[] = ingredientSections.flatMap(
-    (section) =>
-      section.ingredients.map((ingredient, index) => ({
-        name: ingredient.name,
-        quantity: ingredient.quantity,
-        section: section.title,
-        recipe_id: data.id,
-        position: index,
-      })),
+  const ingredients: IngredientInsert[] = createIngredientsInsert(
+    ingredientSections,
+    data.id,
   );
 
   const { error: ingredientError } = await supabase
@@ -72,6 +92,13 @@ export async function addRecipe(
   redirect(`/recipes/${data.id}`);
 }
 
+/**
+ * Update a recipe in the database.
+ *
+ * Updates the recipe info in the recipe table.
+ * Updates/inserts the ingredients in the ingredient table with the new recipe ID.
+ * Deletes any ingredients that are no longer in the FE sections object.
+ */
 export async function updateRecipe(
   recipeId: string,
   ingredientSections: IngredientSections[],
@@ -108,16 +135,9 @@ export async function updateRecipe(
     .select('id')
     .eq('recipe_id', recipeId);
 
-  const ingredients: IngredientInsert[] = ingredientSections.flatMap(
-    (section) =>
-      section.ingredients.map((ingredient, index) => ({
-        id: ingredient.id,
-        name: ingredient.name,
-        quantity: ingredient.quantity,
-        section: section.title,
-        position: index,
-        recipe_id: recipeData.id,
-      })),
+  const ingredients: IngredientInsert[] = createIngredientsInsert(
+    ingredientSections,
+    recipeData.id,
   );
 
   if (currentIngredientIds) {
@@ -157,6 +177,9 @@ export async function updateRecipe(
   redirect(`/recipes/${recipeData.id}`);
 }
 
+/**
+ * Mark a recipe as made or not made.
+ */
 export async function toggleRecipeMade(
   recipeId: string,
   made: boolean,
@@ -174,33 +197,32 @@ export async function toggleRecipeMade(
   }
 }
 
+/**
+ * Update the rating of a recipe.
+ */
 export async function updateRecipeRating(
   recipeId: string,
   rating: number,
 ): Promise<void> {
   const supabase = await createClient();
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from('recipe')
     .update({ rating: rating })
-    .eq('id', recipeId)
-    .select()
-    .single();
+    .eq('id', recipeId);
 
-  if (error || !data) {
+  if (error) {
     throw new Error(error?.message ?? 'Failed to update recipe rating');
   }
 }
 
+/**
+ * Delete a recipe from the database.
+ */
 export async function deleteRecipe(recipeId: string): Promise<void> {
   const supabase = await createClient();
-  const { data, error } = await supabase
-    .from('recipe')
-    .delete()
-    .eq('id', recipeId)
-    .select()
-    .single();
+  const { error } = await supabase.from('recipe').delete().eq('id', recipeId);
 
-  if (error || !data) {
+  if (error) {
     throw new Error(error?.message ?? 'Failed to delete recipe');
   }
 

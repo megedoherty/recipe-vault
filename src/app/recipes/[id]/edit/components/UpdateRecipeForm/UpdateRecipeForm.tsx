@@ -4,7 +4,7 @@ import Form from 'next/form';
 import { useActionState, useState } from 'react';
 
 import Button from '@/components/Button/Button';
-import IngredientsInput from '@/components/IngredientsInput/IngredientsInput';
+import IngredientSectionsEditor from '@/components/IngredientSectionsEditor/IngredientSectionsEditor';
 import TextInput from '@/components/TextInput/TextInput';
 import { updateRecipe } from '@/lib/actions/recipes';
 import { IngredientSections, Recipe } from '@/types';
@@ -61,7 +61,7 @@ export default function UpdateRecipeForm({
       />
       <div className={styles.ingredientsContainer}>
         <h2>Ingredients</h2>
-        <IngredientsInput
+        <IngredientSectionsEditor
           ingredientSections={formIngredientSections}
           setIngredientSections={setFormIngredientSections}
         />

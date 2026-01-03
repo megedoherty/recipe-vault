@@ -1,0 +1,12 @@
+.ingredientsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.ingredient {
+  display: grid;
+  grid-template-columns: min-content min-content 1fr min-content;
+  gap: 0.25rem;
+  align-items: center;
+}

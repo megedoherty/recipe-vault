@@ -5,7 +5,7 @@ import { useActionState, useState } from 'react';
 
 import Button from '@/components/Button/Button';
 import Hint from '@/components/Hint/Hint';
-import IngredientsInput from '@/components/IngredientsInput/IngredientsInput';
+import IngredientSectionsEditor from '@/components/IngredientSectionsEditor/IngredientSectionsEditor';
 import TextInput from '@/components/TextInput/TextInput';
 import { addRecipe } from '@/lib/actions/recipes';
 import { parseIngredients } from '@/lib/utils/parse';
@@ -65,7 +65,7 @@ export default function CreateRecipeForm() {
             </Button>
           </>
         ) : (
-          <IngredientsInput
+          <IngredientSectionsEditor
             ingredientSections={ingredientSections}
             setIngredientSections={setIngredientSections}
           />
