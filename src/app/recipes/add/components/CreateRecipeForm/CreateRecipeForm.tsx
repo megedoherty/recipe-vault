@@ -60,7 +60,11 @@ export default function CreateRecipeForm() {
               type="textarea"
               fullWidth
             />
-            <Button size="small" onClick={onProcessIngredients}>
+            <Button
+              size="small"
+              onClick={onProcessIngredients}
+              disabled={ingredientsInput.trim() === ''}
+            >
               Process Ingredients
             </Button>
           </>

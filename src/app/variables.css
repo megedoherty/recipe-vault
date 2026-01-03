@@ -16,6 +16,7 @@
   --button-secondary-hover: #f1ece6;
   --button-secondary-active: #e5ded5;
   --button-secondary-border: #e3ddd5;
+  --button-disabled-background: #e3ddd5;
   --success: #7c9a6d;
   --warning: #d4a017;
   --error: #b24a3b;
@@ -30,6 +31,7 @@
   --button-primary-background: #d8a25a;
   --button-primary-hover: #c08b46;
   --button-primary-active: #a36f30;
+  --button-disabled-text: #a39a91;
 
   /* Typography */
   --font-family-body: var(--font-inter), sans-serif;
@@ -64,6 +66,7 @@
     --button-secondary-hover: #3a342e;
     --button-secondary-active: #352f27;
     --button-secondary-border: #3a342e;
+    --button-disabled-background: #fff;
     --success: #8fb28a;
     --warning: #e0b84a;
     --error: #d06a5c;

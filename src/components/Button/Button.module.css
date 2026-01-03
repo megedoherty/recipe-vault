@@ -12,7 +12,10 @@
   cursor: pointer;
 
   &:disabled {
-    opacity: 0.5;
+    --button-background: var(--button-disabled-background);
+    --button-text: var(--button-disabled-text);
+
+    opacity: 0.45;
     cursor: default;
   }
 }
