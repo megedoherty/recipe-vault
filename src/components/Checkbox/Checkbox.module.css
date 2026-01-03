@@ -1,0 +1,46 @@
+.container {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.medium {
+  --checkbox-size: 1.25rem;
+  --check-font-size: 1rem;
+}
+
+.small {
+  --checkbox-size: 1rem;
+  --font-size: 0.75rem;
+}
+
+.checkbox {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  appearance: none;
+  height: var(--checkbox-size);
+  width: var(--checkbox-size);
+
+  &:hover {
+    background-color: var(--hover-surface);
+  }
+
+  &:checked {
+    background-color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  &:checked::after {
+    content: "✔";
+    color: var(--text-inverse);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: var(--check-font-size);
+  }
+}
+
+.label {
+  cursor: pointer;
+}

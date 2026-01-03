@@ -2,6 +2,7 @@
 
 import { ChangeEvent, useState, useTransition } from 'react';
 
+import Checkbox from '@/components/Checkbox/Checkbox';
 import { toggleRecipeMade } from '@/lib/actions/recipes';
 
 import styles from './MadeCheckbox.module.css';
@@ -31,19 +32,15 @@ export default function MadeCheckbox({
   };
 
   return (
-    <div className={styles.container}>
-      <input
-        type="checkbox"
-        name="made"
-        id="made"
-        checked={checked}
-        onChange={handleChange}
-        disabled={isPending}
-        className={styles.checkbox}
-      />
-      <label htmlFor="made" className={styles.label}>
-        I made this
-      </label>
-    </div>
+    <Checkbox
+      label="I made this"
+      sizeVariant="medium"
+      id="made"
+      name="made"
+      checked={checked}
+      onChange={handleChange}
+      disabled={isPending}
+      containerClassName={styles.container}
+    />
   );
 }

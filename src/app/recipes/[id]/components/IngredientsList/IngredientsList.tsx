@@ -1,3 +1,4 @@
+import Checkbox from '@/components/Checkbox/Checkbox';
 import { EditableIngredient } from '@/types';
 
 import styles from './IngredientsList.module.css';
@@ -11,14 +12,12 @@ export default function IngredientsList({ ingredients }: IngredientsListProps) {
     <ul className={styles.list}>
       {ingredients.map((ingredient) => (
         <li key={ingredient.id} className={styles.item}>
-          <input
-            type="checkbox"
+          <Checkbox
+            label={`${ingredient.quantity} ${ingredient.name}`}
+            sizeVariant="small"
             id={ingredient.id}
-            className={styles.checkbox}
+            checkboxClassName={styles.checkbox}
           />
-          <label htmlFor={ingredient.id}>
-            {ingredient.quantity} {ingredient.name}
-          </label>
         </li>
       ))}
     </ul>

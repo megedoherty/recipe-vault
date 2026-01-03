@@ -97,26 +97,3 @@ textarea {
     background-color: var(--active-surface);
   }
 }
-
-/* Checkboxes */
-input[type="checkbox"] {
-  cursor: pointer;
-  display: inline-block;
-  position: relative;
-  appearance: none;
-}
-
-input[type="checkbox"]:checked {
-  background-color: var(--accent);
-  border-color: var(--accent);
-}
-
-input[type="checkbox"]:checked::after {
-  content: "✔";
-  color: var(--text-inverse);
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 0.9rem;
-}
