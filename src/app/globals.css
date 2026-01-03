@@ -76,7 +76,7 @@ input[type="url"],
 textarea {
   border: 1px solid var(--border-default);
   border-radius: 0.25rem;
-  background-color: var(--background-card);
+  background-color: var(--input-background);
   font-size: var(--font-size-small);
 }
 

@@ -10,14 +10,31 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  background-color: var(--background-card);
+  padding: 0.5rem 1rem 1rem;
+  border-radius: var(--border-radius-default);
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .ingredients {
-  display: grid;
-  grid-template-columns: min-content 1fr min-content;
+  display: flex;
+  flex-direction: column;
   gap: 0.25rem;
 }
 
-.addButton {
+.ingredient {
+  display: grid;
+  grid-template-columns: min-content 1fr min-content;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.addButton,
+.addSectionButton {
   width: fit-content;
 }

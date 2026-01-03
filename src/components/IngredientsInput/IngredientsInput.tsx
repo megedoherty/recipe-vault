@@ -1,7 +1,8 @@
-import { Dispatch, Fragment, SetStateAction } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 
 import Button from '@/components/Button/Button';
 import PlusIcon from '@/components/icons/PlusIcon';
+import TrashIcon from '@/components/icons/TrashIcon';
 import XIcon from '@/components/icons/XIcon';
 import TextInput from '@/components/TextInput/TextInput';
 import { IngredientSections } from '@/types';
@@ -78,15 +79,66 @@ export default function IngredientsInput({
     );
   };
 
+  const handleSectionTitleChange = (sectionIndex: number, value: string) => {
+    setIngredientSections((prev) =>
+      prev.map((section, sIdx) =>
+        sIdx === sectionIndex ? { ...section, title: value } : section,
+      ),
+    );
+  };
+
+  const handleAddSection = () => {
+    setIngredientSections((prev) => [
+      ...prev,
+      {
+        id: crypto.randomUUID(),
+        title: null,
+        ingredients: [
+          {
+            name: '',
+            quantity: '',
+            id: crypto.randomUUID(),
+            section: '',
+          },
+        ],
+      },
+    ]);
+  };
+
+  const handleDeleteSection = (sectionIndex: number) => {
+    setIngredientSections((prev) => prev.filter((_, i) => i !== sectionIndex));
+  };
+
   return (
     <div className={styles.container}>
       {ingredientSections.map((section, sectionIndex) => {
         return (
-          <div key={section.title || sectionIndex} className={styles.section}>
-            {section.title && <h3>{section.title}</h3>}
+          <div key={section.id} className={styles.section}>
+            <div className={styles.sectionHeader}>
+              <h3>Section {sectionIndex + 1}</h3>
+              <Button
+                variant="secondary"
+                iconOnly
+                onClick={() => handleDeleteSection(sectionIndex)}
+                aria-label="Delete section"
+              >
+                <TrashIcon />
+              </Button>
+            </div>
+            <TextInput
+              label="Title"
+              name={`section-${sectionIndex}`}
+              id={`section-${sectionIndex}`}
+              type="text"
+              value={section.title || ''}
+              onChange={(e) =>
+                handleSectionTitleChange(sectionIndex, e.target.value)
+              }
+            />
             <div className={styles.ingredients}>
+              <p>Ingredients</p>
               {section.ingredients.map((ingredient, ingredientIndex) => (
-                <Fragment key={ingredient.id}>
+                <div key={ingredient.id} className={styles.ingredient}>
                   <TextInput
                     label="Quantity"
                     name={`${section.title}-quantity-${ingredientIndex}`}
@@ -130,7 +182,7 @@ export default function IngredientsInput({
                   >
                     <XIcon />
                   </Button>
-                </Fragment>
+                </div>
               ))}
             </div>
             <Button
@@ -138,11 +190,18 @@ export default function IngredientsInput({
               size="small"
               className={styles.addButton}
             >
-              <PlusIcon /> Add Ingredient
+              Add Ingredient
             </Button>
           </div>
         );
       })}
+      <Button
+        onClick={handleAddSection}
+        size="small"
+        className={styles.addSectionButton}
+      >
+        <PlusIcon /> Add Section
+      </Button>
     </div>
   );
 }

@@ -1,7 +1,8 @@
 :root {
-  --background: #fbf8f4;
-  --background-card: #fff;
-  --background-elevated: #fff;
+  --background: #fff;
+  --background-card: #fbf8f4;
+  --background-elevated: #f4ece1;
+  --input-background: #f7f5f1;
   --text-primary: #3b2f25;
   --text-secondary: #7a6f66;
   --text-muted: #a39a91;
@@ -40,13 +41,17 @@
   --font-size-h2: 1.5rem; /* section headers (ingredients, steps) */
   --font-size-h3: 1.25rem; /* subheaders, notes */
   --font-size-small: 0.875rem; /* footnotes, meta info */
+
+  /* Other */
+  --border-radius-default: 0.5rem;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #141210;
-    --background-card: #1f1c19;
-    --background-elevated: #26221e;
+    --background-card: #221f1b;
+    --background-elevated: #302c27;
+    --input-background: #292522;
     --text-primary: #f5f3ef;
     --text-secondary: #c2bdb4;
     --text-muted: #9b948a;

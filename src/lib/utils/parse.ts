@@ -145,6 +145,7 @@ export function parseIngredients(
     if (line.trim().endsWith(':')) {
       const sectionName = line.replace(':', '').trim();
       acc.push({
+        id: crypto.randomUUID(), // used for key in the UI
         title: sectionName,
         ingredients: [],
       });
@@ -152,7 +153,7 @@ export function parseIngredients(
       // This is an ingredient line - add it to the current section
       // If no section exists yet, create a default one
       if (acc.length === 0) {
-        acc.push({ title: null, ingredients: [] });
+        acc.push({ id: crypto.randomUUID(), title: null, ingredients: [] });
       }
 
       // Parse the ingredient and add it to the last section

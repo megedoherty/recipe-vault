@@ -2,7 +2,7 @@
   border: none;
   background-color: var(--button-background, transparent);
   padding: var(--button-padding, 0.5rem 0.75rem);
-  border-radius: 0.5rem;
+  border-radius: var(--border-radius-default);
   transition: all 0.2s ease;
   display: flex;
   align-items: center;

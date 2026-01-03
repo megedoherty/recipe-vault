@@ -37,5 +37,6 @@ export type EditableIngredient = Omit<Ingredient, 'position'>;
 // The type used when ingredients are grouped on the FE
 export type IngredientSections = {
   title: string | null;
+  id: string;
   ingredients: EditableIngredient[];
 };

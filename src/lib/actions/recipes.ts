@@ -90,14 +90,14 @@ export async function updateRecipe(
     .filter(Boolean);
 
   const supabase = await createClient();
-  const { data, error } = await supabase
+  const { data: recipeData, error } = await supabase
     .from('recipe')
     .update({ name, instructions, image_url, source_url })
     .eq('id', recipeId)
     .select()
     .single();
 
-  if (error || !data) {
+  if (error || !recipeData) {
     console.error(error);
     return { success: false, error: error.message };
   }
@@ -116,6 +116,7 @@ export async function updateRecipe(
         quantity: ingredient.quantity,
         section: section.title,
         position: index,
+        recipe_id: recipeData.id,
       })),
   );
 
@@ -153,7 +154,7 @@ export async function updateRecipe(
     };
   }
 
-  redirect(`/recipes/${data.id}`);
+  redirect(`/recipes/${recipeData.id}`);
 }
 
 export async function toggleRecipeMade(

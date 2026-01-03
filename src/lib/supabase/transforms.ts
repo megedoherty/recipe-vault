@@ -37,6 +37,7 @@ export function transformIngredients(
         section.ingredients.push(ingredient);
       } else {
         acc.push({
+          id: crypto.randomUUID(), // used for key in the UI
           title: ingredient.section,
           ingredients: [ingredient],
         });

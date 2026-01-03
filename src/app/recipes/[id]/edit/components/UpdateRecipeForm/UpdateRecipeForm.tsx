@@ -34,6 +34,7 @@ export default function UpdateRecipeForm({
 
   return (
     <Form action={formAction} className={styles.form}>
+      <h2>Basic Information</h2>
       <TextInput
         label="Name"
         name="name"
@@ -59,7 +60,7 @@ export default function UpdateRecipeForm({
         fullWidth
       />
       <div className={styles.ingredientsContainer}>
-        <p>Ingredients</p>
+        <h2>Ingredients</h2>
         <IngredientsInput
           ingredientSections={formIngredientSections}
           setIngredientSections={setFormIngredientSections}

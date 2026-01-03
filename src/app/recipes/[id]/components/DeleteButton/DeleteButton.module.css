@@ -3,7 +3,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
   padding: 1rem;
-  border-radius: 0.5rem;
+  border-radius: var(--border-radius-default);
   border: 1px solid var(--border-default);
 
   &::backdrop {
