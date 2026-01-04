@@ -70,19 +70,23 @@ export default async function Navbar() {
   return (
     <nav className={styles.navbar}>
       <ul className={styles.links}>
-        <ul className={styles.left}>
-          {leftLinks.map((link) => (
-            <NavbarLink key={link.href} link={link} isLoggedIn={isLoggedIn} />
-          ))}
-        </ul>
-        <ul className={styles.right}>
-          {rightLinks.map((link) => (
-            <NavbarLink key={link.href} link={link} isLoggedIn={isLoggedIn} />
-          ))}
-          {authLinks.map((link) => (
-            <NavbarLink key={link.href} link={link} isLoggedIn={isLoggedIn} />
-          ))}
-        </ul>
+        <li className={styles.left}>
+          <ul className={styles.innerList}>
+            {leftLinks.map((link) => (
+              <NavbarLink key={link.href} link={link} isLoggedIn={isLoggedIn} />
+            ))}
+          </ul>
+        </li>
+        <li className={styles.right}>
+          <ul className={styles.innerList}>
+            {rightLinks.map((link) => (
+              <NavbarLink key={link.href} link={link} isLoggedIn={isLoggedIn} />
+            ))}
+            {authLinks.map((link) => (
+              <NavbarLink key={link.href} link={link} isLoggedIn={isLoggedIn} />
+            ))}
+          </ul>
+        </li>
       </ul>
     </nav>
   );

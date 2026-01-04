@@ -10,11 +10,11 @@
 }
 
 .links,
-.left,
-.right {
+.innerList {
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
+  list-style: none;
 }
 
 .item {
