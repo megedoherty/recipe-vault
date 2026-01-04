@@ -27,14 +27,14 @@ export interface Step {
 // Recipe types
 export type RecipeDb = Database['public']['Tables']['recipe']['Row'];
 export type RecipeDbWithCategory = RecipeDb & {
-  category: { name: string } | null;
+  category: Category | null;
 };
 export type Recipe = Omit<
   KeysToCamelCase<RecipeDb>,
   'ingredients' | 'instructions' | 'updatedAt' | 'userId' | 'categoryId'
 > & {
   instructions: InstructionSection[];
-  category?: string;
+  category?: Category;
 };
 export type RecipeCardInfo = Pick<
   Recipe,

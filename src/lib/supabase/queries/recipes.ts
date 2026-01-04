@@ -7,7 +7,7 @@ export async function getRecipe(id: string): Promise<Recipe | null> {
   const supabase = await createClient();
   const { data } = await supabase
     .from('recipe')
-    .select('*, category(name)')
+    .select('*, category(*)')
     .eq('id', id)
     .single();
 

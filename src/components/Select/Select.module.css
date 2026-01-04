@@ -1,0 +1,8 @@
+.container {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.select {
+  padding: 0.25rem;
+}

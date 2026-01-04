@@ -67,6 +67,7 @@ export async function addRecipe(
 ): Promise<ActionsResponse> {
   const rawFormData = Object.fromEntries(formData);
   const recipeName = rawFormData.name as string;
+  const category_id = Number(rawFormData.categoryId);
 
   const supabase = await createClient();
   const { data: userData } = await supabase.auth.getUser();
@@ -81,6 +82,7 @@ export async function addRecipe(
     .insert({
       user_id: user.id,
       name: recipeName,
+      category_id,
       instructions: cleanInstructionSections(instructionSections),
     })
     .select('id')
@@ -132,6 +134,7 @@ export async function updateRecipe(
   const name = rawFormData.name as string;
   const image_url = rawFormData.imageUrl as string;
   const source_url = rawFormData.sourceUrl as string;
+  const category_id = Number(rawFormData.categoryId);
 
   const supabase = await createClient();
   const { data: recipeData, error } = await supabase
@@ -141,6 +144,7 @@ export async function updateRecipe(
       instructions: cleanInstructionSections(instructionSections),
       image_url,
       source_url,
+      category_id,
     })
     .eq('id', recipeId)
     .select()

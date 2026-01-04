@@ -15,7 +15,7 @@ export function transformRecipe(recipe: RecipeDbWithCategory): Recipe {
     imageUrl: recipe.image_url,
     sourceUrl: recipe.source_url,
     instructions: recipe.instructions as unknown as InstructionSection[],
-    category: recipe.category?.name ?? undefined,
+    category: recipe.category ?? undefined,
     rating: recipe.rating,
   };
 }

@@ -58,11 +58,23 @@ export default async function RecipePage({
           <RatingInput recipeId={id} initialRating={rating} />
         </div>
       </div>
-      {imageUrl && (
-        <div className={styles.imageContainer}>
-          <Image src={imageUrl} alt={name} className={styles.image} fill />
-        </div>
-      )}
+      <div className={styles.imageAndInfoContainer}>
+        <aside>
+          <dl>
+            {recipe.category && (
+              <div className={styles.infoItem}>
+                <dt>Category:</dt>
+                <dd>{recipe.category.name}</dd>
+              </div>
+            )}
+          </dl>
+        </aside>
+        {imageUrl && (
+          <div className={styles.imageContainer}>
+            <Image src={imageUrl} alt={name} className={styles.image} fill />
+          </div>
+        )}
+      </div>
       <section className={styles.ingredientsContainer}>
         <h2>Ingredients</h2>
         {ingredientSections?.map((ingredientSection) => (

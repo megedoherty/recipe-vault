@@ -6,15 +6,22 @@ import { useActionState, useState } from 'react';
 import Button from '@/components/Button/Button';
 import IngredientSectionsEditor from '@/components/IngredientSectionsEditor/IngredientSectionsEditor';
 import InstructionsSectionsEditor from '@/components/InstructionsSectionsEditor/InstructionsSectionsEditor';
+import Select from '@/components/Select/Select';
 import TextInput from '@/components/TextInput/TextInput';
 import { addRecipe } from '@/lib/actions/recipes';
 import { parseIngredients, parseInstructions } from '@/lib/utils/parse';
-import { IngredientSections, InstructionSection } from '@/types';
+import { Category, IngredientSections, InstructionSection } from '@/types';
 
 import ProcessableSection from '../ProcessableSection/ProcessableSection';
 import styles from './CreateRecipeForm.module.css';
 
-export default function CreateRecipeForm() {
+interface CreateRecipeFormComponentProps {
+  categories: Category[];
+}
+
+export default function CreateRecipeForm({
+  categories,
+}: CreateRecipeFormComponentProps) {
   const [ingredientSections, setIngredientSections] = useState<
     IngredientSections[]
   >([]);
@@ -48,6 +55,19 @@ export default function CreateRecipeForm() {
         required
         fullWidth
       />
+      <h2>Organization</h2>
+      <div>
+        <Select
+          label="Category"
+          name="categoryId"
+          id="category"
+          options={categories.map((category) => ({
+            value: category.id.toString(),
+            label: category.name,
+          }))}
+          emptyOption={{ value: '', label: 'Select a category' }}
+        />
+      </div>
       <ProcessableSection
         title="Ingredients"
         onProcess={onProcessIngredients}
