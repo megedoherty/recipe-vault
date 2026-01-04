@@ -1,4 +1,4 @@
-import Checkbox from '@/components/Checkbox/Checkbox';
+import Checkbox from '@/components/atoms/Checkbox/Checkbox';
 import { EditableIngredient } from '@/types';
 
 import styles from './IngredientsList.module.css';

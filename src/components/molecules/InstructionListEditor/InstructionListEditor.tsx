@@ -6,10 +6,10 @@ import {
 } from '@hello-pangea/dnd';
 import { Dispatch, SetStateAction } from 'react';
 
-import Button from '@/components/Button/Button';
-import UpDownArrowIcon from '@/components/icons/UpDownArrowIcon';
-import XIcon from '@/components/icons/XIcon';
-import TextInput from '@/components/TextInput/TextInput';
+import Button from '@/components/atoms/Button/Button';
+import UpDownArrowIcon from '@/components/atoms/icons/UpDownArrowIcon';
+import XIcon from '@/components/atoms/icons/XIcon';
+import TextInput from '@/components/atoms/TextInput/TextInput';
 import { InstructionSection } from '@/types';
 
 import styles from './InstructionListEditor.module.css';

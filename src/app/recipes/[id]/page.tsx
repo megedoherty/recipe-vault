@@ -1,8 +1,8 @@
 import { Metadata } from 'next';
 import Image from 'next/image';
 
-import Button from '@/components/Button/Button';
-import EditIcon from '@/components/icons/EditIcon';
+import Button from '@/components/atoms/Button/Button';
+import EditIcon from '@/components/atoms/icons/EditIcon';
 import {
   getRecipe,
   getRecipeIngredients,

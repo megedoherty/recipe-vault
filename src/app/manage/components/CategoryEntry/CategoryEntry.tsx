@@ -8,11 +8,11 @@ import {
   useTransition,
 } from 'react';
 
-import Button from '@/components/Button/Button';
-import EditIcon from '@/components/icons/EditIcon';
-import XIcon from '@/components/icons/XIcon';
-import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner';
-import TextInput from '@/components/TextInput/TextInput';
+import Button from '@/components/atoms/Button/Button';
+import EditIcon from '@/components/atoms/icons/EditIcon';
+import XIcon from '@/components/atoms/icons/XIcon';
+import LoadingSpinner from '@/components/atoms/LoadingSpinner/LoadingSpinner';
+import TextInput from '@/components/atoms/TextInput/TextInput';
 import { addCategory, updateCategory } from '@/lib/actions/categories';
 import { Category } from '@/types';
 

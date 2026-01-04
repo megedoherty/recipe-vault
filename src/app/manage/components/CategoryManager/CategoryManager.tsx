@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 
-import Button from '@/components/Button/Button';
-import PlusIcon from '@/components/icons/PlusIcon';
+import Button from '@/components/atoms/Button/Button';
+import PlusIcon from '@/components/atoms/icons/PlusIcon';
 import { Category } from '@/types';
 
 import CategoryEntry, {

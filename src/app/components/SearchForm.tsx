@@ -3,9 +3,9 @@
 import Form from 'next/form';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-import Button from '@/components/Button/Button';
-import CategorySelect from '@/components/CategorySelect/CategorySelect';
-import TextInput from '@/components/TextInput/TextInput';
+import Button from '@/components/atoms/Button/Button';
+import TextInput from '@/components/atoms/TextInput/TextInput';
+import CategorySelect from '@/components/molecules/CategorySelect/CategorySelect';
 import { Category } from '@/types';
 
 import styles from './SearchForm.module.css';
@@ -21,6 +21,10 @@ export default function SearchForm({ categories }: SearchFormProps) {
   const nameParam = searchParams.get('name');
   const name = typeof nameParam === 'string' ? nameParam : undefined;
 
+  const categoryParam = searchParams.get('categoryId');
+  const categoryId =
+    typeof categoryParam === 'string' ? categoryParam : undefined;
+
   return (
     <search>
       <Form action="/" className={styles.form}>
@@ -33,7 +37,12 @@ export default function SearchForm({ categories }: SearchFormProps) {
           defaultValue={name}
           hideLabel
         />
-        <CategorySelect categories={categories} showEmptyOption hideLabel />
+        <CategorySelect
+          categories={categories}
+          showEmptyOption
+          hideLabel
+          defaultValue={categoryId}
+        />
         <Button variant="primary" type="submit">
           Search
         </Button>

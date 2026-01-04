@@ -1,4 +1,4 @@
-import Select from '@/components/Select/Select';
+import Select from '@/components/atoms/Select/Select';
 import { Category } from '@/types';
 
 interface CategorySelectProps {

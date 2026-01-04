@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 
-import RecipeCard from '@/components/RecipeCard/RecipeCard';
+import RecipeCard from '@/components/molecules/RecipeCard/RecipeCard';
 import { getCategories } from '@/lib/supabase/queries/categories';
 import { getAllRecipes } from '@/lib/supabase/queries/recipes';
 

@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-import RecipeIcon from '@/components/icons/RecipeIcon';
+import RecipeIcon from '@/components/atoms/icons/RecipeIcon';
 import { RecipeCardInfo } from '@/types';
 
 import styles from './RecipeCard.module.css';

@@ -1,8 +1,8 @@
 import { ReactNode, useState } from 'react';
 
-import Button from '@/components/Button/Button';
-import Hint from '@/components/Hint/Hint';
-import TextInput from '@/components/TextInput/TextInput';
+import Button from '@/components/atoms/Button/Button';
+import Hint from '@/components/atoms/Hint/Hint';
+import TextInput from '@/components/atoms/TextInput/TextInput';
 
 import styles from './ProcessableSection.module.css';
 

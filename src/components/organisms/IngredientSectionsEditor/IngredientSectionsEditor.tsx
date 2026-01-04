@@ -1,34 +1,36 @@
 import { Dispatch, SetStateAction } from 'react';
 
-import Button from '@/components/Button/Button';
-import PlusIcon from '@/components/icons/PlusIcon';
-import TrashIcon from '@/components/icons/TrashIcon';
-import InstructionListEditor from '@/components/InstructionListEditor/InstructionListEditor';
-import TextInput from '@/components/TextInput/TextInput';
-import { InstructionSection } from '@/types';
+import Button from '@/components/atoms/Button/Button';
+import PlusIcon from '@/components/atoms/icons/PlusIcon';
+import TrashIcon from '@/components/atoms/icons/TrashIcon';
+import TextInput from '@/components/atoms/TextInput/TextInput';
+import IngredientListEditor from '@/components/molecules/IngredientListEditor/IngredientListEditor';
+import { IngredientSections } from '@/types';
 
-import styles from './InstructionsSectionsEditor.module.css';
+import styles from './IngredientSectionsEditor.module.css';
 
-interface InstructionsSectionsEditorProps {
-  instructionSections: InstructionSection[];
-  setInstructionSections: Dispatch<SetStateAction<InstructionSection[]>>;
+interface IngredientSectionsEditorProps {
+  ingredientSections: IngredientSections[];
+  setIngredientSections: Dispatch<SetStateAction<IngredientSections[]>>;
 }
 
 export default function IngredientSectionsEditor({
-  instructionSections,
-  setInstructionSections,
-}: InstructionsSectionsEditorProps) {
-  const handleAddInstruction = (sectionIndex: number) => {
-    setInstructionSections((prev) =>
+  ingredientSections,
+  setIngredientSections,
+}: IngredientSectionsEditorProps) {
+  const handleAddIngredient = (sectionIndex: number) => {
+    setIngredientSections((prev) =>
       prev.map((section, i) =>
         i === sectionIndex
           ? {
               ...section,
-              steps: [
-                ...section.steps,
+              ingredients: [
+                ...section.ingredients,
                 {
-                  text: '',
+                  name: '',
+                  quantity: '',
                   id: crypto.randomUUID(),
+                  section: section.title,
                 },
               ],
             }
@@ -38,7 +40,7 @@ export default function IngredientSectionsEditor({
   };
 
   const handleSectionTitleChange = (sectionIndex: number, value: string) => {
-    setInstructionSections((prev) =>
+    setIngredientSections((prev) =>
       prev.map((section, sIdx) =>
         sIdx === sectionIndex ? { ...section, title: value } : section,
       ),
@@ -46,15 +48,17 @@ export default function IngredientSectionsEditor({
   };
 
   const handleAddSection = () => {
-    setInstructionSections((prev) => [
+    setIngredientSections((prev) => [
       ...prev,
       {
         id: crypto.randomUUID(),
         title: null,
-        steps: [
+        ingredients: [
           {
-            text: '',
+            name: '',
+            quantity: '',
             id: crypto.randomUUID(),
+            section: '',
           },
         ],
       },
@@ -62,12 +66,12 @@ export default function IngredientSectionsEditor({
   };
 
   const handleDeleteSection = (sectionIndex: number) => {
-    setInstructionSections((prev) => prev.filter((_, i) => i !== sectionIndex));
+    setIngredientSections((prev) => prev.filter((_, i) => i !== sectionIndex));
   };
 
   return (
     <div className={styles.container}>
-      {instructionSections.map((section, sectionIndex) => {
+      {ingredientSections.map((section, sectionIndex) => {
         return (
           <div key={section.id} className={styles.section}>
             <div className={styles.sectionHeader}>
@@ -91,21 +95,21 @@ export default function IngredientSectionsEditor({
                 handleSectionTitleChange(sectionIndex, e.target.value)
               }
             />
-            <div className={styles.instructions}>
-              <p>Instructions</p>
-              <InstructionListEditor
+            <div className={styles.ingredients}>
+              <p>Ingredients</p>
+              <IngredientListEditor
                 sectionId={section.id}
                 sectionIndex={sectionIndex}
-                setInstructionSections={setInstructionSections}
+                setIngredientSections={setIngredientSections}
                 section={section}
               />
             </div>
             <Button
-              onClick={() => handleAddInstruction(sectionIndex)}
+              onClick={() => handleAddIngredient(sectionIndex)}
               size="small"
               className={styles.addButton}
             >
-              Add Step
+              Add Ingredient
             </Button>
           </div>
         );

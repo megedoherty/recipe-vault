@@ -2,8 +2,8 @@
 
 import { useRef } from 'react';
 
-import Button from '@/components/Button/Button';
-import TrashIcon from '@/components/icons/TrashIcon';
+import Button from '@/components/atoms/Button/Button';
+import TrashIcon from '@/components/atoms/icons/TrashIcon';
 import { deleteRecipe } from '@/lib/actions/recipes';
 
 import styles from './DeleteButton.module.css';

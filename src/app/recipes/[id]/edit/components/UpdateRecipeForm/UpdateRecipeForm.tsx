@@ -3,11 +3,11 @@
 import Form from 'next/form';
 import { useActionState, useState } from 'react';
 
-import Button from '@/components/Button/Button';
-import CategorySelect from '@/components/CategorySelect/CategorySelect';
-import IngredientSectionsEditor from '@/components/IngredientSectionsEditor/IngredientSectionsEditor';
-import InstructionsSectionsEditor from '@/components/InstructionsSectionsEditor/InstructionsSectionsEditor';
-import TextInput from '@/components/TextInput/TextInput';
+import Button from '@/components/atoms/Button/Button';
+import TextInput from '@/components/atoms/TextInput/TextInput';
+import CategorySelect from '@/components/molecules/CategorySelect/CategorySelect';
+import IngredientSectionsEditor from '@/components/organisms/IngredientSectionsEditor/IngredientSectionsEditor';
+import InstructionsSectionsEditor from '@/components/organisms/InstructionsSectionsEditor/InstructionsSectionsEditor';
 import { updateRecipe } from '@/lib/actions/recipes';
 import {
   Category,

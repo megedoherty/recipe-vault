@@ -2,7 +2,7 @@
 
 import { ChangeEvent, useState, useTransition } from 'react';
 
-import Checkbox from '@/components/Checkbox/Checkbox';
+import Checkbox from '@/components/atoms/Checkbox/Checkbox';
 import { toggleRecipeMade } from '@/lib/actions/recipes';
 
 import styles from './MadeCheckbox.module.css';

@@ -1,5 +1,5 @@
-import Button from '@/components/Button/Button';
-import TextInput from '@/components/TextInput/TextInput';
+import Button from '@/components/atoms/Button/Button';
+import TextInput from '@/components/atoms/TextInput/TextInput';
 import { signIn } from '@/lib/actions/auth';
 
 import styles from './page.module.css';
