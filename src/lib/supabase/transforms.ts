@@ -3,10 +3,10 @@ import {
   IngredientSections,
   InstructionSection,
   Recipe,
-  RecipeDb,
+  RecipeDbWithCategory,
 } from '@/types';
 
-export function transformRecipe(recipe: RecipeDb): Recipe {
+export function transformRecipe(recipe: RecipeDbWithCategory): Recipe {
   return {
     id: recipe.id,
     name: recipe.name,
@@ -15,6 +15,7 @@ export function transformRecipe(recipe: RecipeDb): Recipe {
     imageUrl: recipe.image_url,
     sourceUrl: recipe.source_url,
     instructions: recipe.instructions as unknown as InstructionSection[],
+    category: recipe.category?.name ?? undefined,
     rating: recipe.rating,
   };
 }

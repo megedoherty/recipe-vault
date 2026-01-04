@@ -4,16 +4,25 @@
 }
 
 .links {
-  display: flex;
-  flex-direction: row;
-  gap: 0.5rem;
   max-width: 75rem;
   margin: 0 auto;
   padding: 0 clamp(1rem, 4vw, 1.25rem);
 }
 
+.links,
+.left,
+.right {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+}
+
 .item {
   list-style: none;
+}
+
+.right {
+  margin-inline-start: auto;
 }
 
 .link {

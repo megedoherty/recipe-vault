@@ -1,13 +1,13 @@
 import { IngredientSections, Recipe, RecipeCardInfo } from '@/types';
 
-import { createClient } from './server';
-import { transformIngredients, transformRecipe } from './transforms';
+import { createClient } from '../server';
+import { transformIngredients, transformRecipe } from '../transforms';
 
 export async function getRecipe(id: string): Promise<Recipe | null> {
   const supabase = await createClient();
   const { data } = await supabase
     .from('recipe')
-    .select('*')
+    .select('*, category(name)')
     .eq('id', id)
     .single();
 

@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
 import RecipeCard from '@/components/RecipeCard/RecipeCard';
-import { getAllRecipes } from '@/lib/supabase/recipes';
+import { getAllRecipes } from '@/lib/supabase/queries/recipes';
 
 import SearchForm from './components/SearchForm';
 import styles from './page.module.css';

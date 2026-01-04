@@ -1,10 +1,16 @@
 import Link from 'next/link';
 
-import { getUser } from '@/lib/supabase/user';
+import { getUser } from '@/lib/supabase/queries/user';
 
 import styles from './Navbar.module.css';
 
-const links = [
+interface LinkProps {
+  label: string;
+  href: string;
+  loggedIn?: boolean;
+}
+
+const leftLinks: LinkProps[] = [
   {
     label: 'Home',
     href: '/',
@@ -12,36 +18,71 @@ const links = [
   {
     label: 'Add Recipe',
     href: '/recipes/add',
+    loggedIn: true,
   },
 ];
 
+const rightLinks: LinkProps[] = [
+  {
+    label: 'Manage',
+    href: '/manage',
+    loggedIn: true,
+  },
+];
+
+const authLinks: LinkProps[] = [
+  {
+    label: 'Log In',
+    href: '/auth/login',
+    loggedIn: false,
+  },
+  {
+    label: 'Sign Up',
+    href: '/auth/signup',
+    loggedIn: false,
+  },
+];
+
+const NavbarLink = ({
+  link,
+  isLoggedIn,
+}: {
+  link: LinkProps;
+  isLoggedIn: boolean;
+}) => {
+  if (link.loggedIn !== undefined && isLoggedIn !== link.loggedIn) {
+    return null;
+  }
+
+  return (
+    <li key={link.href} className={styles.item}>
+      <Link href={link.href} className={styles.link}>
+        {link.label}
+      </Link>
+    </li>
+  );
+};
+
 export default async function Navbar() {
   const user = await getUser();
+  const isLoggedIn = !!user;
 
   return (
     <nav className={styles.navbar}>
       <ul className={styles.links}>
-        {links.map((link) => (
-          <li key={link.href} className={styles.item}>
-            <Link href={link.href} className={styles.link}>
-              {link.label}
-            </Link>
-          </li>
-        ))}
-        {!user && (
-          <>
-            <li className={styles.item}>
-              <Link href="/auth/login" className={styles.link}>
-                Log In
-              </Link>
-            </li>
-            <li className={styles.item}>
-              <Link href="/auth/signup" className={styles.link}>
-                Sign Up
-              </Link>
-            </li>
-          </>
-        )}
+        <ul className={styles.left}>
+          {leftLinks.map((link) => (
+            <NavbarLink key={link.href} link={link} isLoggedIn={isLoggedIn} />
+          ))}
+        </ul>
+        <ul className={styles.right}>
+          {rightLinks.map((link) => (
+            <NavbarLink key={link.href} link={link} isLoggedIn={isLoggedIn} />
+          ))}
+          {authLinks.map((link) => (
+            <NavbarLink key={link.href} link={link} isLoggedIn={isLoggedIn} />
+          ))}
+        </ul>
       </ul>
     </nav>
   );

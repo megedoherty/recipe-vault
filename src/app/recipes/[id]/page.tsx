@@ -3,7 +3,10 @@ import Image from 'next/image';
 
 import Button from '@/components/Button/Button';
 import EditIcon from '@/components/icons/EditIcon';
-import { getRecipe, getRecipeIngredients } from '@/lib/supabase/recipes';
+import {
+  getRecipe,
+  getRecipeIngredients,
+} from '@/lib/supabase/queries/recipes';
 
 import DeleteButton from './components/DeleteButton/DeleteButton';
 import IngredientsList from './components/IngredientsList/IngredientsList';
@@ -60,28 +63,28 @@ export default async function RecipePage({
           <Image src={imageUrl} alt={name} className={styles.image} fill />
         </div>
       )}
-      <div className={styles.ingredientsContainer}>
+      <section className={styles.ingredientsContainer}>
         <h2>Ingredients</h2>
         {ingredientSections?.map((ingredientSection) => (
-          <div key={ingredientSection.title}>
+          <section key={ingredientSection.title}>
             {ingredientSection.title && <h3>{ingredientSection.title}</h3>}
             <IngredientsList ingredients={ingredientSection.ingredients} />
-          </div>
+          </section>
         ))}
-      </div>
-      <div className={styles.instructionsContainer}>
+      </section>
+      <section className={styles.instructionsContainer}>
         <h2>Instructions</h2>
         {instructions?.map((instructionSection) => (
-          <div key={instructionSection.id}>
+          <section key={instructionSection.id}>
             {instructionSection.title && <h3>{instructionSection.title}</h3>}
             <ol className={styles.instructionsList}>
               {instructionSection.steps.map((step) => (
                 <li key={step.id}>{step.text}</li>
               ))}
             </ol>
-          </div>
+          </section>
         ))}
-      </div>
+      </section>
     </div>
   );
 }

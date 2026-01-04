@@ -26,11 +26,15 @@ export interface Step {
 
 // Recipe types
 export type RecipeDb = Database['public']['Tables']['recipe']['Row'];
+export type RecipeDbWithCategory = RecipeDb & {
+  category: { name: string } | null;
+};
 export type Recipe = Omit<
   KeysToCamelCase<RecipeDb>,
-  'ingredients' | 'instructions' | 'updatedAt' | 'userId'
+  'ingredients' | 'instructions' | 'updatedAt' | 'userId' | 'categoryId'
 > & {
   instructions: InstructionSection[];
+  category?: string;
 };
 export type RecipeCardInfo = Pick<
   Recipe,
@@ -53,3 +57,6 @@ export type IngredientSections = {
   id: string;
   ingredients: EditableIngredient[];
 };
+
+// Category types
+export type Category = Database['public']['Tables']['category']['Row'];

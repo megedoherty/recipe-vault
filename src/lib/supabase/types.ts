@@ -39,6 +39,21 @@ export type Database = {
   };
   public: {
     Tables: {
+      category: {
+        Row: {
+          id: number;
+          name: string;
+        };
+        Insert: {
+          id?: number;
+          name: string;
+        };
+        Update: {
+          id?: number;
+          name?: string;
+        };
+        Relationships: [];
+      };
       ingredient: {
         Row: {
           id: string;
@@ -76,10 +91,10 @@ export type Database = {
       };
       recipe: {
         Row: {
+          category_id: number | null;
           created_at: string;
           id: string;
           image_url: string | null;
-          ingredients: Json | null;
           instructions: Json | null;
           made: boolean;
           name: string;
@@ -89,10 +104,10 @@ export type Database = {
           user_id: string | null;
         };
         Insert: {
+          category_id?: number | null;
           created_at?: string;
           id?: string;
           image_url?: string | null;
-          ingredients?: Json | null;
           instructions?: Json | null;
           made?: boolean;
           name: string;
@@ -102,10 +117,10 @@ export type Database = {
           user_id?: string | null;
         };
         Update: {
+          category_id?: number | null;
           created_at?: string;
           id?: string;
           image_url?: string | null;
-          ingredients?: Json | null;
           instructions?: Json | null;
           made?: boolean;
           name?: string;
@@ -114,7 +129,15 @@ export type Database = {
           updated_at?: string | null;
           user_id?: string | null;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: 'recipe_category_id_fkey';
+            columns: ['category_id'];
+            isOneToOne: false;
+            referencedRelation: 'category';
+            referencedColumns: ['id'];
+          },
+        ];
       };
     };
     Views: {

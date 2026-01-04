@@ -1,6 +1,9 @@
 import { Metadata } from 'next';
 
-import { getRecipe, getRecipeIngredients } from '@/lib/supabase/recipes';
+import {
+  getRecipe,
+  getRecipeIngredients,
+} from '@/lib/supabase/queries/recipes';
 
 import UpdateRecipeForm from './components/UpdateRecipeForm/UpdateRecipeForm';
 import styles from './page.module.css';
