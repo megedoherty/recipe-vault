@@ -1,0 +1,35 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  grid-column: 1 / -1;
+}
+
+.header {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  justify-content: space-between;
+  grid-area: header;
+}
+
+.headerButtons {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  margin-block: 0.25rem;
+}
+
+.source {
+  color: var(--text-secondary);
+  font-size: var(--font-size-small);
+  display: block;
+  width: fit-content;
+}
+
+.personalInfo {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  align-items: center;
+}

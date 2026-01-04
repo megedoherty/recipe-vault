@@ -1,18 +1,14 @@
 import { Metadata } from 'next';
-import Image from 'next/image';
 
-import Button from '@/components/atoms/Button/Button';
-import EditIcon from '@/components/atoms/icons/EditIcon';
 import {
   getRecipe,
   getRecipeIngredients,
 } from '@/lib/supabase/queries/recipes';
 
-import DeleteButton from './components/DeleteButton/DeleteButton';
 import IngredientsList from './components/IngredientsList/IngredientsList';
-import MadeCheckbox from './components/MadeCheckbox/MadeCheckbox';
-import RatingInput from './components/RatingInput/RatingInput';
-import StepIngredients from './components/StepIngredients/StepIngredients';
+import InstructionsSection from './components/InstructionsSection/InstructionsSection';
+import RecipeHeader from './components/RecipeHeader/RecipeHeader';
+import RecipeImageAndInfo from './components/RecipeImageAndInfo/RecipeImageAndInfo';
 import styles from './page.module.css';
 
 export default async function RecipePage({
@@ -37,52 +33,18 @@ export default async function RecipePage({
 
   return (
     <div className={styles.page}>
-      <div className={styles.headerContainer}>
-        <header className={styles.header}>
-          <h1>{name} Recipe</h1>
-          <div className={styles.headerButtons}>
-            <Button
-              href={`/recipes/${id}/edit`}
-              aria-label="Edit recipe"
-              iconOnly
-            >
-              <EditIcon />
-            </Button>
-            <DeleteButton recipeId={id} />
-          </div>
-        </header>
-        {sourceUrl && (
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href={sourceUrl}
-            className={styles.source}
-          >
-            {sourceUrl}
-          </a>
-        )}
-        <div className={styles.personalInfo}>
-          <MadeCheckbox recipeId={id} initialChecked={made} />
-          <RatingInput recipeId={id} initialRating={rating} />
-        </div>
-      </div>
-      <div className={styles.imageAndInfoContainer}>
-        <aside>
-          <dl>
-            {recipe.category && (
-              <div className={styles.infoItem}>
-                <dt>Category:</dt>
-                <dd>{recipe.category.name}</dd>
-              </div>
-            )}
-          </dl>
-        </aside>
-        {imageUrl && (
-          <div className={styles.imageContainer}>
-            <Image src={imageUrl} alt={name} className={styles.image} fill />
-          </div>
-        )}
-      </div>
+      <RecipeHeader
+        recipeId={id}
+        name={name}
+        sourceUrl={sourceUrl}
+        made={made}
+        rating={rating}
+      />
+      <RecipeImageAndInfo
+        category={recipe.category}
+        imageUrl={imageUrl}
+        name={name}
+      />
       <section className={styles.ingredientsContainer}>
         <h2>Ingredients</h2>
         {ingredientSections?.map((ingredientSection) => (
@@ -92,25 +54,10 @@ export default async function RecipePage({
           </section>
         ))}
       </section>
-      <section className={styles.instructionsContainer}>
-        <h2>Instructions</h2>
-        {instructions?.map((instructionSection) => (
-          <section key={instructionSection.id}>
-            {instructionSection.title && <h3>{instructionSection.title}</h3>}
-            <ol className={styles.instructionsList}>
-              {instructionSection.steps.map((step) => (
-                <li key={step.id}>
-                  <p>{step.text}</p>
-                  <StepIngredients
-                    ingredientIds={step.ingredientIds}
-                    ingredients={ingredientMap}
-                  />
-                </li>
-              ))}
-            </ol>
-          </section>
-        ))}
-      </section>
+      <InstructionsSection
+        instructions={instructions}
+        ingredientMap={ingredientMap}
+      />
     </div>
   );
 }

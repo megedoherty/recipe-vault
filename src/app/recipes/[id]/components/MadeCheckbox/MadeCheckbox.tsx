@@ -34,7 +34,6 @@ export default function MadeCheckbox({
   return (
     <Checkbox
       label="I made this"
-      checkboxSize="medium"
       id="made"
       name="made"
       checked={checked}
