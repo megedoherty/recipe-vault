@@ -1,5 +1,9 @@
 .form {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 0.5rem;
+
+  @media (width >= 768px) {
+    flex-direction: row;
+  }
 }

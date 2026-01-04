@@ -5,6 +5,7 @@
 
 .select {
   padding: 0.25rem;
+  min-height: 2.25rem;
 
   &:has(option[value=""]:checked) {
     color: var(--text-muted);
