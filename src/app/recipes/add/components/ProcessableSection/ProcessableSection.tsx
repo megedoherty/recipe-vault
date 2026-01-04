@@ -26,7 +26,7 @@ export default function ProcessableSection({
   };
 
   return (
-    <div className={styles.container}>
+    <section className={styles.container}>
       <h2>{title}</h2>
       {!hasProcessed ? (
         <>
@@ -55,6 +55,6 @@ export default function ProcessableSection({
       ) : (
         editorComponent
       )}
-    </div>
+    </section>
   );
 }

@@ -4,10 +4,17 @@ import Form from 'next/form';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import Button from '@/components/Button/Button';
+import CategorySelect from '@/components/CategorySelect/CategorySelect';
+import TextInput from '@/components/TextInput/TextInput';
+import { Category } from '@/types';
 
 import styles from './SearchForm.module.css';
 
-export default function SearchForm() {
+interface SearchFormProps {
+  categories: Category[];
+}
+
+export default function SearchForm({ categories }: SearchFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -17,16 +24,16 @@ export default function SearchForm() {
   return (
     <search>
       <Form action="/" className={styles.form}>
-        <input
+        <TextInput
+          label="Recipe name"
           type="text"
-          id="name"
+          id="recipeName"
           name="name"
           placeholder="Search recipe name"
           defaultValue={name}
+          hideLabel
         />
-        <label htmlFor="name" className="sr-only">
-          Recipe name
-        </label>
+        <CategorySelect categories={categories} showEmptyOption hideLabel />
         <Button variant="primary" type="submit">
           Search
         </Button>

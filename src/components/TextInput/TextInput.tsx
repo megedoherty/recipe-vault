@@ -24,8 +24,10 @@ export default function TextInput({
   hideLabel,
   ...props
 }: TextInputProps) {
+  const fullWidthClass = fullWidth ? styles.fullWidth : '';
+
   return (
-    <div className={`${styles.container} ${fullWidth ? styles.fullWidth : ''}`}>
+    <div className={`${styles.container} ${fullWidthClass}`}>
       <label htmlFor={id} className={hideLabel ? 'sr-only' : ''}>
         {label}
       </label>
@@ -34,7 +36,7 @@ export default function TextInput({
           id={id}
           name={name}
           defaultValue={defaultValue}
-          className={`${styles.textarea} ${fullWidth ? styles.fullWidth : ''}`}
+          className={`${styles.textarea} ${fullWidthClass}`}
           {...props}
         />
       ) : (
@@ -43,7 +45,7 @@ export default function TextInput({
           id={id}
           name={name}
           defaultValue={defaultValue}
-          className={`${fullWidth ? styles.fullWidth : ''}`}
+          className={`${styles.input} ${fullWidthClass}`}
           {...props}
         />
       )}

@@ -5,6 +5,13 @@
   align-items: flex-start;
 }
 
+.sectionContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
 .submitButton {
   align-self: center;
 }

@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 
 import RecipeCard from '@/components/RecipeCard/RecipeCard';
+import { getCategories } from '@/lib/supabase/queries/categories';
 import { getAllRecipes } from '@/lib/supabase/queries/recipes';
 
 import SearchForm from './components/SearchForm';
@@ -9,11 +10,12 @@ import styles from './page.module.css';
 export default async function Home({ searchParams }: PageProps<'/'>) {
   const query = await searchParams;
   const recipes = await getAllRecipes(query);
+  const categories = await getCategories();
 
   return (
     <div className={styles.page}>
       <h1>Recipes</h1>
-      <SearchForm />
+      <SearchForm categories={categories} />
       {recipes.length === 0 ? (
         <p>No recipes found</p>
       ) : (

@@ -7,6 +7,7 @@ interface SelectProps {
   defaultValue?: string;
   options: { value: string; label: string }[];
   emptyOption?: { value: string; label: string };
+  hideLabel?: boolean;
 }
 
 export default function Select({
@@ -16,10 +17,13 @@ export default function Select({
   defaultValue,
   options,
   emptyOption,
+  hideLabel = false,
 }: SelectProps) {
   return (
     <div className={styles.container}>
-      <label htmlFor={id}>{label}</label>
+      <label htmlFor={id} className={hideLabel ? 'sr-only' : ''}>
+        {label}
+      </label>
       <select
         name={name}
         id={id}

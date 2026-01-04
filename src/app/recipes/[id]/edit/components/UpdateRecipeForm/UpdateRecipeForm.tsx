@@ -4,9 +4,9 @@ import Form from 'next/form';
 import { useActionState, useState } from 'react';
 
 import Button from '@/components/Button/Button';
+import CategorySelect from '@/components/CategorySelect/CategorySelect';
 import IngredientSectionsEditor from '@/components/IngredientSectionsEditor/IngredientSectionsEditor';
 import InstructionsSectionsEditor from '@/components/InstructionsSectionsEditor/InstructionsSectionsEditor';
-import Select from '@/components/Select/Select';
 import TextInput from '@/components/TextInput/TextInput';
 import { updateRecipe } from '@/lib/actions/recipes';
 import {
@@ -76,19 +76,11 @@ export default function UpdateRecipeForm({
       </section>
       <section className={styles.sectionContainer}>
         <h2>Organization</h2>
-        <div>
-          <Select
-            label="Category"
-            name="categoryId"
-            id="category"
-            defaultValue={recipe.category?.id.toString() ?? ''}
-            options={categories.map((category) => ({
-              value: category.id.toString(),
-              label: category.name,
-            }))}
-            emptyOption={{ value: '', label: 'Select a category' }}
-          />
-        </div>
+        <CategorySelect
+          defaultValue={recipe.category?.id.toString() ?? ''}
+          categories={categories}
+          showEmptyOption
+        />
       </section>
       <section className={styles.sectionContainer}>
         <h2>Ingredients</h2>

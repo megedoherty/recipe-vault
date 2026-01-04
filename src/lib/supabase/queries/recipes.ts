@@ -27,10 +27,12 @@ export async function getRecipeIngredients(
 
 interface GetAllRecipesParams {
   name?: string;
+  categoryId?: number;
 }
 
 export async function getAllRecipes({
   name,
+  categoryId,
 }: GetAllRecipesParams = {}): Promise<RecipeCardInfo[]> {
   const supabase = await createClient();
   let query = supabase
@@ -39,6 +41,10 @@ export async function getAllRecipes({
 
   if (name) {
     query = query.ilike('name', `%${name}%`);
+  }
+
+  if (categoryId) {
+    query = query.eq('category_id', categoryId);
   }
 
   const { data } = await query;

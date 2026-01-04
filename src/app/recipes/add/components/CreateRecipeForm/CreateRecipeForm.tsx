@@ -4,9 +4,9 @@ import Form from 'next/form';
 import { useActionState, useState } from 'react';
 
 import Button from '@/components/Button/Button';
+import CategorySelect from '@/components/CategorySelect/CategorySelect';
 import IngredientSectionsEditor from '@/components/IngredientSectionsEditor/IngredientSectionsEditor';
 import InstructionsSectionsEditor from '@/components/InstructionsSectionsEditor/InstructionsSectionsEditor';
-import Select from '@/components/Select/Select';
 import TextInput from '@/components/TextInput/TextInput';
 import { addRecipe } from '@/lib/actions/recipes';
 import { parseIngredients, parseInstructions } from '@/lib/utils/parse';
@@ -55,19 +55,10 @@ export default function CreateRecipeForm({
         required
         fullWidth
       />
-      <h2>Organization</h2>
-      <div>
-        <Select
-          label="Category"
-          name="categoryId"
-          id="category"
-          options={categories.map((category) => ({
-            value: category.id.toString(),
-            label: category.name,
-          }))}
-          emptyOption={{ value: '', label: 'Select a category' }}
-        />
-      </div>
+      <section className={styles.sectionContainer}>
+        <h2>Organization</h2>
+        <CategorySelect categories={categories} showEmptyOption />
+      </section>
       <ProcessableSection
         title="Ingredients"
         onProcess={onProcessIngredients}
