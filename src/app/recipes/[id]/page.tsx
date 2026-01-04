@@ -12,6 +12,7 @@ import DeleteButton from './components/DeleteButton/DeleteButton';
 import IngredientsList from './components/IngredientsList/IngredientsList';
 import MadeCheckbox from './components/MadeCheckbox/MadeCheckbox';
 import RatingInput from './components/RatingInput/RatingInput';
+import StepIngredients from './components/StepIngredients/StepIngredients';
 import styles from './page.module.css';
 
 export default async function RecipePage({
@@ -20,6 +21,13 @@ export default async function RecipePage({
   const { id } = await params;
   const recipe = await getRecipe(id);
   const ingredientSections = await getRecipeIngredients(id);
+
+  const ingredients = ingredientSections.flatMap(
+    (section) => section.ingredients,
+  );
+  const ingredientMap = Object.fromEntries(
+    ingredients.map((ingredient) => [ingredient.id, ingredient]),
+  );
 
   if (recipe === null) {
     return <div>Recipe not found</div>;
@@ -91,7 +99,13 @@ export default async function RecipePage({
             {instructionSection.title && <h3>{instructionSection.title}</h3>}
             <ol className={styles.instructionsList}>
               {instructionSection.steps.map((step) => (
-                <li key={step.id}>{step.text}</li>
+                <li key={step.id}>
+                  <p>{step.text}</p>
+                  <StepIngredients
+                    ingredientIds={step.ingredientIds}
+                    ingredients={ingredientMap}
+                  />
+                </li>
               ))}
             </ol>
           </section>

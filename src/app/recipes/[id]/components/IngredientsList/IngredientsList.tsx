@@ -14,7 +14,7 @@ export default function IngredientsList({ ingredients }: IngredientsListProps) {
         <li key={ingredient.id} className={styles.item}>
           <Checkbox
             label={`${ingredient.quantity ?? ''} ${ingredient.name}`.trim()}
-            sizeVariant="small"
+            checkboxSize="small"
             id={ingredient.id}
             checkboxClassName={styles.checkbox}
           />

@@ -71,6 +71,9 @@
 .instructionsList {
   list-style: decimal;
   padding: 0 1rem 0 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .image {
@@ -82,4 +85,13 @@
   flex-direction: row;
   gap: 1rem;
   align-items: center;
+}
+
+.stepIngredients {
+  color: var(--text-secondary);
+  font-size: var(--font-size-small);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-block-end: 0.25rem;
 }

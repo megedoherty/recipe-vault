@@ -1,7 +1,7 @@
 'use client';
 
 import Form from 'next/form';
-import { useActionState, useState } from 'react';
+import { useActionState, useMemo, useState } from 'react';
 
 import Button from '@/components/atoms/Button/Button';
 import TextInput from '@/components/atoms/TextInput/TextInput';
@@ -44,6 +44,10 @@ export default function UpdateRecipeForm({
     ),
     null,
   );
+
+  const allIngredients = useMemo(() => {
+    return formIngredientSections.flatMap((section) => section.ingredients);
+  }, [formIngredientSections]);
 
   return (
     <Form action={formAction} className={styles.form}>
@@ -94,6 +98,7 @@ export default function UpdateRecipeForm({
         <InstructionsSectionsEditor
           instructionSections={formInstructionSections}
           setInstructionSections={setFormInstructionSections}
+          ingredients={allIngredients}
         />
       </section>
       {state?.error && <p>{state.error}</p>}

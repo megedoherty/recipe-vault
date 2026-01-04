@@ -42,6 +42,7 @@
   --font-size-h2: 1.5rem; /* section headers (ingredients, steps) */
   --font-size-h3: 1.25rem; /* subheaders, notes */
   --font-size-small: 0.875rem; /* footnotes, meta info */
+  --font-size-chip: 0.75rem;
 
   /* Other */
   --border-radius-default: 0.5rem;

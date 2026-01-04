@@ -1,16 +1,16 @@
 .container {
   display: flex;
   gap: 0.5rem;
-}
 
-.medium {
-  --checkbox-size: 1.25rem;
-  --check-font-size: 1rem;
-}
+  &.medium {
+    --checkbox-size: 1.25rem;
+    --check-font-size: 1rem;
+  }
 
-.small {
-  --checkbox-size: 1rem;
-  --font-size: 0.75rem;
+  &.small {
+    --checkbox-size: 1rem;
+    --check-font-size: 0.75rem;
+  }
 }
 
 .checkbox {
@@ -43,4 +43,13 @@
 
 .label {
   cursor: pointer;
+  flex: 1;
+
+  &.medium {
+    font-size: var(--font-size-base);
+  }
+
+  &.small {
+    font-size: var(--font-size-small);
+  }
 }

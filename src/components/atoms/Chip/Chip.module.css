@@ -1,0 +1,15 @@
+.chip {
+  background-color: var(--chip-background, var(--accent));
+  color: var(--chip-text, var(--button-primary-text));
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--border-radius-default);
+  font-size: var(--font-size-chip);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+
+  &:hover {
+    --chip-background: color-mix(in srgb, var(--accent) 80%, transparent);
+  }
+}

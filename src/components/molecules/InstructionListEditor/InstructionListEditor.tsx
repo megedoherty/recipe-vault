@@ -7,11 +7,13 @@ import {
 import { Dispatch, SetStateAction } from 'react';
 
 import Button from '@/components/atoms/Button/Button';
+import Chip from '@/components/atoms/Chip/Chip';
 import UpDownArrowIcon from '@/components/atoms/icons/UpDownArrowIcon';
 import XIcon from '@/components/atoms/icons/XIcon';
 import TextInput from '@/components/atoms/TextInput/TextInput';
-import { InstructionSection } from '@/types';
+import { EditableIngredient, InstructionSection } from '@/types';
 
+import IngredientPicker from '../IngredientPicker/IngredientPicker';
 import styles from './InstructionListEditor.module.css';
 
 interface InstructionListEditorProps {
@@ -19,13 +21,21 @@ interface InstructionListEditorProps {
   sectionIndex: number;
   setInstructionSections: Dispatch<SetStateAction<InstructionSection[]>>;
   section: InstructionSection;
+  ingredients: EditableIngredient[];
 }
+
+const getChipLabel = (ingredient: EditableIngredient | undefined) => {
+  return ingredient?.quantity
+    ? `${ingredient.quantity} ${ingredient.name}`
+    : ingredient?.name;
+};
 
 export default function InstructionListEditor({
   sectionId,
   sectionIndex,
   setInstructionSections,
   section,
+  ingredients,
 }: InstructionListEditorProps) {
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) return;
@@ -52,11 +62,7 @@ export default function InstructionListEditor({
     );
   };
 
-  const handleTextChange = (
-    sectionIndex: number,
-    stepIndex: number,
-    value: string,
-  ) => {
+  const handleTextChange = (stepIndex: number, value: string) => {
     setInstructionSections((prev) =>
       prev.map((section, sIdx) =>
         sIdx === sectionIndex
@@ -71,7 +77,7 @@ export default function InstructionListEditor({
     );
   };
 
-  const handleDeleteStep = (sectionIndex: number, stepIndex: number) => {
+  const handleDeleteStep = (stepIndex: number) => {
     setInstructionSections((prev) =>
       prev.map((section, sIdx) =>
         sIdx === sectionIndex
@@ -81,6 +87,34 @@ export default function InstructionListEditor({
             }
           : section,
       ),
+    );
+  };
+
+  const handleToggleIngredient = (stepIndex: number, ingredientId: string) => {
+    setInstructionSections((prev) =>
+      prev.map((section, sIdx) => {
+        if (sIdx !== sectionIndex) {
+          return section;
+        }
+
+        const modifiedStep = { ...section.steps[stepIndex] };
+        if (modifiedStep.ingredientIds?.includes(ingredientId)) {
+          modifiedStep.ingredientIds = modifiedStep.ingredientIds?.filter(
+            (id) => id !== ingredientId,
+          );
+        } else {
+          modifiedStep.ingredientIds = [
+            ...(modifiedStep.ingredientIds || []),
+            ingredientId,
+          ];
+        }
+        return {
+          ...section,
+          steps: section.steps.map((step, iIdx) =>
+            iIdx === stepIndex ? modifiedStep : step,
+          ),
+        };
+      }),
     );
   };
 
@@ -117,11 +151,7 @@ export default function InstructionListEditor({
                       type="textarea"
                       value={step.text || ''}
                       onChange={(e) =>
-                        handleTextChange(
-                          sectionIndex,
-                          stepIndex,
-                          e.target.value,
-                        )
+                        handleTextChange(stepIndex, e.target.value)
                       }
                       hideLabel
                     />
@@ -129,11 +159,44 @@ export default function InstructionListEditor({
                       variant="secondary"
                       iconOnly
                       size="small"
-                      onClick={() => handleDeleteStep(sectionIndex, stepIndex)}
+                      onClick={() => handleDeleteStep(stepIndex)}
                       aria-label="Delete step"
                     >
                       <XIcon />
                     </Button>
+                    <div className={styles.linkedIngredientsContainer}>
+                      <div className={styles.linkedIngredientsHeader}>
+                        <p className={styles.linkedIngredientsLabel}>
+                          Ingredients used:
+                        </p>
+                        <IngredientPicker
+                          allIngredients={ingredients}
+                          selectedIngredientIds={step.ingredientIds || []}
+                          onToggleIngredient={(ingredientId) =>
+                            handleToggleIngredient(stepIndex, ingredientId)
+                          }
+                        />
+                      </div>
+                      {step.ingredientIds && step.ingredientIds.length > 0 && (
+                        <div className={styles.linkedIngredientsList}>
+                          {step.ingredientIds?.map((ingredientId) => (
+                            <Chip
+                              key={ingredientId}
+                              onClick={() =>
+                                handleToggleIngredient(stepIndex, ingredientId)
+                              }
+                            >
+                              {getChipLabel(
+                                ingredients.find(
+                                  (ingredient) =>
+                                    ingredient.id === ingredientId,
+                                ),
+                              )}
+                            </Chip>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
               </Draggable>

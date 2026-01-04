@@ -4,7 +4,8 @@ import styles from './Checkbox.module.css';
 
 interface CheckboxProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
-  sizeVariant: 'medium' | 'small';
+  labelSize?: 'medium' | 'small';
+  checkboxSize?: 'medium' | 'small';
   id: string;
   containerClassName?: string;
   checkboxClassName?: string;
@@ -12,21 +13,25 @@ interface CheckboxProps extends InputHTMLAttributes<HTMLInputElement> {
 
 export default function Checkbox({
   label,
-  sizeVariant = 'medium',
+  labelSize = 'medium',
+  checkboxSize = 'medium',
   containerClassName = '',
   checkboxClassName = '',
   ...props
 }: CheckboxProps) {
   return (
     <div
-      className={`${containerClassName} ${styles.container} ${styles[sizeVariant]}`}
+      className={`${containerClassName} ${styles.container} ${styles[checkboxSize]}`}
     >
       <input
         type="checkbox"
         {...props}
         className={`${styles.checkbox} ${checkboxClassName}`}
       />
-      <label htmlFor={props.id} className={styles.label}>
+      <label
+        htmlFor={props.id}
+        className={`${styles.label} ${styles[labelSize]}`}
+      >
         {label}
       </label>
     </div>

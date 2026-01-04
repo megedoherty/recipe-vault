@@ -43,6 +43,7 @@ const createIngredientsInsert = (
   return ingredientSections
     .flatMap((section) =>
       section.ingredients.map((ingredient, index) => ({
+        id: ingredient.id,
         name: ingredient.name,
         quantity: ingredient.quantity,
         section: section.title,
