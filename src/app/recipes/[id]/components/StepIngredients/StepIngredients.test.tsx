@@ -42,7 +42,6 @@ describe('StepIngredients', () => {
             id: '1',
             name: 'Ingredient 1',
             quantity: null,
-            section: null,
           },
         }}
       />,

@@ -4,8 +4,8 @@ import { redirect } from 'next/navigation';
 
 import { createClient } from '@/lib/supabase/server';
 import {
-  IngredientInsert,
-  IngredientSections,
+  IngredientDb,
+  IngredientSectionsEditable,
   InstructionSection,
 } from '@/types';
 
@@ -37,9 +37,9 @@ const cleanInstructionSections = (
  * Creates the ingredients insert object for the recipe based on the FE sections object.
  */
 const createIngredientsInsert = (
-  ingredientSections: IngredientSections[],
+  ingredientSections: IngredientSectionsEditable[],
   recipeId: string,
-) => {
+): IngredientDb[] => {
   return ingredientSections
     .flatMap((section) =>
       section.ingredients.map((ingredient, index) => ({
@@ -48,6 +48,7 @@ const createIngredientsInsert = (
         quantity: ingredient.quantity,
         section: section.title,
         recipe_id: recipeId,
+        ingredient_id: ingredient.ingredientId,
         position: index,
       })),
     )
@@ -61,7 +62,7 @@ const createIngredientsInsert = (
  * Inserts the ingredients into the ingredient table with the new recipe ID.
  */
 export async function addRecipe(
-  ingredientSections: IngredientSections[],
+  ingredientSections: IngredientSectionsEditable[],
   instructionSections: InstructionSection[],
   prevState: ActionsResponse | null,
   formData: FormData,
@@ -97,7 +98,7 @@ export async function addRecipe(
     };
   }
 
-  const ingredients: IngredientInsert[] = createIngredientsInsert(
+  const ingredients: IngredientDb[] = createIngredientsInsert(
     ingredientSections,
     data.id,
   );
@@ -126,7 +127,7 @@ export async function addRecipe(
  */
 export async function updateRecipe(
   recipeId: string,
-  ingredientSections: IngredientSections[],
+  ingredientSections: IngredientSectionsEditable[],
   instructionSections: InstructionSection[],
   prevState: ActionsResponse | null,
   formData: FormData,
@@ -162,7 +163,7 @@ export async function updateRecipe(
     .select('id')
     .eq('recipe_id', recipeId);
 
-  const ingredients: IngredientInsert[] = createIngredientsInsert(
+  const ingredients: IngredientDb[] = createIngredientsInsert(
     ingredientSections,
     recipeData.id,
   );

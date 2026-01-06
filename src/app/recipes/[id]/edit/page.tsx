@@ -2,8 +2,8 @@ import { Metadata } from 'next';
 
 import { getCategories } from '@/lib/supabase/queries/categories';
 import {
-  getRecipe,
-  getRecipeIngredients,
+  getRecipeForEdit,
+  getRecipeIngredientsForEdit,
 } from '@/lib/supabase/queries/recipes';
 
 import UpdateRecipeForm from './components/UpdateRecipeForm/UpdateRecipeForm';
@@ -13,8 +13,8 @@ export default async function EditRecipePage({
   params,
 }: PageProps<'/recipes/[id]/edit'>) {
   const { id } = await params;
-  const recipe = await getRecipe(id);
-  const ingredientSections = await getRecipeIngredients(id);
+  const recipe = await getRecipeForEdit(id);
+  const ingredientSections = await getRecipeIngredientsForEdit(id);
   const categories = await getCategories();
 
   if (recipe === null) {
@@ -25,6 +25,7 @@ export default async function EditRecipePage({
     <div className={styles.page}>
       <h1>Edit Recipe</h1>
       <UpdateRecipeForm
+        recipeId={id}
         recipe={recipe}
         ingredientSections={ingredientSections}
         categories={categories}
@@ -39,7 +40,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const recipe = await getRecipe(id);
+  const recipe = await getRecipeForEdit(id);
 
   return {
     title: `Edit ${recipe?.name} | Recipe Vault`,

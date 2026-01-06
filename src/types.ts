@@ -26,37 +26,76 @@ export interface Step {
 
 // Recipe types
 export type RecipeDb = Database['public']['Tables']['recipe']['Row'];
-export type RecipeDbWithCategory = RecipeDb & {
-  category: Category | null;
+export type RecipeDisplayDb = Pick<
+  RecipeDb,
+  'name' | 'image_url' | 'source_url' | 'rating' | 'made' | 'instructions'
+> & {
+  category: { name: string } | null;
 };
-export type Recipe = Omit<
-  KeysToCamelCase<RecipeDb>,
-  'ingredients' | 'instructions' | 'updatedAt' | 'userId' | 'categoryId'
+export type RecipeDisplay = Omit<
+  KeysToCamelCase<RecipeDisplayDb>,
+  'instructions' | 'category'
 > & {
   instructions: InstructionSection[];
-  category?: Category;
+  category: string | null;
 };
-export type RecipeCardInfo = Pick<
-  Recipe,
+export type RecipeSummary = Pick<
+  KeysToCamelCase<RecipeDb>,
   'id' | 'name' | 'imageUrl' | 'rating' | 'made'
 >;
+
+export type EditableRecipeDb = Pick<
+  RecipeDb,
+  'name' | 'image_url' | 'source_url' | 'instructions' | 'category_id'
+>;
+export type EditableRecipe = Omit<
+  KeysToCamelCase<EditableRecipeDb>,
+  'instructions'
+> & {
+  instructions: InstructionSection[];
+};
 
 // Ingredient types
 // The exact row that comes from the database
 export type IngredientDb = Database['public']['Tables']['ingredient']['Row'];
-// The type used in recipes on the FE - all the fields except the recipe_id
-export type Ingredient = Omit<KeysToCamelCase<IngredientDb>, 'recipeId'>;
-// The type used when inserting a new ingredient
-export type IngredientInsert =
-  Database['public']['Tables']['ingredient']['Insert'];
+// What's returned from the query
+export type IngredientDisplayDb = Pick<
+  IngredientDb,
+  'id' | 'name' | 'quantity' | 'position' | 'section'
+>;
+// What is available after processing
+export type IngredientDisplay = Pick<
+  IngredientDisplayDb,
+  'id' | 'name' | 'quantity'
+>;
+
 // The type used when editing an ingredient
-export type EditableIngredient = Omit<Ingredient, 'position'>;
+// What's returned from the query
+export type EditableIngredientDb = Pick<
+  IngredientDb,
+  'id' | 'name' | 'quantity' | 'position' | 'section' | 'ingredient_id'
+>;
+export type EditableIngredient = KeysToCamelCase<
+  Pick<
+    EditableIngredientDb,
+    'id' | 'name' | 'quantity' | 'section' | 'ingredient_id'
+  >
+>;
+
 // The type used when ingredients are grouped on the FE. Id is used for the key in the UI.
-export type IngredientSections = {
+type IngredientSectionBase<T> = {
   title: string | null;
   id: string;
-  ingredients: EditableIngredient[];
+  ingredients: T[];
 };
+export type IngredientSections = IngredientSectionBase<IngredientDisplay>;
+export type IngredientSectionsEditable =
+  IngredientSectionBase<EditableIngredient>;
 
 // Category types
 export type Category = Database['public']['Tables']['category']['Row'];
+
+// Ingredient Catalog types
+export type IngredientCatalogDb =
+  Database['public']['Tables']['ingredient_catalog']['Row'];
+export type IngredientCatalog = KeysToCamelCase<IngredientCatalogDb>;

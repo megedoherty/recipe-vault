@@ -57,6 +57,7 @@ export type Database = {
       ingredient: {
         Row: {
           id: string;
+          ingredient_id: number | null;
           name: string;
           position: number;
           quantity: string | null;
@@ -65,6 +66,7 @@ export type Database = {
         };
         Insert: {
           id?: string;
+          ingredient_id?: number | null;
           name: string;
           position: number;
           quantity?: string | null;
@@ -73,6 +75,7 @@ export type Database = {
         };
         Update: {
           id?: string;
+          ingredient_id?: number | null;
           name?: string;
           position?: number;
           quantity?: string | null;
@@ -85,6 +88,42 @@ export type Database = {
             columns: ['recipe_id'];
             isOneToOne: false;
             referencedRelation: 'recipe';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'ingredient_ingredient_id_fkey';
+            columns: ['ingredient_id'];
+            isOneToOne: false;
+            referencedRelation: 'ingredient_catalog';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      ingredient_catalog: {
+        Row: {
+          category: string | null;
+          id: number;
+          name: string;
+          parent_id: number | null;
+        };
+        Insert: {
+          category?: string | null;
+          id?: number;
+          name: string;
+          parent_id?: number | null;
+        };
+        Update: {
+          category?: string | null;
+          id?: number;
+          name?: string;
+          parent_id?: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'ingredient_catalog_parent_id_fkey';
+            columns: ['parent_id'];
+            isOneToOne: false;
+            referencedRelation: 'ingredient_catalog';
             referencedColumns: ['id'];
           },
         ];

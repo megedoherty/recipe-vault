@@ -2,12 +2,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import RecipeIcon from '@/components/atoms/icons/RecipeIcon';
-import { RecipeCardInfo } from '@/types';
+import { RecipeSummary } from '@/types';
 
 import styles from './RecipeCard.module.css';
 
 interface RecipeCardProps {
-  recipe: RecipeCardInfo;
+  recipe: RecipeSummary;
 }
 
 export default function RecipeCard({ recipe }: RecipeCardProps) {

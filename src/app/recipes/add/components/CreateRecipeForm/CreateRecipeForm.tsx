@@ -10,7 +10,11 @@ import IngredientSectionsEditor from '@/components/organisms/IngredientSectionsE
 import InstructionsSectionsEditor from '@/components/organisms/InstructionsSectionsEditor/InstructionsSectionsEditor';
 import { addRecipe } from '@/lib/actions/recipes';
 import { parseIngredients, parseInstructions } from '@/lib/utils/parse';
-import { Category, IngredientSections, InstructionSection } from '@/types';
+import {
+  Category,
+  IngredientSectionsEditable,
+  InstructionSection,
+} from '@/types';
 
 import ProcessableSection from '../ProcessableSection/ProcessableSection';
 import styles from './CreateRecipeForm.module.css';
@@ -23,7 +27,7 @@ export default function CreateRecipeForm({
   categories,
 }: CreateRecipeFormComponentProps) {
   const [ingredientSections, setIngredientSections] = useState<
-    IngredientSections[]
+    IngredientSectionsEditable[]
   >([]);
   const [instructionSections, setInstructionSections] = useState<
     InstructionSection[]

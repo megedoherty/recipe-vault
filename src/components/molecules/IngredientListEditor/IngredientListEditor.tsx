@@ -10,15 +10,15 @@ import Button from '@/components/atoms/Button/Button';
 import UpDownArrowIcon from '@/components/atoms/icons/UpDownArrowIcon';
 import XIcon from '@/components/atoms/icons/XIcon';
 import TextInput from '@/components/atoms/TextInput/TextInput';
-import { IngredientSections } from '@/types';
+import { IngredientSectionsEditable } from '@/types';
 
 import styles from './IngredientListEditor.module.css';
 
 interface IngredientListEditorProps {
   sectionId: string;
   sectionIndex: number;
-  setIngredientSections: Dispatch<SetStateAction<IngredientSections[]>>;
-  section: IngredientSections;
+  setIngredientSections: Dispatch<SetStateAction<IngredientSectionsEditable[]>>;
+  section: IngredientSectionsEditable;
 }
 
 export default function IngredientListEditor({

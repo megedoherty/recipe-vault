@@ -5,13 +5,13 @@ import PlusIcon from '@/components/atoms/icons/PlusIcon';
 import TrashIcon from '@/components/atoms/icons/TrashIcon';
 import TextInput from '@/components/atoms/TextInput/TextInput';
 import IngredientListEditor from '@/components/molecules/IngredientListEditor/IngredientListEditor';
-import { IngredientSections } from '@/types';
+import { IngredientSectionsEditable } from '@/types';
 
 import styles from './IngredientSectionsEditor.module.css';
 
 interface IngredientSectionsEditorProps {
-  ingredientSections: IngredientSections[];
-  setIngredientSections: Dispatch<SetStateAction<IngredientSections[]>>;
+  ingredientSections: IngredientSectionsEditable[];
+  setIngredientSections: Dispatch<SetStateAction<IngredientSectionsEditable[]>>;
 }
 
 export default function IngredientSectionsEditor({
@@ -31,6 +31,7 @@ export default function IngredientSectionsEditor({
                   quantity: '',
                   id: crypto.randomUUID(),
                   section: section.title,
+                  ingredientId: null,
                 },
               ],
             }
@@ -59,6 +60,7 @@ export default function IngredientSectionsEditor({
             quantity: '',
             id: crypto.randomUUID(),
             section: '',
+            ingredientId: null,
           },
         ],
       },

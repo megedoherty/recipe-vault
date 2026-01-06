@@ -11,26 +11,28 @@ import InstructionsSectionsEditor from '@/components/organisms/InstructionsSecti
 import { updateRecipe } from '@/lib/actions/recipes';
 import {
   Category,
-  IngredientSections,
+  EditableRecipe,
+  IngredientSectionsEditable,
   InstructionSection,
-  Recipe,
 } from '@/types';
 
 import styles from './UpdateRecipeForm.module.css';
 
 interface UpdateRecipeFormComponentProps {
-  recipe: Recipe;
-  ingredientSections: IngredientSections[];
+  recipeId: string;
+  recipe: EditableRecipe;
+  ingredientSections: IngredientSectionsEditable[];
   categories: Category[];
 }
 
 export default function UpdateRecipeForm({
+  recipeId,
   recipe,
   ingredientSections,
   categories,
 }: UpdateRecipeFormComponentProps) {
   const [formIngredientSections, setFormIngredientSections] =
-    useState<IngredientSections[]>(ingredientSections);
+    useState<IngredientSectionsEditable[]>(ingredientSections);
   const [formInstructionSections, setFormInstructionSections] = useState<
     InstructionSection[]
   >(recipe.instructions);
@@ -38,7 +40,7 @@ export default function UpdateRecipeForm({
   const [state, formAction, isPending] = useActionState(
     updateRecipe.bind(
       null,
-      recipe.id,
+      recipeId,
       formIngredientSections,
       formInstructionSections,
     ),
@@ -81,7 +83,7 @@ export default function UpdateRecipeForm({
       <section className={styles.sectionContainer}>
         <h2>Organization</h2>
         <CategorySelect
-          defaultValue={recipe.category?.id.toString() ?? ''}
+          defaultValue={recipe.categoryId?.toString() ?? ''}
           categories={categories}
           showEmptyOption
         />

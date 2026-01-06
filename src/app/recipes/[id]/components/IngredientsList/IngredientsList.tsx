@@ -1,10 +1,10 @@
 import Checkbox from '@/components/atoms/Checkbox/Checkbox';
-import { EditableIngredient } from '@/types';
+import { IngredientDisplay } from '@/types';
 
 import styles from './IngredientsList.module.css';
 
 interface IngredientsListProps {
-  ingredients: EditableIngredient[];
+  ingredients: IngredientDisplay[];
 }
 
 export default function IngredientsList({ ingredients }: IngredientsListProps) {

@@ -1,10 +1,10 @@
-import { EditableIngredient } from '@/types';
+import { IngredientDisplay } from '@/types';
 
 import styles from './StepIngredients.module.css';
 
 interface StepIngredientsProps {
   ingredientIds: string[] | undefined;
-  ingredients: Record<string, EditableIngredient>;
+  ingredients: Record<string, IngredientDisplay>;
 }
 
 export default function StepIngredients({

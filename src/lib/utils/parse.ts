@@ -1,6 +1,6 @@
 import {
   EditableIngredient,
-  IngredientSections,
+  IngredientSectionsEditable,
   InstructionSection,
 } from '@/types';
 
@@ -133,11 +133,11 @@ function parseIngredientLine(line: string): ParsedIngredient {
 
 export function parseIngredients(
   text: string | undefined,
-): IngredientSections[] {
+): IngredientSectionsEditable[] {
   if (!text) return [];
 
   const lines = text.split(/\r?\n/).filter(Boolean);
-  const sections = lines.reduce((acc: IngredientSections[], line) => {
+  const sections = lines.reduce((acc: IngredientSectionsEditable[], line) => {
     // Check if this line is a section header (ends with colon)
     if (line.trim().endsWith(':')) {
       const sectionName = line.replace(':', '').trim();
@@ -160,6 +160,7 @@ export function parseIngredients(
         quantity: parsed.quantity,
         id: crypto.randomUUID(),
         section: null,
+        ingredientId: null, // TODO: try to guess the ingredient id
       });
     }
 

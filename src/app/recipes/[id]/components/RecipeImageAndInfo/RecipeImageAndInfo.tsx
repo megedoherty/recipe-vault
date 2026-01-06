@@ -1,11 +1,9 @@
 import Image from 'next/image';
 
-import { Category } from '@/types';
-
 import styles from './RecipeImageAndInfo.module.css';
 
 interface RecipeImageAndInfoProps {
-  category: Category | undefined;
+  category: string | null;
   imageUrl: string | null;
   name: string;
 }
@@ -22,7 +20,7 @@ export default function RecipeImageAndInfo({
           {category && (
             <div className={styles.infoItem}>
               <dt>Category:</dt>
-              <dd>{category.name}</dd>
+              <dd>{category}</dd>
             </div>
           )}
         </dl>

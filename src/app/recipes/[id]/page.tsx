@@ -1,8 +1,8 @@
 import { Metadata } from 'next';
 
 import {
-  getRecipe,
-  getRecipeIngredients,
+  getRecipeForDisplay,
+  getRecipeIngredientsForDisplay,
 } from '@/lib/supabase/queries/recipes';
 
 import IngredientsList from './components/IngredientsList/IngredientsList';
@@ -15,8 +15,8 @@ export default async function RecipePage({
   params,
 }: PageProps<'/recipes/[id]'>) {
   const { id } = await params;
-  const recipe = await getRecipe(id);
-  const ingredientSections = await getRecipeIngredients(id);
+  const recipe = await getRecipeForDisplay(id);
+  const ingredientSections = await getRecipeIngredientsForDisplay(id);
 
   const ingredients = ingredientSections.flatMap(
     (section) => section.ingredients,
@@ -68,7 +68,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const recipe = await getRecipe(id);
+  const recipe = await getRecipeForDisplay(id);
 
   return {
     title: `${recipe?.name} | Recipe Vault`,
