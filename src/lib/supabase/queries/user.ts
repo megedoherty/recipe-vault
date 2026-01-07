@@ -8,3 +8,9 @@ export async function getUser(): Promise<User | null> {
 
   return data ? data.user : null;
 }
+
+export async function isUserLoggedIn(): Promise<boolean> {
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getClaims();
+  return !!data?.claims;
+}

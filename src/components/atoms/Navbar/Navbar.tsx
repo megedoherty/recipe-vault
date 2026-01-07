@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import { getUser } from '@/lib/supabase/queries/user';
+import { isUserLoggedIn } from '@/lib/supabase/queries/user';
 
 import styles from './Navbar.module.css';
 
@@ -64,8 +64,7 @@ const NavbarLink = ({
 };
 
 export default async function Navbar() {
-  const user = await getUser();
-  const isLoggedIn = !!user;
+  const isLoggedIn = await isUserLoggedIn();
 
   return (
     <nav className={styles.navbar}>

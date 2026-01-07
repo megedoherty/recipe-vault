@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { redirect } from 'next/navigation';
 
 import { getCategories } from '@/lib/supabase/queries/categories';
 import { getIngredientCatalogForRecipeEdit } from '@/lib/supabase/queries/ingredientCatalog';
@@ -6,6 +7,7 @@ import {
   getRecipeForEdit,
   getRecipeIngredientsForEdit,
 } from '@/lib/supabase/queries/recipes';
+import { isUserLoggedIn } from '@/lib/supabase/queries/user';
 
 import UpdateRecipeForm from './components/UpdateRecipeForm/UpdateRecipeForm';
 import styles from './page.module.css';
@@ -18,6 +20,11 @@ export default async function EditRecipePage({
   const ingredientSections = await getRecipeIngredientsForEdit(id);
   const categories = await getCategories();
   const ingredientCatalog = await getIngredientCatalogForRecipeEdit();
+  const isLoggedIn = await isUserLoggedIn();
+
+  if (!isLoggedIn) {
+    redirect('/auth/login');
+  }
 
   if (recipe === null) {
     return <div>Recipe not found</div>;

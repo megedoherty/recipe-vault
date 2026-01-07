@@ -4,6 +4,7 @@ import {
   getRecipeForDisplay,
   getRecipeIngredientsForDisplay,
 } from '@/lib/supabase/queries/recipes';
+import { isUserLoggedIn } from '@/lib/supabase/queries/user';
 
 import IngredientsList from './components/IngredientsList/IngredientsList';
 import InstructionsSection from './components/InstructionsSection/InstructionsSection';
@@ -17,6 +18,7 @@ export default async function RecipePage({
   const { id } = await params;
   const recipe = await getRecipeForDisplay(id);
   const ingredientSections = await getRecipeIngredientsForDisplay(id);
+  const isLoggedIn = await isUserLoggedIn();
 
   const ingredients = ingredientSections.flatMap(
     (section) => section.ingredients,
@@ -39,6 +41,7 @@ export default async function RecipePage({
         sourceUrl={sourceUrl}
         made={made}
         rating={rating}
+        isLoggedIn={isLoggedIn}
       />
       <RecipeImageAndInfo
         category={recipe.category}

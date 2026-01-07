@@ -12,6 +12,7 @@ interface RecipeHeaderProps {
   sourceUrl: string | null;
   made: boolean;
   rating: number | null;
+  isLoggedIn: boolean;
 }
 
 export default function RecipeHeader({
@@ -20,21 +21,24 @@ export default function RecipeHeader({
   sourceUrl,
   made,
   rating,
+  isLoggedIn,
 }: RecipeHeaderProps) {
   return (
     <div className={styles.container}>
       <header className={styles.header}>
         <h1>{name} Recipe</h1>
-        <div className={styles.headerButtons}>
-          <Button
-            href={`/recipes/${recipeId}/edit`}
-            aria-label="Edit recipe"
-            iconOnly
-          >
-            <EditIcon />
-          </Button>
-          <DeleteButton recipeId={recipeId} />
-        </div>
+        {isLoggedIn && (
+          <div className={styles.headerButtons}>
+            <Button
+              href={`/recipes/${recipeId}/edit`}
+              aria-label="Edit recipe"
+              iconOnly
+            >
+              <EditIcon />
+            </Button>
+            <DeleteButton recipeId={recipeId} />
+          </div>
+        )}
       </header>
       {sourceUrl && (
         <a

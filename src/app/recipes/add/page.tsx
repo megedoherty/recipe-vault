@@ -1,5 +1,8 @@
+import { redirect } from 'next/navigation';
+
 import { getCategories } from '@/lib/supabase/queries/categories';
 import { getIngredientCatalogForRecipeEdit } from '@/lib/supabase/queries/ingredientCatalog';
+import { isUserLoggedIn } from '@/lib/supabase/queries/user';
 
 import CreateRecipeForm from './components/CreateRecipeForm/CreateRecipeForm';
 import styles from './page.module.css';
@@ -7,6 +10,11 @@ import styles from './page.module.css';
 export default async function AddRecipePage() {
   const categories = await getCategories();
   const ingredientCatalog = await getIngredientCatalogForRecipeEdit();
+  const isLoggedIn = await isUserLoggedIn();
+
+  if (!isLoggedIn) {
+    redirect('/auth/login');
+  }
 
   return (
     <div className={styles.page}>
