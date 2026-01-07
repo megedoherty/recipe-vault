@@ -42,7 +42,10 @@ export default function CreateRecipeForm({
   );
 
   const onProcessIngredients = (ingredientsInput: string) => {
-    const parsedSections = parseIngredients(ingredientsInput);
+    const parsedSections = parseIngredients(
+      ingredientsInput,
+      ingredientCatalog,
+    );
     setIngredientSections(parsedSections);
   };
 

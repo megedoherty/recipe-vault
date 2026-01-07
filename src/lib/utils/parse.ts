@@ -1,5 +1,6 @@
 import {
   EditableIngredient,
+  IngredientCatalogEntryForRecipeEdit,
   IngredientSectionsEditable,
   InstructionSection,
 } from '@/types';
@@ -131,12 +132,113 @@ function parseIngredientLine(line: string): ParsedIngredient {
   return { name: line, quantity: null };
 }
 
+const specialCaseMappings: Array<{
+  match: (name: string) => boolean;
+  catalogName: string;
+}> = [
+  {
+    match: (n) =>
+      n.includes('egg') && !n.includes('yolk') && !n.includes('white'),
+    catalogName: 'whole egg',
+  },
+  {
+    match: (n) => n.startsWith('salt') || n.includes('sea salt'),
+    catalogName: 'table salt',
+  },
+  {
+    match: (n) => n.startsWith('vinegar'),
+    catalogName: 'white vinegar',
+  },
+  {
+    match: (n) =>
+      n.startsWith('confectioners’ sugar') ||
+      n.startsWith("confections' sugar"),
+    catalogName: 'powdered sugar',
+  },
+  {
+    match: (n) => n.startsWith('corn syrup'),
+    catalogName: 'light corn syrup',
+  },
+  {
+    match: (n) => n.includes('graham cracker crumbs'),
+    catalogName: 'graham crackers',
+  },
+  {
+    match: (n) => n.includes('cinnamon'),
+    catalogName: 'ground cinnamon',
+  },
+  {
+    match: (n) => n.includes('canola oil'),
+    catalogName: 'vegetable oil',
+  },
+  {
+    match: (n) => n.includes('process cocoa powder'),
+    catalogName: 'dutch processed cocoa powder',
+  },
+  {
+    match: (n) => n.includes('unsalted butter') || n.startsWith('butter'),
+    catalogName: 'unsalted butter',
+  },
+];
+
+function findClosestIngredient(
+  name: string,
+  ingredientCatalog: IngredientCatalogEntryForRecipeEdit[],
+): string | null {
+  // Check some special cases first
+  let lowercaseName = name.toLowerCase();
+  // Handle some common cases
+  lowercaseName = lowercaseName.replace(
+    'all purpose flour',
+    'all-purpose flour',
+  );
+
+  // Handle special cases
+  // Check special cases
+  for (const { match, catalogName } of specialCaseMappings) {
+    if (match(lowercaseName)) {
+      const found = ingredientCatalog.find(
+        (ingredient) => catalogName === ingredient.name,
+      );
+      if (found) {
+        return found.id;
+      }
+    }
+  }
+
+  // Look for an exact match
+  const splitName = lowercaseName.split(/,\s*|\s+or\s+|\(/)[0].trim();
+  const exactMatch = ingredientCatalog.find(
+    (ingredient) => ingredient.name.toLowerCase() === splitName,
+  );
+  if (exactMatch) {
+    return exactMatch.id;
+  }
+
+  // Look for a partial match
+  return (
+    ingredientCatalog.find((ingredient) =>
+      lowercaseName.includes(ingredient.name.toLowerCase()),
+    )?.id ?? null
+  );
+}
+
 export function parseIngredients(
   text: string | undefined,
+  ingredientCatalog: IngredientCatalogEntryForRecipeEdit[],
 ): IngredientSectionsEditable[] {
   if (!text) return [];
 
-  const lines = text.split(/\r?\n/).filter(Boolean);
+  const lowercaseIngredientCatalog = ingredientCatalog.map((x) => ({
+    ...x,
+    name: x.name.toLowerCase(),
+  }));
+
+  const lines = text
+    .split(/\r?\n/)
+    .filter(Boolean)
+    .map((line) => line.replace(/^[\s▢•\-\*\+]\s*/, '')); // Remove special chars from start
+
   const sections = lines.reduce((acc: IngredientSectionsEditable[], line) => {
     // Check if this line is a section header (ends with colon)
     if (line.trim().endsWith(':')) {
@@ -160,7 +262,10 @@ export function parseIngredients(
         quantity: parsed.quantity,
         id: crypto.randomUUID(),
         section: null,
-        ingredientId: null, // TODO: try to guess the ingredient id
+        ingredientId: findClosestIngredient(
+          parsed.name,
+          lowercaseIngredientCatalog,
+        ),
       });
     }
 
