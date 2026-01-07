@@ -28,13 +28,19 @@ export interface Step {
 export type RecipeDb = Database['public']['Tables']['recipe']['Row'];
 export type RecipeDisplayDb = Pick<
   RecipeDb,
-  'name' | 'image_url' | 'source_url' | 'rating' | 'made' | 'instructions'
+  | 'name'
+  | 'image_url'
+  | 'source_url'
+  | 'rating'
+  | 'made'
+  | 'instructions'
+  | 'instruction_section_order'
 > & {
   category: { name: string } | null;
 };
 export type RecipeDisplay = Omit<
   KeysToCamelCase<RecipeDisplayDb>,
-  'instructions' | 'category'
+  'instructions' | 'category' | 'instructionSectionOrder'
 > & {
   instructions: InstructionSection[];
   category: string | null;
@@ -46,11 +52,17 @@ export type RecipeSummary = Pick<
 
 export type EditableRecipeDb = Pick<
   RecipeDb,
-  'name' | 'image_url' | 'source_url' | 'instructions' | 'category_id'
+  | 'name'
+  | 'image_url'
+  | 'source_url'
+  | 'instructions'
+  | 'category_id'
+  | 'ingredient_section_order'
+  | 'instruction_section_order'
 >;
 export type EditableRecipe = Omit<
   KeysToCamelCase<EditableRecipeDb>,
-  'instructions'
+  'instructions' | 'ingredientSectionOrder' | 'instructionSectionOrder'
 > & {
   instructions: InstructionSection[];
 };

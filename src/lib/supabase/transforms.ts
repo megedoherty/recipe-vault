@@ -11,6 +11,9 @@ import {
   Step,
 } from '@/types';
 
+import { sortByOrder } from '../utils/sort';
+import { Json } from './types';
+
 function isValidInstructionSection(
   data: unknown,
 ): data is InstructionSection[] {
@@ -40,15 +43,38 @@ function isValidStepItem(data: unknown): data is Step {
   );
 }
 
+function isValidInstructionSectionOrder(data: unknown): data is string[] {
+  return Array.isArray(data) && data.every((item) => typeof item === 'string');
+}
+
+function isValidIngredientSectionOrder(data: unknown): data is string[] {
+  return Array.isArray(data) && data.every((item) => typeof item === 'string');
+}
+
 export function transformRecipe(recipe: RecipeDisplayDb): RecipeDisplay {
+  const rawInstructions = isValidInstructionSection(recipe.instructions)
+    ? (recipe.instructions as InstructionSection[])
+    : [];
+  const rawInstructionSectionOrder = isValidInstructionSectionOrder(
+    recipe.instruction_section_order,
+  )
+    ? (recipe.instruction_section_order as string[])
+    : [];
+
+  // If we have a stored instruction section order, use it to reorder sections
+  const instructions: InstructionSection[] =
+    rawInstructionSectionOrder.length > 0
+      ? rawInstructions.sort(
+          sortByOrder(rawInstructionSectionOrder, (section) => section.id),
+        )
+      : rawInstructions;
+
   return {
     name: recipe.name,
     made: recipe.made,
     imageUrl: recipe.image_url,
     sourceUrl: recipe.source_url,
-    instructions: isValidInstructionSection(recipe.instructions)
-      ? recipe.instructions
-      : [],
+    instructions,
     category: recipe.category?.name ?? null,
     rating: recipe.rating,
   };
@@ -57,23 +83,42 @@ export function transformRecipe(recipe: RecipeDisplayDb): RecipeDisplay {
 export function transformRecipeForEdit(
   recipe: EditableRecipeDb,
 ): EditableRecipe {
+  const rawInstructions = isValidInstructionSection(recipe.instructions)
+    ? (recipe.instructions as InstructionSection[])
+    : [];
+  const rawInstructionSectionOrder = isValidInstructionSectionOrder(
+    recipe.instruction_section_order,
+  )
+    ? (recipe.instruction_section_order as string[])
+    : [];
+
+  // If we have a stored instruction section order, use it to reorder sections
+  const instructions: InstructionSection[] =
+    rawInstructionSectionOrder.length > 0
+      ? rawInstructions.sort(
+          sortByOrder(rawInstructionSectionOrder, (section) => section.id),
+        )
+      : rawInstructions;
+
   return {
     name: recipe.name,
     imageUrl: recipe.image_url,
     sourceUrl: recipe.source_url,
-    instructions: isValidInstructionSection(recipe.instructions)
-      ? recipe.instructions
-      : [],
+    instructions,
     categoryId: recipe.category_id,
   };
 }
 
 export function transformIngredientsForDisplay(
   ingredients: IngredientDisplayDb[],
+  sectionOrder: Json | null = null,
 ): IngredientSections[] {
+  const validSectionOrder = isValidIngredientSectionOrder(sectionOrder)
+    ? sectionOrder
+    : null;
   const sortedIngredients = ingredients.sort((a, b) => a.position - b.position);
 
-  return sortedIngredients.reduce(
+  const sections = sortedIngredients.reduce(
     (acc: IngredientSections[], ingredient: IngredientDisplayDb) => {
       const section = acc.find(
         (section) => section.title === ingredient.section,
@@ -97,14 +142,27 @@ export function transformIngredientsForDisplay(
     },
     [],
   );
+
+  // Sort by sectionOrder if available
+  if (validSectionOrder && validSectionOrder.length > 0) {
+    return sections.sort(
+      sortByOrder(validSectionOrder, (section) => section.title),
+    );
+  }
+
+  return sections;
 }
 
 export function transformIngredientsForEdit(
   ingredients: EditableIngredientDb[],
+  sectionOrder: Json | null = null,
 ): IngredientSectionsEditable[] {
+  const validSectionOrder = isValidIngredientSectionOrder(sectionOrder)
+    ? sectionOrder
+    : null;
   const sortedIngredients = ingredients.sort((a, b) => a.position - b.position);
 
-  return sortedIngredients.reduce(
+  const sections = sortedIngredients.reduce(
     (acc: IngredientSectionsEditable[], ingredient: EditableIngredientDb) => {
       const section = acc.find(
         (section) => section.title === ingredient.section,
@@ -127,8 +185,18 @@ export function transformIngredientsForEdit(
           ingredients: [ingredientToAdd],
         });
       }
+
       return acc;
     },
     [],
   );
+
+  // Sort by sectionOrder if available
+  if (validSectionOrder && validSectionOrder.length > 0) {
+    return sections.sort(
+      sortByOrder(validSectionOrder, (section) => section.title),
+    );
+  }
+
+  return sections;
 }

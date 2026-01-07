@@ -21,7 +21,7 @@ export async function getRecipeForDisplay(
   const { data } = await supabase
     .from('recipe')
     .select(
-      'image_url, instructions, name, made, rating, source_url, category(name)',
+      'image_url, instructions, name, made, rating, source_url, category(name), instruction_section_order',
     )
     .eq('id', id)
     .single();
@@ -35,7 +35,9 @@ export async function getRecipeForEdit(
   const supabase = await createClient();
   const { data } = await supabase
     .from('recipe')
-    .select('name, image_url, source_url, instructions, category_id')
+    .select(
+      'name, image_url, source_url, instructions, category_id, ingredient_section_order, instruction_section_order',
+    )
     .eq('id', id)
     .single();
   return data ? transformRecipeForEdit(data) : null;
@@ -45,22 +47,49 @@ export async function getRecipeIngredientsForDisplay(
   id: string,
 ): Promise<IngredientSections[]> {
   const supabase = await createClient();
-  const { data } = await supabase
+
+  // Get ingredients
+  const { data: ingredients } = await supabase
     .from('ingredient')
     .select('id, name, quantity, position, section')
     .eq('recipe_id', id);
-  return data ? transformIngredientsForDisplay(data) : [];
+
+  // Get section order from recipe
+  const { data: recipe } = await supabase
+    .from('recipe')
+    .select('ingredient_section_order')
+    .eq('id', id)
+    .single();
+
+  return ingredients
+    ? transformIngredientsForDisplay(
+        ingredients,
+        recipe?.ingredient_section_order,
+      )
+    : [];
 }
 
 export async function getRecipeIngredientsForEdit(
   id: string,
 ): Promise<IngredientSectionsEditable[]> {
   const supabase = await createClient();
-  const { data } = await supabase
+
+  // Get ingredients
+  const { data: ingredients } = await supabase
     .from('ingredient')
     .select('id, name, quantity, position, section, ingredient_id')
     .eq('recipe_id', id);
-  return data ? transformIngredientsForEdit(data) : [];
+
+  // Get section order from recipe
+  const { data: recipe } = await supabase
+    .from('recipe')
+    .select('ingredient_section_order')
+    .eq('id', id)
+    .single();
+
+  return ingredients
+    ? transformIngredientsForEdit(ingredients, recipe?.ingredient_section_order)
+    : [];
 }
 
 interface GetAllRecipesParams {

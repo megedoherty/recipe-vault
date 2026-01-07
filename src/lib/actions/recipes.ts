@@ -34,6 +34,28 @@ const cleanInstructionSections = (
 };
 
 /**
+ * Removes deleted ingredient IDs from all steps in instruction sections.
+ */
+const removeDeletedIngredientIds = (
+  instructionSections: InstructionSection[],
+  deletedIngredientIds: string[],
+): InstructionSection[] => {
+  if (deletedIngredientIds.length === 0) {
+    return instructionSections;
+  }
+
+  return instructionSections.map((section) => ({
+    ...section,
+    steps: section.steps.map((step) => ({
+      ...step,
+      ingredientIds: step.ingredientIds?.filter(
+        (id) => !deletedIngredientIds.includes(id),
+      ),
+    })),
+  }));
+};
+
+/**
  * Creates the ingredients insert object for the recipe based on the FE sections object.
  */
 const createIngredientsInsert = (
@@ -81,6 +103,12 @@ export async function addRecipe(
     return { success: false, error: 'User not found' };
   }
 
+  // Extract section order
+  const instructionSectionOrder = instructionSections.map(
+    (section) => section.id,
+  );
+  const ingredientSectionOrder = ingredientSections.map((s) => s.title);
+
   const { data, error } = await supabase
     .from('recipe')
     .insert({
@@ -88,6 +116,8 @@ export async function addRecipe(
       name: recipeName,
       category_id,
       instructions: cleanInstructionSections(instructionSections),
+      ingredient_section_order: ingredientSectionOrder,
+      instruction_section_order: instructionSectionOrder,
     })
     .select('id')
     .single();
@@ -140,15 +170,55 @@ export async function updateRecipe(
   const source_url = rawFormData.sourceUrl as string;
   const category_id = Number(rawFormData.categoryId);
 
+  // Extract section order
+  const instructionSectionOrder = instructionSections.map(
+    (section) => section.id,
+  );
+  const ingredientSectionOrder = ingredientSections
+    .map((s) => s.title)
+    .filter((title) => title !== null);
+
   const supabase = await createClient();
+
+  // Check if we need to delete any ingredients BEFORE updating the recipe
+  // so we can remove their IDs from instruction steps
+  const { data: currentIngredientIds } = await supabase
+    .from('ingredient')
+    .select('id')
+    .eq('recipe_id', recipeId);
+
+  const ingredients: IngredientDb[] = createIngredientsInsert(
+    ingredientSections,
+    recipeId,
+  );
+
+  // Identify ingredients to delete
+  const ingredientsToDelete = currentIngredientIds
+    ? currentIngredientIds.filter(
+        (ingredient) => !ingredients.some((i) => i.id === ingredient.id),
+      )
+    : [];
+
+  // Remove deleted ingredient IDs from all instruction steps
+  const cleanedInstructionSections =
+    ingredientsToDelete.length > 0
+      ? removeDeletedIngredientIds(
+          instructionSections,
+          ingredientsToDelete.map((i) => i.id),
+        )
+      : instructionSections;
+
+  // Update recipe with cleaned instruction sections
   const { data: recipeData, error } = await supabase
     .from('recipe')
     .update({
       name,
-      instructions: cleanInstructionSections(instructionSections),
+      instructions: cleanInstructionSections(cleanedInstructionSections),
       image_url,
       source_url,
       category_id,
+      ingredient_section_order: ingredientSectionOrder,
+      instruction_section_order: instructionSectionOrder,
     })
     .eq('id', recipeId)
     .select()
@@ -159,35 +229,19 @@ export async function updateRecipe(
     return { success: false, error: error.message };
   }
 
-  // Check if we need to delete any ingredients
-  const { data: currentIngredientIds } = await supabase
-    .from('ingredient')
-    .select('id')
-    .eq('recipe_id', recipeId);
+  // Delete ingredients from database
+  if (ingredientsToDelete.length > 0) {
+    const { error: deleteError } = await supabase
+      .from('ingredient')
+      .delete()
+      .in(
+        'id',
+        ingredientsToDelete.map((i) => i.id),
+      );
 
-  const ingredients: IngredientDb[] = createIngredientsInsert(
-    ingredientSections,
-    recipeData.id,
-  );
-
-  if (currentIngredientIds) {
-    const ingredientsToDelete = currentIngredientIds.filter(
-      (ingredient) => !ingredients.some((i) => i.id === ingredient.id),
-    );
-
-    if (ingredientsToDelete.length > 0) {
-      const { error: deleteError } = await supabase
-        .from('ingredient')
-        .delete()
-        .in(
-          'id',
-          ingredientsToDelete.map((i) => i.id),
-        );
-
-      if (deleteError) {
-        console.error(deleteError);
-        return { success: false, error: deleteError.message };
-      }
+    if (deleteError) {
+      console.error(deleteError);
+      return { success: false, error: deleteError.message };
     }
   }
 

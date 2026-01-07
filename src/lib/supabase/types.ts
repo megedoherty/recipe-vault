@@ -134,6 +134,8 @@ export type Database = {
           created_at: string;
           id: string;
           image_url: string | null;
+          ingredient_section_order: Json | null;
+          instruction_section_order: Json | null;
           instructions: Json | null;
           made: boolean;
           name: string;
@@ -147,6 +149,8 @@ export type Database = {
           created_at?: string;
           id?: string;
           image_url?: string | null;
+          ingredient_section_order?: Json | null;
+          instruction_section_order?: Json | null;
           instructions?: Json | null;
           made?: boolean;
           name: string;
@@ -160,6 +164,8 @@ export type Database = {
           created_at?: string;
           id?: string;
           image_url?: string | null;
+          ingredient_section_order?: Json | null;
+          instruction_section_order?: Json | null;
           instructions?: Json | null;
           made?: boolean;
           name?: string;
