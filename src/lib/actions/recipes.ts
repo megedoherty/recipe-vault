@@ -48,7 +48,9 @@ const createIngredientsInsert = (
         quantity: ingredient.quantity,
         section: section.title,
         recipe_id: recipeId,
-        ingredient_id: ingredient.ingredientId,
+        ingredient_id: ingredient.ingredientId
+          ? Number(ingredient.ingredientId)
+          : null,
         position: index,
       })),
     )

@@ -149,7 +149,7 @@ export default function InstructionListEditor({
                         <SelectableSearchPopover<EditableIngredient>
                           popoverId="ingredient-picker-popover"
                           popoverAriaLabel="Ingredient picker"
-                          searchPlaceholder="Ingredient name or quantity"
+                          searchPlaceholder="Ingredient name"
                           searchLabel="Search ingredients"
                           searchId="ingredient-picker-search"
                           buttonText="Add ingredients"

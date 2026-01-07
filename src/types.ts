@@ -76,11 +76,10 @@ export type EditableIngredientDb = Pick<
   'id' | 'name' | 'quantity' | 'position' | 'section' | 'ingredient_id'
 >;
 export type EditableIngredient = KeysToCamelCase<
-  Pick<
-    EditableIngredientDb,
-    'id' | 'name' | 'quantity' | 'section' | 'ingredient_id'
-  >
->;
+  Pick<EditableIngredientDb, 'id' | 'name' | 'quantity' | 'section'>
+> & {
+  ingredientId: string | null;
+};
 
 // The type used when ingredients are grouped on the FE. Id is used for the key in the UI.
 type IngredientSectionBase<T> = {
@@ -98,4 +97,13 @@ export type Category = Database['public']['Tables']['category']['Row'];
 // Ingredient Catalog types
 export type IngredientCatalogDb =
   Database['public']['Tables']['ingredient_catalog']['Row'];
-export type IngredientCatalogEntry = KeysToCamelCase<IngredientCatalogDb>;
+export type IngredientCatalogEntryForRecipeEditDb = Pick<
+  IngredientCatalogDb,
+  'id' | 'name' | 'category'
+>;
+export type IngredientCatalogEntryForRecipeEdit = Pick<
+  KeysToCamelCase<IngredientCatalogEntryForRecipeEditDb>,
+  'name' | 'category'
+> & {
+  id: string;
+};

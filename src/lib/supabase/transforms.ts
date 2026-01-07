@@ -115,7 +115,7 @@ export function transformIngredientsForEdit(
         name: ingredient.name,
         quantity: ingredient.quantity,
         section: ingredient.section,
-        ingredientId: ingredient.ingredient_id,
+        ingredientId: ingredient.ingredient_id?.toString() ?? null,
       };
 
       if (section) {

@@ -12,7 +12,7 @@ import { addRecipe } from '@/lib/actions/recipes';
 import { parseIngredients, parseInstructions } from '@/lib/utils/parse';
 import {
   Category,
-  IngredientCatalogEntry,
+  IngredientCatalogEntryForRecipeEdit,
   IngredientSectionsEditable,
   InstructionSection,
 } from '@/types';
@@ -22,7 +22,7 @@ import styles from './CreateRecipeForm.module.css';
 
 interface CreateRecipeFormComponentProps {
   categories: Category[];
-  ingredientCatalog: IngredientCatalogEntry[];
+  ingredientCatalog: IngredientCatalogEntryForRecipeEdit[];
 }
 
 export default function CreateRecipeForm({

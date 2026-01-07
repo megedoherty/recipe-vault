@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-import Button from '@/components/atoms/Button/Button';
+import Button, { ButtonProps } from '@/components/atoms/Button/Button';
 import Checkbox from '@/components/atoms/Checkbox/Checkbox';
 import TextInput from '@/components/atoms/TextInput/TextInput';
 
@@ -21,6 +21,8 @@ interface SelectableSearchPopoverProps<T extends SearchItem> {
   searchId: string;
   // open button
   buttonText: string;
+  buttonClassName?: string;
+  buttonSize?: ButtonProps['size'];
   // no results text
   noResultsText: string;
   // items
@@ -30,7 +32,7 @@ interface SelectableSearchPopoverProps<T extends SearchItem> {
   getItemChecked: (itemId: string) => boolean;
   onToggleItem: (itemId: string) => void;
   // unique props
-  canSelectMultiple: boolean;
+  canSelectMultiple?: boolean;
 }
 
 export default function SelectableSearchPopover<T extends SearchItem>({
@@ -40,13 +42,15 @@ export default function SelectableSearchPopover<T extends SearchItem>({
   searchLabel,
   searchId,
   buttonText,
+  buttonSize = 'small',
+  buttonClassName,
   noResultsText,
   items,
   groupItems,
   getItemLabel,
   getItemChecked,
   onToggleItem,
-  canSelectMultiple,
+  canSelectMultiple = false,
 }: SelectableSearchPopoverProps<T>) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -94,8 +98,9 @@ export default function SelectableSearchPopover<T extends SearchItem>({
 
   const groupedItems = groupItems(filteredItems);
 
-  const onToggleItemSelection = (itemId: string) => {
-    if (!canSelectMultiple) {
+  const onToggleItemSelection = (itemId: string, isChecked: boolean) => {
+    // Close if its single select and the item is being checked
+    if (!canSelectMultiple && isChecked) {
       setIsOpen(false);
     }
     onToggleItem(itemId);
@@ -105,11 +110,12 @@ export default function SelectableSearchPopover<T extends SearchItem>({
     <div className={styles.container} ref={containerRef}>
       <Button
         variant="secondary"
-        size="small"
+        size={buttonSize}
         onClick={() => setIsOpen((prev) => !prev)}
         aria-haspopup="dialog"
         aria-expanded={isOpen}
         aria-controls={popoverId}
+        className={buttonClassName}
       >
         {buttonText}
       </Button>
@@ -158,7 +164,9 @@ export default function SelectableSearchPopover<T extends SearchItem>({
                           label={getItemLabel(item)}
                           checkboxSize="small"
                           labelSize="small"
-                          onChange={() => onToggleItemSelection(item.id)}
+                          onChange={(e) =>
+                            onToggleItemSelection(item.id, e.target.checked)
+                          }
                           id={item.id}
                           checked={getItemChecked(item.id)}
                           checkboxClassName={styles.checkbox}

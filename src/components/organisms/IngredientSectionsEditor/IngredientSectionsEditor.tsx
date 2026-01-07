@@ -5,14 +5,17 @@ import PlusIcon from '@/components/atoms/icons/PlusIcon';
 import TrashIcon from '@/components/atoms/icons/TrashIcon';
 import TextInput from '@/components/atoms/TextInput/TextInput';
 import IngredientListEditor from '@/components/molecules/IngredientListEditor/IngredientListEditor';
-import { IngredientCatalogEntry, IngredientSectionsEditable } from '@/types';
+import {
+  IngredientCatalogEntryForRecipeEdit,
+  IngredientSectionsEditable,
+} from '@/types';
 
 import styles from './IngredientSectionsEditor.module.css';
 
 interface IngredientSectionsEditorProps {
   ingredientSections: IngredientSectionsEditable[];
   setIngredientSections: Dispatch<SetStateAction<IngredientSectionsEditable[]>>;
-  ingredientCatalog: IngredientCatalogEntry[];
+  ingredientCatalog: IngredientCatalogEntryForRecipeEdit[];
 }
 
 export default function IngredientSectionsEditor({

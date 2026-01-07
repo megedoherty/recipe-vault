@@ -25,7 +25,7 @@ type ButtonAsLink = AnchorHTMLAttributes<HTMLAnchorElement> & {
 };
 
 type ButtonOrLink = ButtonAsButton | ButtonAsLink;
-type ButtonProps = BaseButtonProps & ButtonOrLink;
+export type ButtonProps = BaseButtonProps & ButtonOrLink;
 
 function isLink(obj: ButtonOrLink): obj is ButtonAsLink {
   return 'href' in obj;

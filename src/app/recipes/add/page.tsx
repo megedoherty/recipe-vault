@@ -1,12 +1,12 @@
 import { getCategories } from '@/lib/supabase/queries/categories';
-import { getIngredientCatalog } from '@/lib/supabase/queries/ingredientCatalog';
+import { getIngredientCatalogForRecipeEdit } from '@/lib/supabase/queries/ingredientCatalog';
 
 import CreateRecipeForm from './components/CreateRecipeForm/CreateRecipeForm';
 import styles from './page.module.css';
 
 export default async function AddRecipePage() {
   const categories = await getCategories();
-  const ingredientCatalog = await getIngredientCatalog();
+  const ingredientCatalog = await getIngredientCatalogForRecipeEdit();
 
   return (
     <div className={styles.page}>

@@ -12,7 +12,7 @@ import { updateRecipe } from '@/lib/actions/recipes';
 import {
   Category,
   EditableRecipe,
-  IngredientCatalogEntry,
+  IngredientCatalogEntryForRecipeEdit,
   IngredientSectionsEditable,
   InstructionSection,
 } from '@/types';
@@ -24,7 +24,7 @@ interface UpdateRecipeFormComponentProps {
   recipe: EditableRecipe;
   ingredientSections: IngredientSectionsEditable[];
   categories: Category[];
-  ingredientCatalog: IngredientCatalogEntry[];
+  ingredientCatalog: IngredientCatalogEntryForRecipeEdit[];
 }
 
 export default function UpdateRecipeForm({

@@ -6,7 +6,16 @@
 
 .ingredient {
   display: grid;
-  grid-template-columns: min-content min-content 1fr min-content min-content;
+  grid-template-columns: min-content min-content 1fr 10rem min-content;
   gap: 0.25rem;
   align-items: center;
+}
+
+.ingredientIdButton {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 100%;
+  text-align: left;
+  display: block;
 }
