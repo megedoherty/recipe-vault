@@ -4,22 +4,22 @@ import {
   Droppable,
   DropResult,
 } from '@hello-pangea/dnd';
-import { Dispatch, SetStateAction } from 'react';
 
 import Button from '@/components/atoms/Button/Button';
 import Chip from '@/components/atoms/Chip/Chip';
 import UpDownArrowIcon from '@/components/atoms/icons/UpDownArrowIcon';
 import XIcon from '@/components/atoms/icons/XIcon';
 import TextInput from '@/components/atoms/TextInput/TextInput';
+import SelectableSearchPopover from '@/components/molecules/SelectableSearchPopover/SelectableSearchPopover';
 import { EditableIngredient, InstructionSection } from '@/types';
 
-import IngredientPicker from '../IngredientPicker/IngredientPicker';
 import styles from './InstructionListEditor.module.css';
 
 interface InstructionListEditorProps {
   sectionId: string;
-  sectionIndex: number;
-  setInstructionSections: Dispatch<SetStateAction<InstructionSection[]>>;
+  setSection: (
+    updater: (section: InstructionSection) => InstructionSection,
+  ) => void;
   section: InstructionSection;
   ingredients: EditableIngredient[];
 }
@@ -32,8 +32,7 @@ const getChipLabel = (ingredient: EditableIngredient | undefined) => {
 
 export default function InstructionListEditor({
   sectionId,
-  sectionIndex,
-  setInstructionSections,
+  setSection,
   section,
   ingredients,
 }: InstructionListEditorProps) {
@@ -44,78 +43,56 @@ export default function InstructionListEditor({
 
     if (source.index === destination.index) return;
 
-    setInstructionSections((prev) =>
-      prev.map((section) => {
-        // Check if this is the section where the drag happened
-        if (section.id === source.droppableId) {
-          const newSteps = [...section.steps];
-          const [movedStep] = newSteps.splice(source.index, 1);
-          newSteps.splice(destination.index, 0, movedStep);
-
-          return {
-            ...section,
-            steps: newSteps,
-          };
-        }
-        return section;
-      }),
-    );
+    setSection((section) => {
+      const newSteps = [...section.steps];
+      const [movedStep] = newSteps.splice(source.index, 1);
+      newSteps.splice(destination.index, 0, movedStep);
+      return {
+        ...section,
+        steps: newSteps,
+      };
+    });
   };
 
   const handleTextChange = (stepIndex: number, value: string) => {
-    setInstructionSections((prev) =>
-      prev.map((section, sIdx) =>
-        sIdx === sectionIndex
-          ? {
-              ...section,
-              steps: section.steps.map((step, iIdx) =>
-                iIdx === stepIndex ? { ...step, text: value } : step,
-              ),
-            }
-          : section,
+    setSection((section) => ({
+      ...section,
+      steps: section.steps.map((step, iIdx) =>
+        iIdx === stepIndex ? { ...step, text: value } : step,
       ),
-    );
+    }));
   };
 
   const handleDeleteStep = (stepIndex: number) => {
-    setInstructionSections((prev) =>
-      prev.map((section, sIdx) =>
-        sIdx === sectionIndex
-          ? {
-              ...section,
-              steps: section.steps.filter((_, i) => i !== stepIndex),
-            }
-          : section,
-      ),
-    );
+    setSection((section) => ({
+      ...section,
+      steps: section.steps.filter((_, i) => i !== stepIndex),
+    }));
   };
 
   const handleToggleIngredient = (stepIndex: number, ingredientId: string) => {
-    setInstructionSections((prev) =>
-      prev.map((section, sIdx) => {
-        if (sIdx !== sectionIndex) {
-          return section;
+    setSection((section) => {
+      const updatedSteps = section.steps.map((step, iIdx) => {
+        if (iIdx !== stepIndex) {
+          return step;
         }
 
-        const modifiedStep = { ...section.steps[stepIndex] };
-        if (modifiedStep.ingredientIds?.includes(ingredientId)) {
-          modifiedStep.ingredientIds = modifiedStep.ingredientIds?.filter(
-            (id) => id !== ingredientId,
-          );
-        } else {
-          modifiedStep.ingredientIds = [
-            ...(modifiedStep.ingredientIds || []),
-            ingredientId,
-          ];
-        }
+        const currentIds = step.ingredientIds || [];
+        const isChecked = currentIds.includes(ingredientId);
+
         return {
-          ...section,
-          steps: section.steps.map((step, iIdx) =>
-            iIdx === stepIndex ? modifiedStep : step,
-          ),
+          ...step,
+          ingredientIds: isChecked
+            ? currentIds.filter((id) => id !== ingredientId)
+            : [...currentIds, ingredientId],
         };
-      }),
-    );
+      });
+
+      return {
+        ...section,
+        steps: updatedSteps,
+      };
+    });
   };
 
   return (
@@ -169,12 +146,36 @@ export default function InstructionListEditor({
                         <p className={styles.linkedIngredientsLabel}>
                           Ingredients used:
                         </p>
-                        <IngredientPicker
-                          allIngredients={ingredients}
-                          selectedIngredientIds={step.ingredientIds || []}
-                          onToggleIngredient={(ingredientId) =>
+                        <SelectableSearchPopover<EditableIngredient>
+                          popoverId="ingredient-picker-popover"
+                          popoverAriaLabel="Ingredient picker"
+                          searchPlaceholder="Ingredient name or quantity"
+                          searchLabel="Search ingredients"
+                          searchId="ingredient-picker-search"
+                          buttonText="Add ingredients"
+                          noResultsText="No ingredients found"
+                          items={ingredients}
+                          groupItems={(items) => {
+                            const grouped = Object.groupBy(
+                              items,
+                              (ingredient) => ingredient.section || '',
+                            );
+
+                            return grouped as Record<
+                              string,
+                              EditableIngredient[]
+                            >;
+                          }}
+                          getItemLabel={(ingredient) =>
+                            `${ingredient.quantity ?? ''} ${ingredient.name}`.trim()
+                          }
+                          getItemChecked={(itemId) =>
+                            step.ingredientIds?.includes(itemId) || false
+                          }
+                          onToggleItem={(ingredientId) =>
                             handleToggleIngredient(stepIndex, ingredientId)
                           }
+                          canSelectMultiple={true}
                         />
                       </div>
                       {step.ingredientIds && step.ingredientIds.length > 0 && (

@@ -12,6 +12,7 @@ import { addRecipe } from '@/lib/actions/recipes';
 import { parseIngredients, parseInstructions } from '@/lib/utils/parse';
 import {
   Category,
+  IngredientCatalogEntry,
   IngredientSectionsEditable,
   InstructionSection,
 } from '@/types';
@@ -21,10 +22,12 @@ import styles from './CreateRecipeForm.module.css';
 
 interface CreateRecipeFormComponentProps {
   categories: Category[];
+  ingredientCatalog: IngredientCatalogEntry[];
 }
 
 export default function CreateRecipeForm({
   categories,
+  ingredientCatalog,
 }: CreateRecipeFormComponentProps) {
   const [ingredientSections, setIngredientSections] = useState<
     IngredientSectionsEditable[]
@@ -74,6 +77,7 @@ export default function CreateRecipeForm({
           <IngredientSectionsEditor
             ingredientSections={ingredientSections}
             setIngredientSections={setIngredientSections}
+            ingredientCatalog={ingredientCatalog}
           />
         }
       />

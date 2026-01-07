@@ -1,10 +1,10 @@
-import { IngredientCatalog, IngredientCatalogDb } from '@/types';
+import { IngredientCatalogDb, IngredientCatalogEntry } from '@/types';
 
 import { createClient } from '../server';
 
 const transformIngredientCatalog = (
   data: IngredientCatalogDb[],
-): IngredientCatalog[] => {
+): IngredientCatalogEntry[] => {
   return data.map((item) => ({
     id: item.id,
     name: item.name,
@@ -13,7 +13,9 @@ const transformIngredientCatalog = (
   }));
 };
 
-export async function getIngredientCatalog(): Promise<IngredientCatalog[]> {
+export async function getIngredientCatalog(): Promise<
+  IngredientCatalogEntry[]
+> {
   const supabase = await createClient();
   const { data } = await supabase.from('ingredient_catalog').select('*');
   return data ? transformIngredientCatalog(data) : [];

@@ -4,7 +4,7 @@ import Button from '@/components/atoms/Button/Button';
 import PlusIcon from '@/components/atoms/icons/PlusIcon';
 import TrashIcon from '@/components/atoms/icons/TrashIcon';
 import TextInput from '@/components/atoms/TextInput/TextInput';
-import InstructionListEditor from '@/components/molecules/InstructionListEditor/InstructionListEditor';
+import InstructionListEditor from '@/components/organisms/InstructionListEditor/InstructionListEditor';
 import { EditableIngredient, InstructionSection } from '@/types';
 
 import styles from './InstructionsSectionsEditor.module.css';
@@ -97,8 +97,13 @@ export default function IngredientSectionsEditor({
               <p>Instructions</p>
               <InstructionListEditor
                 sectionId={section.id}
-                sectionIndex={sectionIndex}
-                setInstructionSections={setInstructionSections}
+                setSection={(updater) => {
+                  setInstructionSections((prev) =>
+                    prev.map((s, idx) =>
+                      idx === sectionIndex ? updater(s) : s,
+                    ),
+                  );
+                }}
                 section={section}
                 ingredients={ingredients}
               />

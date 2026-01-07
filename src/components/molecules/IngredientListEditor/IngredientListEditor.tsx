@@ -9,8 +9,9 @@ import { Dispatch, SetStateAction } from 'react';
 import Button from '@/components/atoms/Button/Button';
 import UpDownArrowIcon from '@/components/atoms/icons/UpDownArrowIcon';
 import XIcon from '@/components/atoms/icons/XIcon';
+import Select from '@/components/atoms/Select/Select';
 import TextInput from '@/components/atoms/TextInput/TextInput';
-import { IngredientSectionsEditable } from '@/types';
+import { IngredientCatalogEntry, IngredientSectionsEditable } from '@/types';
 
 import styles from './IngredientListEditor.module.css';
 
@@ -19,6 +20,7 @@ interface IngredientListEditorProps {
   sectionIndex: number;
   setIngredientSections: Dispatch<SetStateAction<IngredientSectionsEditable[]>>;
   section: IngredientSectionsEditable;
+  ingredientCatalog: IngredientCatalogEntry[];
 }
 
 export default function IngredientListEditor({
@@ -26,6 +28,7 @@ export default function IngredientListEditor({
   sectionIndex,
   setIngredientSections,
   section,
+  ingredientCatalog,
 }: IngredientListEditorProps) {
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) return;
@@ -155,6 +158,17 @@ export default function IngredientListEditor({
                       }
                       hideLabel
                     />
+                    {/* <Select
+                      label="Ingredient Normalized"
+                      name={`section-${section.title}-ingredient-${ingredientIndex}`}
+                      id={`${section.title}-ingredient-${ingredientIndex}`}
+                      options={ingredientCatalog.map((ic) => ({
+                        value: ic.id.toString(),
+                        label: ic.name,
+                      }))}
+                      emptyOption={{ value: '', label: 'Select an ingredient' }}
+                      hideLabel
+                    /> */}
                     <Button
                       variant="secondary"
                       iconOnly

@@ -5,18 +5,20 @@ import PlusIcon from '@/components/atoms/icons/PlusIcon';
 import TrashIcon from '@/components/atoms/icons/TrashIcon';
 import TextInput from '@/components/atoms/TextInput/TextInput';
 import IngredientListEditor from '@/components/molecules/IngredientListEditor/IngredientListEditor';
-import { IngredientSectionsEditable } from '@/types';
+import { IngredientCatalogEntry, IngredientSectionsEditable } from '@/types';
 
 import styles from './IngredientSectionsEditor.module.css';
 
 interface IngredientSectionsEditorProps {
   ingredientSections: IngredientSectionsEditable[];
   setIngredientSections: Dispatch<SetStateAction<IngredientSectionsEditable[]>>;
+  ingredientCatalog: IngredientCatalogEntry[];
 }
 
 export default function IngredientSectionsEditor({
   ingredientSections,
   setIngredientSections,
+  ingredientCatalog,
 }: IngredientSectionsEditorProps) {
   const handleAddIngredient = (sectionIndex: number) => {
     setIngredientSections((prev) =>
@@ -104,6 +106,7 @@ export default function IngredientSectionsEditor({
                 sectionIndex={sectionIndex}
                 setIngredientSections={setIngredientSections}
                 section={section}
+                ingredientCatalog={ingredientCatalog}
               />
             </div>
             <Button

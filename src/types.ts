@@ -98,4 +98,4 @@ export type Category = Database['public']['Tables']['category']['Row'];
 // Ingredient Catalog types
 export type IngredientCatalogDb =
   Database['public']['Tables']['ingredient_catalog']['Row'];
-export type IngredientCatalog = KeysToCamelCase<IngredientCatalogDb>;
+export type IngredientCatalogEntry = KeysToCamelCase<IngredientCatalogDb>;

@@ -12,6 +12,7 @@ import { updateRecipe } from '@/lib/actions/recipes';
 import {
   Category,
   EditableRecipe,
+  IngredientCatalogEntry,
   IngredientSectionsEditable,
   InstructionSection,
 } from '@/types';
@@ -23,12 +24,14 @@ interface UpdateRecipeFormComponentProps {
   recipe: EditableRecipe;
   ingredientSections: IngredientSectionsEditable[];
   categories: Category[];
+  ingredientCatalog: IngredientCatalogEntry[];
 }
 
 export default function UpdateRecipeForm({
   recipeId,
   recipe,
   ingredientSections,
+  ingredientCatalog,
   categories,
 }: UpdateRecipeFormComponentProps) {
   const [formIngredientSections, setFormIngredientSections] =
@@ -93,6 +96,7 @@ export default function UpdateRecipeForm({
         <IngredientSectionsEditor
           ingredientSections={formIngredientSections}
           setIngredientSections={setFormIngredientSections}
+          ingredientCatalog={ingredientCatalog}
         />
       </section>
       <section className={styles.sectionContainer}>

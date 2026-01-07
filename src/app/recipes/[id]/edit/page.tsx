@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 
 import { getCategories } from '@/lib/supabase/queries/categories';
+import { getIngredientCatalog } from '@/lib/supabase/queries/ingredientCatalog';
 import {
   getRecipeForEdit,
   getRecipeIngredientsForEdit,
@@ -16,6 +17,7 @@ export default async function EditRecipePage({
   const recipe = await getRecipeForEdit(id);
   const ingredientSections = await getRecipeIngredientsForEdit(id);
   const categories = await getCategories();
+  const ingredientCatalog = await getIngredientCatalog();
 
   if (recipe === null) {
     return <div>Recipe not found</div>;
@@ -29,6 +31,7 @@ export default async function EditRecipePage({
         recipe={recipe}
         ingredientSections={ingredientSections}
         categories={categories}
+        ingredientCatalog={ingredientCatalog}
       />
     </div>
   );
