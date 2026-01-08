@@ -1,16 +1,16 @@
 import { Metadata } from 'next';
+import { Suspense } from 'react';
 
-import RecipeCard from '@/components/molecules/RecipeCard/RecipeCard';
+import LoadingSpinner from '@/components/atoms/LoadingSpinner/LoadingSpinner';
 import { getCategories } from '@/lib/supabase/queries/categories';
 import { getIngredientCatalogForSearch } from '@/lib/supabase/queries/ingredientCatalog';
-import { getAllRecipes } from '@/lib/supabase/queries/recipes';
 
+import RecipesList from './components/RecipesList/RecipesList';
 import SearchForm from './components/SearchForm';
 import styles from './page.module.css';
 
 export default async function Home({ searchParams }: PageProps<'/'>) {
   const query = await searchParams;
-  const recipes = await getAllRecipes(query);
   const categories = await getCategories();
   const ingredientCatalog = await getIngredientCatalogForSearch();
 
@@ -21,17 +21,22 @@ export default async function Home({ searchParams }: PageProps<'/'>) {
         categories={categories}
         ingredientCatalog={ingredientCatalog}
       />
-      {recipes.length === 0 ? (
-        <p>No recipes found</p>
-      ) : (
-        <ul className={styles.recipeGrid}>
-          {recipes.map((recipe) => (
-            <li key={recipe.id} className={styles.listItem}>
-              <RecipeCard recipe={recipe} />
-            </li>
-          ))}
-        </ul>
-      )}
+      <Suspense
+        key={JSON.stringify(query)}
+        fallback={
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              padding: '2rem',
+            }}
+          >
+            <LoadingSpinner size="large" />
+          </div>
+        }
+      >
+        <RecipesList query={query} />
+      </Suspense>
     </div>
   );
 }

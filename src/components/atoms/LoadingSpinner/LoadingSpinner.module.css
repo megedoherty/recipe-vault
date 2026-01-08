@@ -1,12 +1,24 @@
 .spinner {
-  width: 1rem;
-  height: 1rem;
+  width: var(--spinner-size);
+  height: var(--spinner-size);
   border: 2px solid var(--text-primary);
   border-bottom-color: transparent;
   border-radius: 50%;
   display: inline-block;
   box-sizing: border-box;
   animation: rotation 1s linear infinite;
+
+  &.small {
+    --spinner-size: 1rem;
+  }
+
+  &.medium {
+    --spinner-size: 1.5rem;
+  }
+
+  &.large {
+    --spinner-size: 2rem;
+  }
 }
 
 @keyframes rotation {

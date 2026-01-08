@@ -1,0 +1,9 @@
+.recipeGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15.625rem, 1fr));
+  gap: 1rem;
+}
+
+.listItem {
+  list-style: none;
+}

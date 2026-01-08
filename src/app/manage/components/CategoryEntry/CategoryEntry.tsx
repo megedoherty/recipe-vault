@@ -111,7 +111,7 @@ export default function CategoryEntry({
         <>
           <p className={styles.name}>
             {optimisticCategory.name}
-            {isPending ? <LoadingSpinner /> : ''}
+            {isPending ? <LoadingSpinner size="small" /> : ''}
           </p>
           <Button iconOnly size="small" onClick={() => setIsEditing(true)}>
             <EditIcon />

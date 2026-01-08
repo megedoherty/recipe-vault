@@ -1,5 +1,20 @@
 import styles from './LoadingSpinner.module.css';
 
-export default function LoadingSpinner() {
-  return <span className={styles.spinner} />;
+interface LoadingSpinnerProps {
+  size?: 'small' | 'medium' | 'large';
+}
+
+export default function LoadingSpinner({
+  size = 'medium',
+}: LoadingSpinnerProps) {
+  const classes = [
+    styles.spinner,
+    size === 'small' && styles.small,
+    size === 'medium' && styles.medium,
+    size === 'large' && styles.large,
+  ]
+    .filter(Boolean)
+    .join(' ');
+
+  return <span className={classes} />;
 }

@@ -57,6 +57,7 @@ export default function SelectableSearchPopover<T extends SearchItem>({
   containerClassName = '',
 }: SelectableSearchPopoverProps<T>) {
   const [isOpen, setIsOpen] = useState(false);
+  const wasOpenRef = useRef(false);
   const [searchTerm, setSearchTerm] = useState('');
 
   const popoverRef = useRef<HTMLDivElement>(null);
@@ -114,14 +115,26 @@ export default function SelectableSearchPopover<T extends SearchItem>({
     }
   }, [isOpen]);
 
-  // Return focus to the button when the popover is closed
+  // Manage focus
   useEffect(() => {
-    if (!isOpen && buttonRef.current) {
-      // Use requestAnimationFrame to ensure the DOM has updated
+    // Return focus to the button when the popover is closed (not on mount)
+    if (!isOpen && wasOpenRef.current && buttonRef.current) {
       requestAnimationFrame(() => {
         buttonRef.current?.focus();
       });
     }
+
+    // Set focus to the search input when the popover is opened
+    if (isOpen && popoverRef.current) {
+      requestAnimationFrame(() => {
+        const input = popoverRef.current?.querySelector(
+          'input',
+        ) as HTMLInputElement;
+        input?.focus();
+      });
+    }
+
+    wasOpenRef.current = isOpen;
   }, [isOpen]);
 
   // Items to be displayed
