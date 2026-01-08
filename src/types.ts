@@ -1,4 +1,4 @@
-import { Database } from '@/lib/supabase/types';
+import { Database, Tables } from '@/lib/supabase/types';
 
 // Utils
 // Convert a single key from snake_case to camelCase
@@ -69,7 +69,7 @@ export type EditableRecipe = Omit<
 
 // Ingredient types
 // The exact row that comes from the database
-export type IngredientDb = Database['public']['Tables']['ingredient']['Row'];
+export type IngredientDb = Tables<'ingredient'>;
 // What's returned from the query
 export type IngredientDisplayDb = Pick<
   IngredientDb,
@@ -104,18 +104,32 @@ export type IngredientSectionsEditable =
   IngredientSectionBase<EditableIngredient>;
 
 // Category types
-export type Category = Database['public']['Tables']['category']['Row'];
+export type Category = Tables<'category'>;
 
 // Ingredient Catalog types
 export type IngredientCatalogDb =
   Database['public']['Tables']['ingredient_catalog']['Row'];
+export type IngredientCatalog = Omit<
+  KeysToCamelCase<IngredientCatalogDb>,
+  'parentId' | 'id'
+> & {
+  id: string;
+  parentId: string | null;
+};
 export type IngredientCatalogEntryForRecipeEditDb = Pick<
   IngredientCatalogDb,
   'id' | 'name' | 'category'
 >;
 export type IngredientCatalogEntryForRecipeEdit = Pick<
-  KeysToCamelCase<IngredientCatalogEntryForRecipeEditDb>,
+  IngredientCatalog,
+  'name' | 'category' | 'id'
+>;
+export type IngredientCatalogEntryForSearch = Pick<
+  IngredientCatalogDb,
   'name' | 'category'
 > & {
   id: string;
+  childrenIds: string[];
+  parentIds: string[];
+  depth: number;
 };

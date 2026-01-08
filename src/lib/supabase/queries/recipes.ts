@@ -95,11 +95,13 @@ export async function getRecipeIngredientsForEdit(
 interface GetAllRecipesParams {
   name?: string;
   categoryId?: number;
+  includedIngredients?: string;
 }
 
 export async function getAllRecipes({
   name,
   categoryId,
+  includedIngredients,
 }: GetAllRecipesParams = {}): Promise<RecipeSummary[]> {
   const supabase = await createClient();
   let query = supabase
@@ -112,6 +114,52 @@ export async function getAllRecipes({
 
   if (categoryId) {
     query = query.eq('category_id', categoryId);
+  }
+
+  if (includedIngredients && includedIngredients.length > 0) {
+    // Convert string IDs to numbers (ingredient_catalog uses number IDs)
+    const ingredientIds = includedIngredients
+      .split(',')
+      .map((id) => parseInt(id, 10));
+
+    // Get all ingredients that match the selected ingredient catalog IDs
+    const { data: ingredients } = await supabase
+      .from('ingredient')
+      .select('recipe_id, ingredient_id')
+      .in('ingredient_id', ingredientIds)
+      .not('recipe_id', 'is', null)
+      .overrideTypes<Array<{ recipe_id: string; ingredient_id: number }>>();
+
+    if (ingredients && ingredients.length > 0) {
+      // Group by recipe_id and count unique ingredients per recipe in set
+      const recipeToIngredients = ingredients.reduce(
+        (acc, ing) => {
+          if (!acc[ing.recipe_id]) {
+            acc[ing.recipe_id] = new Set();
+          }
+          acc[ing.recipe_id].add(ing.ingredient_id);
+          return acc;
+        },
+        {} as Record<string, Set<number>>,
+      );
+
+      // Filter to recipes that have ALL selected ingredients
+      const recipeIds = Object.entries(recipeToIngredients)
+        .filter(
+          ([_, ingredientSet]) => ingredientSet.size === ingredientIds.length,
+        )
+        .map(([recipeId]) => recipeId);
+
+      if (recipeIds.length > 0) {
+        query = query.in('id', recipeIds);
+      } else {
+        // No recipes have all the ingredients, return empty
+        return [];
+      }
+    } else {
+      // No ingredients found, return empty
+      return [];
+    }
   }
 
   const { data } = await query;

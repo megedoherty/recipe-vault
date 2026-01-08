@@ -12,7 +12,7 @@ const defaultProps = {
 
 describe('RecipeHeader', () => {
   it('should render the recipe header', () => {
-    render(<RecipeHeader {...defaultProps} />);
+    render(<RecipeHeader {...defaultProps} isLoggedIn={true} />);
     expect(screen.getByText(`${defaultProps.name} Recipe`)).toBeInTheDocument();
     expect(
       screen.getByRole('link', { name: defaultProps.sourceUrl }),

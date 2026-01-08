@@ -44,6 +44,18 @@
 
 .checkbox {
   margin-block-start: 0.25rem;
+
+  &.indent-0 {
+    margin-inline-start: 0;
+  }
+
+  &.indent-1 {
+    margin-inline-start: 1.5rem;
+  }
+
+  &.indent-2 {
+    margin-inline-start: 3rem;
+  }
 }
 
 .itemsContainer {

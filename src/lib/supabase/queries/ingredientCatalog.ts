@@ -1,19 +1,54 @@
 import {
+  IngredientCatalog,
   IngredientCatalogEntryForRecipeEdit,
-  IngredientCatalogEntryForRecipeEditDb,
+  IngredientCatalogEntryForSearch,
 } from '@/types';
 
 import { createClient } from '../server';
 
-const transformIngredientCatalog = (
-  data: IngredientCatalogEntryForRecipeEditDb[],
-): IngredientCatalogEntryForRecipeEdit[] => {
-  return data.map((item) => ({
-    id: item.id.toString(),
-    name: item.name,
-    category: item.category,
-  }));
-};
+// Put these at the top of the list
+const priorityCategories = [
+  'Flours & Starches',
+  'Sugars & Sweeteners',
+  'Eggs',
+  'Baking Essentials',
+  'Chocolate & Baking Chips',
+  'Extracts & Flavorings',
+  'Dairy',
+  'Fats & Oils',
+];
+
+function sortIngredientCatalog<
+  T extends
+    | IngredientCatalogEntryForRecipeEdit
+    | IngredientCatalogEntryForSearch,
+>(data: T[]): T[] {
+  data.sort((a, b) => {
+    const aPriority = priorityCategories.indexOf(a.category || '');
+    const bPriority = priorityCategories.indexOf(b.category || '');
+
+    // If both are in priority list, sort by priority order
+    if (aPriority !== -1 && bPriority !== -1) {
+      if (aPriority !== bPriority) {
+        return aPriority - bPriority;
+      }
+      // Same priority category, sort by name
+      return a.name.localeCompare(b.name);
+    }
+    // If only a is in priority, it comes first
+    if (aPriority !== -1) return -1;
+    // If only b is in priority, it comes first
+    if (bPriority !== -1) return 1;
+    // If neither is in priority, sort by category then name
+    const categoryCompare = (a.category || '').localeCompare(b.category || '');
+    if (categoryCompare !== 0) {
+      return categoryCompare;
+    }
+    return a.name.localeCompare(b.name);
+  });
+
+  return data;
+}
 
 /**
  * When editing or creating a recipe, only return the ingredients that are not children of other ingredients.
@@ -28,6 +63,7 @@ export async function getIngredientCatalogForRecipeEdit(): Promise<
     .select('id, name, category, parent_id');
 
   if (!allIngredients) {
+    console.error('No ingredients found');
     return [];
   }
 
@@ -43,34 +79,133 @@ export async function getIngredientCatalogForRecipeEdit(): Promise<
     (ing) => !parentIds.has(ing.id),
   );
 
-  // Sort by name
-  ingredientsWithNoChildren.sort((a, b) => a.name.localeCompare(b.name));
-  const transformed = transformIngredientCatalog(ingredientsWithNoChildren);
+  const transformed = sortIngredientCatalog(
+    ingredientsWithNoChildren.map((ing) => ({
+      id: ing.id.toString(),
+      name: ing.name,
+      category: ing.category,
+    })),
+  );
+  return transformed;
+}
 
-  const priorityCategories = [
-    'Flours & Starches',
-    'Sugars & Sweeteners',
-    'Baking Essentials',
-    'Chocolate & Baking Chips',
-    'Extracts & Flavorings',
-    'Dairy',
-    'Eggs',
-    'Fats & Oils',
-  ];
+function getAllDescendants(
+  parentId: string,
+  parentToChildren: Record<string, string[]>,
+  memo: Record<string, string[]> = {},
+): string[] {
+  // Return cached result if available
+  if (parentId in memo) {
+    return memo[parentId];
+  }
 
-  return transformed.sort((a, b) => {
-    const aPriority = priorityCategories.indexOf(a.category || '');
-    const bPriority = priorityCategories.indexOf(b.category || '');
+  const directChildren = parentToChildren[parentId] || [];
+  const allDescendants = new Set<string>(directChildren);
 
-    // If both are in priority list, sort by priority order
-    if (aPriority !== -1 && bPriority !== -1) {
-      return aPriority - bPriority;
+  // Recursively get descendants of each child
+  for (const childId of directChildren) {
+    const childDescendants = getAllDescendants(childId, parentToChildren, memo);
+    childDescendants.forEach((desc) => allDescendants.add(desc));
+  }
+
+  const result = Array.from(allDescendants);
+  memo[parentId] = result;
+  return result;
+}
+
+function buildWithDepth(
+  items: IngredientCatalog[],
+  allItems: IngredientCatalog[],
+  parentToDescendants: Record<string, string[]>,
+  depth: number = 0,
+  parentIds: string[] = [],
+): IngredientCatalogEntryForSearch[] {
+  // Build items at this depth
+  const itemsAtDepth: IngredientCatalogEntryForSearch[] = items.map((item) => ({
+    id: item.id,
+    name: item.name,
+    category: item.category,
+    childrenIds: parentToDescendants[item.id] || [],
+    parentIds,
+    depth,
+  }));
+
+  // Sort items at this depth
+  const sorted = sortIngredientCatalog(itemsAtDepth);
+  const result: IngredientCatalogEntryForSearch[] = [];
+
+  for (const item of sorted) {
+    result.push(item);
+    // Get direct children (not all descendants)
+    const directChildren = allItems.filter(
+      (child) => child.parentId === item.id,
+    );
+
+    if (directChildren.length > 0) {
+      // Recursively add children with incremented depth and updated parentIds
+      result.push(
+        ...buildWithDepth(
+          directChildren,
+          allItems,
+          parentToDescendants,
+          depth + 1,
+          [...parentIds, item.id],
+        ),
+      );
     }
-    // If only a is in priority, it comes first
-    if (aPriority !== -1) return -1;
-    // If only b is in priority, it comes first
-    if (bPriority !== -1) return 1;
-    // If neither is in priority, sort alphabetically
-    return (a.category || '').localeCompare(b.category || '');
-  });
+  }
+
+  return result;
+}
+
+/**
+ * When searching for recipes, return all ingredients. Parents and children are included.
+ */
+export async function getIngredientCatalogForSearch(): Promise<
+  IngredientCatalogEntryForSearch[]
+> {
+  const supabase = await createClient();
+  const { data: allIngredients } = await supabase
+    .from('ingredient_catalog')
+    .select('id, name, category, parent_id');
+
+  if (!allIngredients) {
+    console.error('No ingredients found');
+    return [];
+  }
+
+  // Convert to FE type so we have strings to work with
+  const transformed = allIngredients.map((ing) => ({
+    id: ing.id.toString(),
+    name: ing.name,
+    category: ing.category,
+    parentId: ing.parent_id?.toString() ?? '',
+  }));
+
+  // Group by parent_id and get initial children map
+  const grouped = Object.groupBy(transformed, (item) => item.parentId);
+  const parentToChildren: Record<string, string[]> = {};
+
+  for (const [parentId, children] of Object.entries(grouped)) {
+    if (parentId === '') {
+      continue;
+    }
+    parentToChildren[parentId] = children?.map((child) => child.id) ?? [];
+  }
+
+  const parentToDescendants: Record<string, string[]> = {};
+  const memo: Record<string, string[]> = {};
+
+  for (const parentId of Object.keys(parentToChildren)) {
+    parentToDescendants[parentId] = getAllDescendants(
+      parentId,
+      parentToChildren,
+      memo,
+    );
+  }
+
+  // Start with root items (no parent)
+  const rootItems = transformed.filter((item) => !item.parentId);
+
+  return buildWithDepth(rootItems, transformed, parentToDescendants, 0);
 }

@@ -10,12 +10,12 @@ import Button from '@/components/atoms/Button/Button';
 import UpDownArrowIcon from '@/components/atoms/icons/UpDownArrowIcon';
 import XIcon from '@/components/atoms/icons/XIcon';
 import TextInput from '@/components/atoms/TextInput/TextInput';
+import SelectableSearchPopover from '@/components/molecules/SelectableSearchPopover/SelectableSearchPopover';
 import {
   IngredientCatalogEntryForRecipeEdit,
   IngredientSectionsEditable,
 } from '@/types';
 
-import SelectableSearchPopover from '../SelectableSearchPopover/SelectableSearchPopover';
 import styles from './IngredientListEditor.module.css';
 
 interface IngredientListEditorProps {

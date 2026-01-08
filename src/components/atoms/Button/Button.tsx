@@ -3,6 +3,7 @@ import {
   AnchorHTMLAttributes,
   ButtonHTMLAttributes,
   PropsWithChildren,
+  Ref,
 } from 'react';
 
 import styles from './Button.module.css';
@@ -17,11 +18,13 @@ interface BaseButtonProps extends PropsWithChildren {
 type ButtonAsButton = ButtonHTMLAttributes<HTMLButtonElement> & {
   href?: never;
   onClick?: () => void;
+  ref?: Ref<HTMLButtonElement>;
 };
 
 type ButtonAsLink = AnchorHTMLAttributes<HTMLAnchorElement> & {
   href: string;
   onClick?: () => void;
+  ref?: Ref<HTMLAnchorElement>;
 };
 
 type ButtonOrLink = ButtonAsButton | ButtonAsLink;

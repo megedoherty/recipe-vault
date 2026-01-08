@@ -31,6 +31,7 @@ interface SelectableSearchPopoverProps<T extends SearchItem> {
   getItemLabel: (item: T) => string;
   getItemChecked: (itemId: string) => boolean;
   onToggleItem: (itemId: string) => void;
+  getIndentationLevel?: (item: T) => number;
   // unique props
   canSelectMultiple?: boolean;
 }
@@ -49,6 +50,7 @@ export default function SelectableSearchPopover<T extends SearchItem>({
   groupItems,
   getItemLabel,
   getItemChecked,
+  getIndentationLevel,
   onToggleItem,
   canSelectMultiple = false,
 }: SelectableSearchPopoverProps<T>) {
@@ -57,7 +59,24 @@ export default function SelectableSearchPopover<T extends SearchItem>({
 
   const popoverRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
+  // Close the popover and clear the search term
+  const closePopover = () => {
+    setIsOpen(false);
+    setSearchTerm('');
+  };
+
+  // Toggle the item selection and close if its single select and the item is being checked
+  const onToggleItemSelection = (itemId: string, isChecked: boolean) => {
+    // Close if its single select and the item is being checked
+    if (!canSelectMultiple && isChecked) {
+      closePopover();
+    }
+    onToggleItem(itemId);
+  };
+
+  // Close on Escape
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isOpen) {
@@ -73,6 +92,7 @@ export default function SelectableSearchPopover<T extends SearchItem>({
     }
   }, [isOpen]);
 
+  // Close on click outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (
@@ -80,7 +100,7 @@ export default function SelectableSearchPopover<T extends SearchItem>({
         !popoverRef.current?.contains(e.target as Node) &&
         !containerRef.current?.contains(e.target as Node)
       ) {
-        setIsOpen(false);
+        closePopover();
       }
     };
 
@@ -92,30 +112,41 @@ export default function SelectableSearchPopover<T extends SearchItem>({
     }
   }, [isOpen]);
 
+  // Return focus to the button when the popover is closed
+  useEffect(() => {
+    if (!isOpen && buttonRef.current) {
+      // Use requestAnimationFrame to ensure the DOM has updated
+      requestAnimationFrame(() => {
+        buttonRef.current?.focus();
+      });
+    }
+  }, [isOpen]);
+
+  // Items to be displayed
   const filteredItems = items.filter((item) =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase()),
   );
-
   const groupedItems = groupItems(filteredItems);
-
-  const onToggleItemSelection = (itemId: string, isChecked: boolean) => {
-    // Close if its single select and the item is being checked
-    if (!canSelectMultiple && isChecked) {
-      setIsOpen(false);
-    }
-    onToggleItem(itemId);
-  };
 
   return (
     <div className={styles.container} ref={containerRef}>
       <Button
         variant="secondary"
         size={buttonSize}
-        onClick={() => setIsOpen((prev) => !prev)}
+        onClick={() => {
+          setIsOpen((prev) => {
+            const newIsOpen = !prev;
+            if (!newIsOpen) {
+              closePopover();
+            }
+            return newIsOpen;
+          });
+        }}
         aria-haspopup="dialog"
         aria-expanded={isOpen}
         aria-controls={popoverId}
         className={buttonClassName}
+        ref={buttonRef}
       >
         {buttonText}
       </Button>
@@ -169,7 +200,7 @@ export default function SelectableSearchPopover<T extends SearchItem>({
                           }
                           id={item.id}
                           checked={getItemChecked(item.id)}
-                          checkboxClassName={styles.checkbox}
+                          checkboxClassName={`${styles.checkbox} ${getIndentationLevel?.(item) ? styles[`indent-${getIndentationLevel(item)}`] : ''}`}
                         />
                       ))}
                     </div>
