@@ -7,3 +7,7 @@
     flex-direction: row;
   }
 }
+
+.selectableSearchPopoverButton {
+  min-width: 14rem;
+}

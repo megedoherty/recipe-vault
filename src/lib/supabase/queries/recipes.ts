@@ -96,12 +96,14 @@ interface GetAllRecipesParams {
   name?: string;
   categoryId?: number;
   includedIngredients?: string;
+  excludedIngredients?: string;
 }
 
 export async function getAllRecipes({
   name,
   categoryId,
   includedIngredients,
+  excludedIngredients,
 }: GetAllRecipesParams = {}): Promise<RecipeSummary[]> {
   const supabase = await createClient();
   let query = supabase
@@ -116,6 +118,7 @@ export async function getAllRecipes({
     query = query.eq('category_id', categoryId);
   }
 
+  let includedRecipeIds: string[] = [];
   if (includedIngredients && includedIngredients.length > 0) {
     // Convert string IDs to numbers (ingredient_catalog uses number IDs)
     const ingredientIds = includedIngredients
@@ -151,13 +154,57 @@ export async function getAllRecipes({
         .map(([recipeId]) => recipeId);
 
       if (recipeIds.length > 0) {
-        query = query.in('id', recipeIds);
+        includedRecipeIds = recipeIds;
       } else {
         // No recipes have all the ingredients, return empty
         return [];
       }
     } else {
       // No ingredients found, return empty
+      return [];
+    }
+  }
+
+  let excludedRecipeIds: string[] = [];
+  if (excludedIngredients && excludedIngredients.length > 0) {
+    const excludedIngredientIds = excludedIngredients
+      .split(',')
+      .map((id) => parseInt(id, 10));
+
+    const { data: excludedRecipes } = await supabase
+      .from('ingredient')
+      .select('recipe_id')
+      .in('ingredient_id', excludedIngredientIds)
+      .not('recipe_id', 'is', null)
+      .overrideTypes<Array<{ recipe_id: string }>>();
+
+    if (excludedRecipes && excludedRecipes.length > 0) {
+      const recipeIds = [...new Set(excludedRecipes.map((r) => r.recipe_id))];
+      excludedRecipeIds = recipeIds;
+    }
+  }
+
+  console.log('includedRecipeIds', includedRecipeIds);
+  console.log('excludedRecipeIds', excludedRecipeIds);
+
+  let finalRecipeIds: string[] | undefined;
+  if (includedRecipeIds.length > 0) {
+    // Filter out any recipes that have excluded ingredients
+    finalRecipeIds = includedRecipeIds.filter(
+      (id) => !excludedRecipeIds.includes(id),
+    );
+  } else if (excludedRecipeIds.length > 0) {
+    // No included ingredients, but we need to exclude some
+    // We'll handle this with a query filter instead
+    finalRecipeIds = undefined;
+    query = query.not('id', 'in', `(${excludedRecipeIds.join(',')})`);
+  }
+
+  if (finalRecipeIds !== undefined) {
+    if (finalRecipeIds.length > 0) {
+      query = query.in('id', finalRecipeIds);
+    } else {
+      // No recipes match after filtering, return empty
       return [];
     }
   }

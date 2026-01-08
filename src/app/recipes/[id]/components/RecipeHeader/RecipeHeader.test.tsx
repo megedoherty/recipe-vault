@@ -27,4 +27,14 @@ describe('RecipeHeader', () => {
       screen.getByRole('checkbox', { name: 'I made this' }),
     ).toBeInTheDocument();
   });
+
+  it('should hide the edit and delete buttons if not logged in', () => {
+    render(<RecipeHeader {...defaultProps} isLoggedIn={false} />);
+    expect(
+      screen.queryByRole('link', { name: 'Edit recipe' }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Delete recipe' }),
+    ).not.toBeInTheDocument();
+  });
 });
