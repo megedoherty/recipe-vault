@@ -136,7 +136,7 @@ export async function addRecipe(
   );
 
   const { error: ingredientError } = await supabase
-    .from('ingredient')
+    .from('recipe_ingredient')
     .insert(ingredients);
 
   if (ingredientError) {
@@ -183,7 +183,7 @@ export async function updateRecipe(
   // Check if we need to delete any ingredients BEFORE updating the recipe
   // so we can remove their IDs from instruction steps
   const { data: currentIngredientIds } = await supabase
-    .from('ingredient')
+    .from('recipe_ingredient')
     .select('id')
     .eq('recipe_id', recipeId);
 
@@ -232,7 +232,7 @@ export async function updateRecipe(
   // Delete ingredients from database
   if (ingredientsToDelete.length > 0) {
     const { error: deleteError } = await supabase
-      .from('ingredient')
+      .from('recipe_ingredient')
       .delete()
       .in(
         'id',
@@ -247,7 +247,7 @@ export async function updateRecipe(
 
   // Update the rest of the ingredients
   const { error: ingredientError } = await supabase
-    .from('ingredient')
+    .from('recipe_ingredient')
     .upsert(ingredients);
 
   if (ingredientError) {

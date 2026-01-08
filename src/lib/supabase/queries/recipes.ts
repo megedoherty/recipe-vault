@@ -50,7 +50,7 @@ export async function getRecipeIngredientsForDisplay(
 
   // Get ingredients
   const { data: ingredients } = await supabase
-    .from('ingredient')
+    .from('recipe_ingredient')
     .select('id, name, quantity, position, section')
     .eq('recipe_id', id);
 
@@ -76,7 +76,7 @@ export async function getRecipeIngredientsForEdit(
 
   // Get ingredients
   const { data: ingredients } = await supabase
-    .from('ingredient')
+    .from('recipe_ingredient')
     .select('id, name, quantity, position, section, ingredient_id')
     .eq('recipe_id', id);
 
@@ -127,7 +127,7 @@ export async function getAllRecipes({
 
     // Get all ingredients that match the selected ingredient catalog IDs
     const { data: ingredients } = await supabase
-      .from('ingredient')
+      .from('recipe_ingredient')
       .select('recipe_id, ingredient_id')
       .in('ingredient_id', ingredientIds)
       .not('recipe_id', 'is', null)
@@ -149,7 +149,7 @@ export async function getAllRecipes({
       // Filter to recipes that have ALL selected ingredients
       const recipeIds = Object.entries(recipeToIngredients)
         .filter(
-          ([_, ingredientSet]) => ingredientSet.size === ingredientIds.length,
+          ([, ingredientSet]) => ingredientSet.size === ingredientIds.length,
         )
         .map(([recipeId]) => recipeId);
 
@@ -172,7 +172,7 @@ export async function getAllRecipes({
       .map((id) => parseInt(id, 10));
 
     const { data: excludedRecipes } = await supabase
-      .from('ingredient')
+      .from('recipe_ingredient')
       .select('recipe_id')
       .in('ingredient_id', excludedIngredientIds)
       .not('recipe_id', 'is', null)

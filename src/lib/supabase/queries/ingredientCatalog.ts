@@ -59,7 +59,7 @@ export async function getIngredientCatalogForRecipeEdit(): Promise<
 > {
   const supabase = await createClient();
   const { data: allIngredients } = await supabase
-    .from('ingredient_catalog')
+    .from('ingredient')
     .select('id, name, category, parent_id');
 
   if (!allIngredients) {
@@ -166,7 +166,7 @@ export async function getIngredientCatalogForSearch(): Promise<
 > {
   const supabase = await createClient();
   const { data: allIngredients } = await supabase
-    .from('ingredient_catalog')
+    .from('ingredient')
     .select('id, name, category, parent_id');
 
   if (!allIngredients) {

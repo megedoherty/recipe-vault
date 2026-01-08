@@ -1,4 +1,4 @@
-import { Database, Tables } from '@/lib/supabase/types';
+import { Tables } from '@/lib/supabase/types';
 
 // Utils
 // Convert a single key from snake_case to camelCase
@@ -25,7 +25,7 @@ export interface Step {
 }
 
 // Recipe types
-export type RecipeDb = Database['public']['Tables']['recipe']['Row'];
+export type RecipeDb = Tables<'recipe'>;
 export type RecipeDisplayDb = Pick<
   RecipeDb,
   | 'name'
@@ -69,7 +69,7 @@ export type EditableRecipe = Omit<
 
 // Ingredient types
 // The exact row that comes from the database
-export type IngredientDb = Tables<'ingredient'>;
+export type IngredientDb = Tables<'recipe_ingredient'>;
 // What's returned from the query
 export type IngredientDisplayDb = Pick<
   IngredientDb,
@@ -107,8 +107,7 @@ export type IngredientSectionsEditable =
 export type Category = Tables<'category'>;
 
 // Ingredient Catalog types
-export type IngredientCatalogDb =
-  Database['public']['Tables']['ingredient_catalog']['Row'];
+export type IngredientCatalogDb = Tables<'ingredient'>;
 export type IngredientCatalog = Omit<
   KeysToCamelCase<IngredientCatalogDb>,
   'parentId' | 'id'

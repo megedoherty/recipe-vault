@@ -54,52 +54,22 @@ export type Database = {
         };
         Relationships: [];
       };
-      ingredient: {
+      equipment: {
         Row: {
-          id: string;
-          ingredient_id: number | null;
+          id: number;
           name: string;
-          position: number;
-          quantity: string | null;
-          recipe_id: string | null;
-          section: string | null;
         };
         Insert: {
-          id?: string;
-          ingredient_id?: number | null;
+          id?: number;
           name: string;
-          position: number;
-          quantity?: string | null;
-          recipe_id?: string | null;
-          section?: string | null;
         };
         Update: {
-          id?: string;
-          ingredient_id?: number | null;
+          id?: number;
           name?: string;
-          position?: number;
-          quantity?: string | null;
-          recipe_id?: string | null;
-          section?: string | null;
         };
-        Relationships: [
-          {
-            foreignKeyName: 'ingredien_recipe_id_fkey';
-            columns: ['recipe_id'];
-            isOneToOne: false;
-            referencedRelation: 'recipe';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'ingredient_ingredient_id_fkey';
-            columns: ['ingredient_id'];
-            isOneToOne: false;
-            referencedRelation: 'ingredient_catalog';
-            referencedColumns: ['id'];
-          },
-        ];
+        Relationships: [];
       };
-      ingredient_catalog: {
+      ingredient: {
         Row: {
           category: string | null;
           id: number;
@@ -123,7 +93,7 @@ export type Database = {
             foreignKeyName: 'ingredient_catalog_parent_id_fkey';
             columns: ['parent_id'];
             isOneToOne: false;
-            referencedRelation: 'ingredient_catalog';
+            referencedRelation: 'ingredient';
             referencedColumns: ['id'];
           },
         ];
@@ -180,6 +150,84 @@ export type Database = {
             columns: ['category_id'];
             isOneToOne: false;
             referencedRelation: 'category';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      recipe_equipment: {
+        Row: {
+          equipment_id: number;
+          id: number;
+          recipe_id: string;
+        };
+        Insert: {
+          equipment_id: number;
+          id?: number;
+          recipe_id: string;
+        };
+        Update: {
+          equipment_id?: number;
+          id?: number;
+          recipe_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'recipe_equipment_equipment_id_fkey';
+            columns: ['equipment_id'];
+            isOneToOne: false;
+            referencedRelation: 'equipment';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'recipe_equipment_recipe_id_fkey';
+            columns: ['recipe_id'];
+            isOneToOne: false;
+            referencedRelation: 'recipe';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      recipe_ingredient: {
+        Row: {
+          id: string;
+          ingredient_id: number | null;
+          name: string;
+          position: number;
+          quantity: string | null;
+          recipe_id: string | null;
+          section: string | null;
+        };
+        Insert: {
+          id?: string;
+          ingredient_id?: number | null;
+          name: string;
+          position: number;
+          quantity?: string | null;
+          recipe_id?: string | null;
+          section?: string | null;
+        };
+        Update: {
+          id?: string;
+          ingredient_id?: number | null;
+          name?: string;
+          position?: number;
+          quantity?: string | null;
+          recipe_id?: string | null;
+          section?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'ingredien_recipe_id_fkey';
+            columns: ['recipe_id'];
+            isOneToOne: false;
+            referencedRelation: 'recipe';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'ingredient_ingredient_id_fkey';
+            columns: ['ingredient_id'];
+            isOneToOne: false;
+            referencedRelation: 'ingredient';
             referencedColumns: ['id'];
           },
         ];
