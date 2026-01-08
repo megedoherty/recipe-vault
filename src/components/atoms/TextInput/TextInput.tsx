@@ -12,6 +12,7 @@ interface TextInputProps extends InputHTMLAttributes<
   defaultValue?: string;
   fullWidth?: boolean;
   hideLabel?: boolean;
+  className?: string;
 }
 
 export default function TextInput({
@@ -22,12 +23,13 @@ export default function TextInput({
   defaultValue,
   fullWidth,
   hideLabel,
+  className = '',
   ...props
 }: TextInputProps) {
   const fullWidthClass = fullWidth ? styles.fullWidth : '';
 
   return (
-    <div className={`${styles.container} ${fullWidthClass}`}>
+    <div className={`${styles.container} ${fullWidthClass} ${className}`}>
       <label htmlFor={id} className={hideLabel ? 'sr-only' : ''}>
         {label}
       </label>

@@ -34,6 +34,7 @@ interface SelectableSearchPopoverProps<T extends SearchItem> {
   getIndentationLevel?: (item: T) => number;
   // unique props
   canSelectMultiple?: boolean;
+  containerClassName?: string;
 }
 
 export default function SelectableSearchPopover<T extends SearchItem>({
@@ -53,6 +54,7 @@ export default function SelectableSearchPopover<T extends SearchItem>({
   getIndentationLevel,
   onToggleItem,
   canSelectMultiple = false,
+  containerClassName = '',
 }: SelectableSearchPopoverProps<T>) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -129,7 +131,10 @@ export default function SelectableSearchPopover<T extends SearchItem>({
   const groupedItems = groupItems(filteredItems);
 
   return (
-    <div className={styles.container} ref={containerRef}>
+    <div
+      className={`${styles.container} ${containerClassName}`}
+      ref={containerRef}
+    >
       <Button
         variant="secondary"
         size={buttonSize}

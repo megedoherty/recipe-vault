@@ -6,9 +6,39 @@
 
 .ingredient {
   display: grid;
-  grid-template-columns: min-content min-content 1fr 10rem min-content;
   gap: 0.25rem;
   align-items: center;
+  grid-template-areas:
+    "drag-handle quantity ingredient delete"
+    ". . picker  .";
+  grid-template-columns: min-content min-content auto min-content;
+
+  @media (width >= 768px) {
+    grid-template-areas: "drag-handle quantity ingredient picker delete";
+    grid-template-columns: min-content min-content 1fr 10rem min-content;
+  }
+}
+
+/* Grid */
+.dragHandleButton {
+  grid-area: drag-handle;
+}
+
+.quantityInput {
+  grid-area: quantity;
+}
+
+.ingredientInput {
+  grid-area: ingredient;
+}
+
+.ingredientPickerContainer {
+  grid-area: picker;
+  min-width: 0;
+}
+
+.deleteButton {
+  grid-area: delete;
 }
 
 .ingredientIdButton {

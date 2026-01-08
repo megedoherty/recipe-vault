@@ -125,11 +125,13 @@ export default function IngredientListEditor({
                       iconOnly
                       size="small"
                       aria-label="Reorder ingredient"
+                      className={styles.dragHandleButton}
                       {...provided.dragHandleProps}
                     >
                       <UpDownArrowIcon />
                     </Button>
                     <TextInput
+                      className={styles.quantityInput}
                       label="Quantity"
                       name={`${section.title}-quantity-${ingredientIndex}`}
                       id={`${section.title}-quantity-${ingredientIndex}`}
@@ -147,6 +149,7 @@ export default function IngredientListEditor({
                     />
                     <TextInput
                       label="Ingredient"
+                      className={styles.ingredientInput}
                       name={`section-${section.title}-ingredient-${ingredientIndex}`}
                       id={`${section.title}-ingredient-${ingredientIndex}`}
                       type="text"
@@ -162,6 +165,7 @@ export default function IngredientListEditor({
                       hideLabel
                     />
                     <SelectableSearchPopover
+                      containerClassName={styles.ingredientPickerContainer}
                       popoverId="ingredient-picker-popover"
                       popoverAriaLabel="Ingredient picker"
                       searchPlaceholder="Ingredient name"
@@ -206,6 +210,7 @@ export default function IngredientListEditor({
                     <Button
                       variant="secondary"
                       iconOnly
+                      className={styles.deleteButton}
                       size="small"
                       onClick={() =>
                         handleDeleteIngredient(sectionIndex, ingredientIndex)
