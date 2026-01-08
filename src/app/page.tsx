@@ -23,17 +23,7 @@ export default async function Home({ searchParams }: PageProps<'/'>) {
       />
       <Suspense
         key={JSON.stringify(query)}
-        fallback={
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              padding: '2rem',
-            }}
-          >
-            <LoadingSpinner size="large" />
-          </div>
-        }
+        fallback={<LoadingSpinner size="large" isCentered />}
       >
         <RecipesList query={query} />
       </Suspense>

@@ -1,7 +1,17 @@
+.container {
+  display: flex;
+  justify-content: center;
+
+  &.centered {
+    padding: 2rem;
+    width: 100%;
+  }
+}
+
 .spinner {
   width: var(--spinner-size);
   height: var(--spinner-size);
-  border: 2px solid var(--text-primary);
+  border: 2px solid currentcolor;
   border-bottom-color: transparent;
   border-radius: 50%;
   display: inline-block;

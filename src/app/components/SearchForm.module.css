@@ -11,3 +11,17 @@
 .selectableSearchPopoverButton {
   min-width: 14rem;
 }
+
+.searchButton {
+  min-width: 6.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.clearButton {
+  min-width: 5.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}

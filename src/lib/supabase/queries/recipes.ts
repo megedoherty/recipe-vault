@@ -184,9 +184,6 @@ export async function getAllRecipes({
     }
   }
 
-  console.log('includedRecipeIds', includedRecipeIds);
-  console.log('excludedRecipeIds', excludedRecipeIds);
-
   let finalRecipeIds: string[] | undefined;
   if (includedRecipeIds.length > 0) {
     // Filter out any recipes that have excluded ingredients

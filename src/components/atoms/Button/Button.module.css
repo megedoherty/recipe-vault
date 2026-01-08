@@ -14,8 +14,8 @@
 
   &:disabled {
     --button-background: var(--button-disabled-background);
-    --button-text: var(--button-disabled-text);
 
+    color: var(--button-disabled-text);
     opacity: 0.45;
     cursor: default;
   }

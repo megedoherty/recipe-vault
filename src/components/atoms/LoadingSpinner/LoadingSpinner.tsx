@@ -2,10 +2,12 @@ import styles from './LoadingSpinner.module.css';
 
 interface LoadingSpinnerProps {
   size?: 'small' | 'medium' | 'large';
+  isCentered?: boolean;
 }
 
 export default function LoadingSpinner({
   size = 'medium',
+  isCentered = false,
 }: LoadingSpinnerProps) {
   const classes = [
     styles.spinner,
@@ -16,5 +18,9 @@ export default function LoadingSpinner({
     .filter(Boolean)
     .join(' ');
 
-  return <span className={classes} />;
+  return (
+    <div className={`${styles.container} ${isCentered ? styles.centered : ''}`}>
+      <span className={classes} />
+    </div>
+  );
 }

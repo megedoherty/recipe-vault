@@ -1,10 +1,11 @@
 'use client';
 
-import Form from 'next/form';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { FormEvent, useRef, useTransition } from 'react';
 
 import IngredientFilter from '@/app/components/IngredientFilter/IngredientFilter';
 import Button from '@/components/atoms/Button/Button';
+import LoadingSpinner from '@/components/atoms/LoadingSpinner/LoadingSpinner';
 import TextInput from '@/components/atoms/TextInput/TextInput';
 import CategorySelect from '@/components/molecules/CategorySelect/CategorySelect';
 import { Category, IngredientCatalogEntryForSearch } from '@/types';
@@ -22,13 +23,15 @@ export default function SearchForm({
 }: SearchFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const formRef = useRef<HTMLFormElement>(null);
+  const [isPending, startTransition] = useTransition();
+  const [isClearing, startClearTransition] = useTransition();
 
   const nameParam = searchParams.get('name');
   const name = typeof nameParam === 'string' ? nameParam : undefined;
 
   const categoryParam = searchParams.get('categoryId');
-  const categoryId =
-    typeof categoryParam === 'string' ? categoryParam : undefined;
+  const categoryId = typeof categoryParam === 'string' ? categoryParam : '';
 
   const includedIngredientsParam = searchParams.get('includedIngredients');
   const includedIngredients = includedIngredientsParam
@@ -40,13 +43,59 @@ export default function SearchForm({
     ? excludedIngredientsParam.split(',')
     : [];
 
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+
+    const params = new URLSearchParams();
+
+    const nameValue = formData.get('name') as string;
+    if (nameValue?.trim()) {
+      params.set('name', nameValue.trim());
+    }
+
+    const categoryValue = formData.get('categoryId') as string;
+    if (categoryValue) {
+      params.set('categoryId', categoryValue);
+    }
+
+    const includedValue = formData.get('includedIngredients') as string;
+    if (includedValue) {
+      params.set('includedIngredients', includedValue);
+    }
+
+    const excludedValue = formData.get('excludedIngredients') as string;
+    if (excludedValue) {
+      params.set('excludedIngredients', excludedValue);
+    }
+
+    const queryString = params.toString();
+    startTransition(() => {
+      router.replace(queryString ? `/?${queryString}` : '/');
+    });
+  };
+
   const clearFilters = () => {
-    router.replace('/');
+    if (!formRef.current) {
+      return;
+    }
+
+    const formData = new FormData(formRef.current);
+    const isEmpty = Array.from(formData.values()).every(
+      (value) => value === '',
+    );
+
+    if (!isEmpty) {
+      startClearTransition(() => {
+        router.replace('/');
+      });
+      formRef.current?.reset();
+    }
   };
 
   return (
     <search>
-      <Form action="/" className={styles.form}>
+      <form ref={formRef} onSubmit={handleSubmit} className={styles.form}>
         <TextInput
           label="Recipe name"
           type="text"
@@ -76,13 +125,38 @@ export default function SearchForm({
           initialValue={excludedIngredients}
           buttonClassName={styles.selectableSearchPopoverButton}
         />
-        <Button variant="primary" type="submit">
-          Search
+        <Button
+          variant="primary"
+          type="submit"
+          disabled={isPending}
+          className={styles.searchButton}
+        >
+          {isPending ? (
+            <>
+              Search
+              <LoadingSpinner size="small" />
+            </>
+          ) : (
+            'Search'
+          )}
         </Button>
-        <Button type="reset" variant="secondary" onClick={clearFilters}>
-          Clear
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={clearFilters}
+          disabled={isClearing}
+          className={styles.clearButton}
+        >
+          {isClearing ? (
+            <>
+              Clear
+              <LoadingSpinner size="small" />
+            </>
+          ) : (
+            'Clear'
+          )}
         </Button>
-      </Form>
+      </form>
     </search>
   );
 }
