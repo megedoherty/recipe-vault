@@ -1,13 +1,13 @@
 import {
-  EditableIngredientDb,
   EditableRecipe,
   EditableRecipeDb,
-  IngredientDisplayDb,
-  IngredientSections,
-  IngredientSectionsEditable,
   InstructionSection,
   RecipeDisplay,
   RecipeDisplayDb,
+  RecipeEditableIngredientDb,
+  RecipeIngredientDisplayDb,
+  RecipeIngredientSections,
+  RecipeIngredientSectionsEditable,
   Step,
 } from '@/types';
 
@@ -110,16 +110,19 @@ export function transformRecipeForEdit(
 }
 
 export function transformIngredientsForDisplay(
-  ingredients: IngredientDisplayDb[],
+  ingredients: RecipeIngredientDisplayDb[],
   sectionOrder: Json | null = null,
-): IngredientSections[] {
+): RecipeIngredientSections[] {
   const validSectionOrder = isValidIngredientSectionOrder(sectionOrder)
     ? sectionOrder
     : null;
   const sortedIngredients = ingredients.sort((a, b) => a.position - b.position);
 
   const sections = sortedIngredients.reduce(
-    (acc: IngredientSections[], ingredient: IngredientDisplayDb) => {
+    (
+      acc: RecipeIngredientSections[],
+      ingredient: RecipeIngredientDisplayDb,
+    ) => {
       const section = acc.find(
         (section) => section.title === ingredient.section,
       );
@@ -154,16 +157,19 @@ export function transformIngredientsForDisplay(
 }
 
 export function transformIngredientsForEdit(
-  ingredients: EditableIngredientDb[],
+  ingredients: RecipeEditableIngredientDb[],
   sectionOrder: Json | null = null,
-): IngredientSectionsEditable[] {
+): RecipeIngredientSectionsEditable[] {
   const validSectionOrder = isValidIngredientSectionOrder(sectionOrder)
     ? sectionOrder
     : null;
   const sortedIngredients = ingredients.sort((a, b) => a.position - b.position);
 
   const sections = sortedIngredients.reduce(
-    (acc: IngredientSectionsEditable[], ingredient: EditableIngredientDb) => {
+    (
+      acc: RecipeIngredientSectionsEditable[],
+      ingredient: RecipeEditableIngredientDb,
+    ) => {
       const section = acc.find(
         (section) => section.title === ingredient.section,
       );

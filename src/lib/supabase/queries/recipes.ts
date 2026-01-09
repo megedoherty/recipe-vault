@@ -1,8 +1,8 @@
 import {
   EditableRecipe,
-  IngredientSections,
-  IngredientSectionsEditable,
   RecipeDisplay,
+  RecipeIngredientSections,
+  RecipeIngredientSectionsEditable,
   RecipeSummary,
 } from '@/types';
 
@@ -45,7 +45,7 @@ export async function getRecipeForEdit(
 
 export async function getRecipeIngredientsForDisplay(
   id: string,
-): Promise<IngredientSections[]> {
+): Promise<RecipeIngredientSections[]> {
   const supabase = await createClient();
 
   // Get ingredients
@@ -71,7 +71,7 @@ export async function getRecipeIngredientsForDisplay(
 
 export async function getRecipeIngredientsForEdit(
   id: string,
-): Promise<IngredientSectionsEditable[]> {
+): Promise<RecipeIngredientSectionsEditable[]> {
   const supabase = await createClient();
 
   // Get ingredients
@@ -120,12 +120,12 @@ export async function getAllRecipes({
 
   let includedRecipeIds: string[] = [];
   if (includedIngredients && includedIngredients.length > 0) {
-    // Convert string IDs to numbers (ingredient_catalog uses number IDs)
+    // Convert string IDs to numbers (ingredients uses number IDs)
     const ingredientIds = includedIngredients
       .split(',')
       .map((id) => parseInt(id, 10));
 
-    // Get all ingredients that match the selected ingredient catalog IDs
+    // Get all ingredients that match the selected ingredients IDs
     const { data: ingredients } = await supabase
       .from('recipe_ingredient')
       .select('recipe_id, ingredient_id')

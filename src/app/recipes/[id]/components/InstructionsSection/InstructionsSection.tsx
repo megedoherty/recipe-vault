@@ -1,11 +1,11 @@
-import { IngredientDisplay, InstructionSection } from '@/types';
+import { InstructionSection, RecipeIngredientDisplay } from '@/types';
 
 import StepIngredients from '../StepIngredients/StepIngredients';
 import styles from './InstructionsSection.module.css';
 
 interface InstructionsSectionProps {
   instructions: InstructionSection[] | null;
-  ingredientMap: Record<string, IngredientDisplay>;
+  ingredientMap: Record<string, RecipeIngredientDisplay>;
 }
 
 export default function InstructionsSection({

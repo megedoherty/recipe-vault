@@ -1,134 +1,163 @@
-import { Tables } from '@/lib/supabase/types';
+import { Json, Tables } from '@/lib/supabase/types';
 
-// Utils
-// Convert a single key from snake_case to camelCase
-type SnakeToCamelCase<S extends string> = S extends `${infer T}_${infer U}`
-  ? `${T}${Capitalize<SnakeToCamelCase<U>>}`
-  : S;
+////////////////////////////////////////////////////////////
+// FE unique types
+////////////////////////////////////////////////////////////
 
-// Convert all keys in an object from snake_case to camelCase
-export type KeysToCamelCase<T> = {
-  [K in keyof T as SnakeToCamelCase<string & K>]: T[K];
-};
-
-// Instruction Section
+// A section of instructions, stored in the database as a JSON array
 export interface InstructionSection {
   id: string;
   title: string | null;
   steps: Step[];
 }
 
+// Single step in an instruction section
 export interface Step {
   text: string;
   id: string;
   ingredientIds?: string[];
 }
 
-// Recipe types
-export type RecipeDb = Tables<'recipe'>;
-export type RecipeDisplayDb = Pick<
-  RecipeDb,
-  | 'name'
-  | 'image_url'
-  | 'source_url'
-  | 'rating'
-  | 'made'
-  | 'instructions'
-  | 'instruction_section_order'
-> & {
-  category: { name: string } | null;
-};
-export type RecipeDisplay = Omit<
-  KeysToCamelCase<RecipeDisplayDb>,
-  'instructions' | 'category' | 'instructionSectionOrder'
-> & {
-  instructions: InstructionSection[];
-  category: string | null;
-};
-export type RecipeSummary = Pick<
-  KeysToCamelCase<RecipeDb>,
-  'id' | 'name' | 'imageUrl' | 'rating' | 'made'
->;
-
-export type EditableRecipeDb = Pick<
-  RecipeDb,
-  | 'name'
-  | 'image_url'
-  | 'source_url'
-  | 'instructions'
-  | 'category_id'
-  | 'ingredient_section_order'
-  | 'instruction_section_order'
->;
-export type EditableRecipe = Omit<
-  KeysToCamelCase<EditableRecipeDb>,
-  'instructions' | 'ingredientSectionOrder' | 'instructionSectionOrder'
-> & {
-  instructions: InstructionSection[];
-};
-
-// Ingredient types
-// The exact row that comes from the database
-export type IngredientDb = Tables<'recipe_ingredient'>;
-// What's returned from the query
-export type IngredientDisplayDb = Pick<
-  IngredientDb,
-  'id' | 'name' | 'quantity' | 'position' | 'section'
->;
-// What is available after processing
-export type IngredientDisplay = Pick<
-  IngredientDisplayDb,
-  'id' | 'name' | 'quantity'
->;
-
-// The type used when editing an ingredient
-// What's returned from the query
-export type EditableIngredientDb = Pick<
-  IngredientDb,
-  'id' | 'name' | 'quantity' | 'position' | 'section' | 'ingredient_id'
->;
-export type EditableIngredient = KeysToCamelCase<
-  Pick<EditableIngredientDb, 'id' | 'name' | 'quantity' | 'section'>
-> & {
-  ingredientId: string | null;
-};
-
-// The type used when ingredients are grouped on the FE. Id is used for the key in the UI.
-type IngredientSectionBase<T> = {
+// The type used when ingredients are grouped on the FE
+type RecipeIngredientSectionBase<T> = {
   title: string | null;
-  id: string;
+  id: string; // UI only key
   ingredients: T[];
 };
-export type IngredientSections = IngredientSectionBase<IngredientDisplay>;
-export type IngredientSectionsEditable =
-  IngredientSectionBase<EditableIngredient>;
 
+////////////////////////////////////////////////////////////
+// Recipe types
+////////////////////////////////////////////////////////////
+
+// The type used when querying for a single recipe
+export interface RecipeDisplayDb {
+  name: string;
+  image_url: string | null;
+  source_url: string | null;
+  rating: number | null;
+  made: boolean;
+  instructions: Json;
+  instruction_section_order: Json;
+  category: { name: string } | null;
+}
+
+// The type used on the FE when displaying a single recipe
+export interface RecipeDisplay {
+  name: string;
+  made: boolean;
+  imageUrl: string | null;
+  sourceUrl: string | null;
+  instructions: InstructionSection[];
+  rating: number | null;
+  category: string | null;
+}
+
+// The type used when displaying a list of recipes
+export interface RecipeSummary {
+  id: string;
+  name: string;
+  imageUrl: string | null;
+  rating: number | null;
+  made: boolean;
+}
+
+// The type used when querying for a recipe to edit it
+export interface EditableRecipeDb {
+  name: string;
+  image_url: string | null;
+  source_url: string | null;
+  instructions: Json;
+  instruction_section_order: Json;
+  category_id: number | null;
+  ingredient_section_order: Json;
+}
+
+// The type used on the FE when editing a recipe
+export interface EditableRecipe {
+  name: string;
+  imageUrl: string | null;
+  sourceUrl: string | null;
+  instructions: InstructionSection[];
+  categoryId: number | null;
+}
+
+////////////////////////////////////////////////////////////
+// Recipe ingredient types
+////////////////////////////////////////////////////////////
+
+// The exact row that comes from the database
+export type RecipeIngredientDb = Tables<'recipe_ingredient'>;
+
+// The type used when querying for a single recipe's ingredients
+export interface RecipeIngredientDisplayDb {
+  id: string;
+  name: string;
+  quantity: string | null;
+  position: number;
+  section: string | null;
+}
+
+// The type used on the FE when displaying a single recipe's ingredients
+export interface RecipeIngredientDisplay {
+  id: string;
+  name: string;
+  quantity: string | null;
+}
+export type RecipeIngredientSections =
+  RecipeIngredientSectionBase<RecipeIngredientDisplay>;
+
+// The type used when querying for a single recipe's ingredients to edit it
+export interface RecipeEditableIngredientDb {
+  id: string;
+  name: string;
+  quantity: string | null;
+  position: number;
+  section: string | null;
+  ingredient_id: number | null;
+}
+
+// The type used on the FE when editing a single recipe's ingredients
+export interface RecipeEditableIngredient {
+  id: string;
+  name: string;
+  quantity: string | null;
+  section: string | null;
+  ingredientId: string | null;
+}
+export type RecipeIngredientSectionsEditable =
+  RecipeIngredientSectionBase<RecipeEditableIngredient>;
+
+////////////////////////////////////////////////////////////
 // Category types
+////////////////////////////////////////////////////////////
+
 export type Category = Tables<'category'>;
 
-// Ingredient Catalog types
-export type IngredientCatalogDb = Tables<'ingredient'>;
-export type IngredientCatalog = Omit<
-  KeysToCamelCase<IngredientCatalogDb>,
-  'parentId' | 'id'
-> & {
+////////////////////////////////////////////////////////////
+// Ingredient types
+////////////////////////////////////////////////////////////
+
+// The type used when querying for all the ingredients
+export interface IngredientDb {
   id: string;
-  parentId: string | null;
-};
-export type IngredientCatalogEntryForRecipeEditDb = Pick<
-  IngredientCatalogDb,
-  'id' | 'name' | 'category'
->;
-export type IngredientCatalogEntryForRecipeEdit = Pick<
-  IngredientCatalog,
-  'name' | 'category' | 'id'
->;
-export type IngredientCatalogEntryForSearch = Pick<
-  IngredientCatalogDb,
-  'name' | 'category'
-> & {
+  name: string;
+  category: string | null;
+  parentId: string;
+}
+
+// The type used on the FE for all the ingredients to edit a recipe
+export interface IngredientForRecipeEdit {
   id: string;
+  name: string;
+  category: string | null;
+}
+
+// The type used on the FE when searching for ingredients
+export interface IngredientForSearch {
+  id: string;
+  name: string;
+  category: string | null;
   childrenIds: string[];
   parentIds: string[];
   depth: number;
-};
+}

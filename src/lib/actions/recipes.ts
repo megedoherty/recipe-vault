@@ -4,9 +4,9 @@ import { redirect } from 'next/navigation';
 
 import { createClient } from '@/lib/supabase/server';
 import {
-  IngredientDb,
-  IngredientSectionsEditable,
   InstructionSection,
+  RecipeIngredientDb,
+  RecipeIngredientSectionsEditable,
 } from '@/types';
 
 import { Json } from '../supabase/types';
@@ -59,9 +59,9 @@ const removeDeletedIngredientIds = (
  * Creates the ingredients insert object for the recipe based on the FE sections object.
  */
 const createIngredientsInsert = (
-  ingredientSections: IngredientSectionsEditable[],
+  ingredientSections: RecipeIngredientSectionsEditable[],
   recipeId: string,
-): IngredientDb[] => {
+): RecipeIngredientDb[] => {
   return ingredientSections
     .flatMap((section) =>
       section.ingredients.map((ingredient, index) => ({
@@ -86,7 +86,7 @@ const createIngredientsInsert = (
  * Inserts the ingredients into the ingredient table with the new recipe ID.
  */
 export async function addRecipe(
-  ingredientSections: IngredientSectionsEditable[],
+  ingredientSections: RecipeIngredientSectionsEditable[],
   instructionSections: InstructionSection[],
   prevState: ActionsResponse | null,
   formData: FormData,
@@ -130,7 +130,7 @@ export async function addRecipe(
     };
   }
 
-  const ingredients: IngredientDb[] = createIngredientsInsert(
+  const ingredients: RecipeIngredientDb[] = createIngredientsInsert(
     ingredientSections,
     data.id,
   );
@@ -159,7 +159,7 @@ export async function addRecipe(
  */
 export async function updateRecipe(
   recipeId: string,
-  ingredientSections: IngredientSectionsEditable[],
+  ingredientSections: RecipeIngredientSectionsEditable[],
   instructionSections: InstructionSection[],
   prevState: ActionsResponse | null,
   formData: FormData,
@@ -187,7 +187,7 @@ export async function updateRecipe(
     .select('id')
     .eq('recipe_id', recipeId);
 
-  const ingredients: IngredientDb[] = createIngredientsInsert(
+  const ingredients: RecipeIngredientDb[] = createIngredientsInsert(
     ingredientSections,
     recipeId,
   );

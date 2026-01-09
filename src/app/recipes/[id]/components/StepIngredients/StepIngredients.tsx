@@ -1,10 +1,10 @@
-import { IngredientDisplay } from '@/types';
+import { RecipeIngredientDisplay } from '@/types';
 
 import styles from './StepIngredients.module.css';
 
 interface StepIngredientsProps {
   ingredientIds: string[] | undefined;
-  ingredients: Record<string, IngredientDisplay>;
+  ingredients: Record<string, RecipeIngredientDisplay>;
 }
 
 export default function StepIngredients({

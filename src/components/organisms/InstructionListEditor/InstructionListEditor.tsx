@@ -11,7 +11,7 @@ import UpDownArrowIcon from '@/components/atoms/icons/UpDownArrowIcon';
 import XIcon from '@/components/atoms/icons/XIcon';
 import TextInput from '@/components/atoms/TextInput/TextInput';
 import SelectableSearchPopover from '@/components/molecules/SelectableSearchPopover/SelectableSearchPopover';
-import { EditableIngredient, InstructionSection } from '@/types';
+import { InstructionSection, RecipeEditableIngredient } from '@/types';
 
 import styles from './InstructionListEditor.module.css';
 
@@ -21,10 +21,10 @@ interface InstructionListEditorProps {
     updater: (section: InstructionSection) => InstructionSection,
   ) => void;
   section: InstructionSection;
-  ingredients: EditableIngredient[];
+  ingredients: RecipeEditableIngredient[];
 }
 
-const getChipLabel = (ingredient: EditableIngredient | undefined) => {
+const getChipLabel = (ingredient: RecipeEditableIngredient | undefined) => {
   return ingredient?.quantity
     ? `${ingredient.quantity} ${ingredient.name}`
     : ingredient?.name;
@@ -146,13 +146,13 @@ export default function InstructionListEditor({
                         <p className={styles.linkedIngredientsLabel}>
                           Ingredients used:
                         </p>
-                        <SelectableSearchPopover<EditableIngredient>
+                        <SelectableSearchPopover<RecipeEditableIngredient>
                           popoverId="ingredient-picker-popover"
                           popoverAriaLabel="Ingredient picker"
                           searchPlaceholder="Ingredient name"
                           searchLabel="Search ingredients"
                           searchId="ingredient-picker-search"
-                          buttonText="Add ingredients"
+                          buttonContent="Add ingredients"
                           noResultsText="No ingredients found"
                           items={ingredients}
                           groupItems={(items) => {
@@ -163,7 +163,7 @@ export default function InstructionListEditor({
 
                             return grouped as Record<
                               string,
-                              EditableIngredient[]
+                              RecipeEditableIngredient[]
                             >;
                           }}
                           getItemLabel={(ingredient) =>

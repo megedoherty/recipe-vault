@@ -42,10 +42,13 @@
 }
 
 .ingredientIdButton {
+  width: 100%;
+  justify-content: flex-start;
+}
+
+.ingredientIdButtonText {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
-  width: 100%;
   text-align: left;
-  display: block;
 }

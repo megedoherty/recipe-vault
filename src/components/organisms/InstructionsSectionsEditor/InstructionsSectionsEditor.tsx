@@ -5,14 +5,14 @@ import PlusIcon from '@/components/atoms/icons/PlusIcon';
 import TrashIcon from '@/components/atoms/icons/TrashIcon';
 import TextInput from '@/components/atoms/TextInput/TextInput';
 import InstructionListEditor from '@/components/organisms/InstructionListEditor/InstructionListEditor';
-import { EditableIngredient, InstructionSection } from '@/types';
+import { InstructionSection, RecipeEditableIngredient } from '@/types';
 
 import styles from './InstructionsSectionsEditor.module.css';
 
 interface InstructionsSectionsEditorProps {
   instructionSections: InstructionSection[];
   setInstructionSections: Dispatch<SetStateAction<InstructionSection[]>>;
-  ingredients: EditableIngredient[];
+  ingredients: RecipeEditableIngredient[];
 }
 
 export default function IngredientSectionsEditor({

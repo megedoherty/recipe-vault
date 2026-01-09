@@ -6,22 +6,24 @@ import TrashIcon from '@/components/atoms/icons/TrashIcon';
 import TextInput from '@/components/atoms/TextInput/TextInput';
 import IngredientListEditor from '@/components/molecules/IngredientListEditor/IngredientListEditor';
 import {
-  IngredientCatalogEntryForRecipeEdit,
-  IngredientSectionsEditable,
+  IngredientForRecipeEdit,
+  RecipeIngredientSectionsEditable,
 } from '@/types';
 
 import styles from './IngredientSectionsEditor.module.css';
 
 interface IngredientSectionsEditorProps {
-  ingredientSections: IngredientSectionsEditable[];
-  setIngredientSections: Dispatch<SetStateAction<IngredientSectionsEditable[]>>;
-  ingredientCatalog: IngredientCatalogEntryForRecipeEdit[];
+  ingredientSections: RecipeIngredientSectionsEditable[];
+  setIngredientSections: Dispatch<
+    SetStateAction<RecipeIngredientSectionsEditable[]>
+  >;
+  ingredients: IngredientForRecipeEdit[];
 }
 
 export default function IngredientSectionsEditor({
   ingredientSections,
   setIngredientSections,
-  ingredientCatalog,
+  ingredients,
 }: IngredientSectionsEditorProps) {
   const handleAddIngredient = (sectionIndex: number) => {
     setIngredientSections((prev) =>
@@ -109,7 +111,7 @@ export default function IngredientSectionsEditor({
                 sectionIndex={sectionIndex}
                 setIngredientSections={setIngredientSections}
                 section={section}
-                ingredientCatalog={ingredientCatalog}
+                ingredients={ingredients}
               />
             </div>
             <Button

@@ -12,8 +12,8 @@ import XIcon from '@/components/atoms/icons/XIcon';
 import TextInput from '@/components/atoms/TextInput/TextInput';
 import SelectableSearchPopover from '@/components/molecules/SelectableSearchPopover/SelectableSearchPopover';
 import {
-  IngredientCatalogEntryForRecipeEdit,
-  IngredientSectionsEditable,
+  IngredientForRecipeEdit,
+  RecipeIngredientSectionsEditable,
 } from '@/types';
 
 import styles from './IngredientListEditor.module.css';
@@ -21,9 +21,11 @@ import styles from './IngredientListEditor.module.css';
 interface IngredientListEditorProps {
   sectionId: string;
   sectionIndex: number;
-  setIngredientSections: Dispatch<SetStateAction<IngredientSectionsEditable[]>>;
-  section: IngredientSectionsEditable;
-  ingredientCatalog: IngredientCatalogEntryForRecipeEdit[];
+  setIngredientSections: Dispatch<
+    SetStateAction<RecipeIngredientSectionsEditable[]>
+  >;
+  section: RecipeIngredientSectionsEditable;
+  ingredients: IngredientForRecipeEdit[];
 }
 
 export default function IngredientListEditor({
@@ -31,7 +33,7 @@ export default function IngredientListEditor({
   sectionIndex,
   setIngredientSections,
   section,
-  ingredientCatalog,
+  ingredients,
 }: IngredientListEditorProps) {
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) return;
@@ -171,16 +173,18 @@ export default function IngredientListEditor({
                       searchPlaceholder="Ingredient name"
                       searchLabel="Search ingredients"
                       searchId="ingredient-picker-search"
-                      buttonText={
-                        ingredient.ingredientId
-                          ? (ingredientCatalog.find(
-                              (ic) => ic.id === ingredient.ingredientId,
-                            )?.name ?? '')
-                          : 'Pick ingredient'
+                      buttonContent={
+                        <span className={styles.ingredientIdButtonText}>
+                          {ingredient.ingredientId
+                            ? (ingredients.find(
+                                (ic) => ic.id === ingredient.ingredientId,
+                              )?.name ?? '')
+                            : 'Pick ingredient'}
+                        </span>
                       }
                       buttonSize="medium"
                       noResultsText="No ingredients found"
-                      items={ingredientCatalog}
+                      items={ingredients}
                       groupItems={(items) => {
                         const grouped = Object.groupBy(
                           items,
@@ -188,7 +192,7 @@ export default function IngredientListEditor({
                         );
                         return grouped as Record<
                           string,
-                          IngredientCatalogEntryForRecipeEdit[]
+                          IngredientForRecipeEdit[]
                         >;
                       }}
                       getItemLabel={(ingredient) => ingredient.name}

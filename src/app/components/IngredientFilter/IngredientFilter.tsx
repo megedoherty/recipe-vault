@@ -3,18 +3,18 @@
 import { useState } from 'react';
 
 import SelectableSearchPopover from '@/components/molecules/SelectableSearchPopover/SelectableSearchPopover';
-import { IngredientCatalogEntryForSearch } from '@/types';
+import { IngredientForSearch } from '@/types';
 
 interface IngredientFilterProps {
   type: 'Included' | 'Excluded';
-  ingredientCatalog: IngredientCatalogEntryForSearch[];
+  ingredients: IngredientForSearch[];
   initialValue?: string[];
   buttonClassName?: string;
 }
 
 export default function IngredientFilter({
   type,
-  ingredientCatalog,
+  ingredients,
   initialValue = [],
   buttonClassName,
 }: IngredientFilterProps) {
@@ -22,7 +22,7 @@ export default function IngredientFilter({
     useState<string[]>(initialValue);
 
   const onToggleIngredient = (itemId: string) => {
-    const ingredientInfo = ingredientCatalog.find((i) => i.id === itemId);
+    const ingredientInfo = ingredients.find((i) => i.id === itemId);
 
     setSelectedIngredients((prev) => {
       if (prev.includes(itemId)) {
@@ -49,21 +49,21 @@ export default function IngredientFilter({
     <>
       <SelectableSearchPopover
         popoverId={popoverId}
-        popoverAriaLabel="Ingredient catalog"
+        popoverAriaLabel="Ingredient filter"
         searchPlaceholder="Ingredient name"
         searchLabel="Ingredient name"
         searchId={searchId}
-        buttonText={`${buttonTextPrefix}${selectedIngredients.length > 0 ? ` (${selectedIngredients.length})` : ''}`}
+        buttonContent={`${buttonTextPrefix}${selectedIngredients.length > 0 ? ` (${selectedIngredients.length})` : ''}`}
         buttonClassName={buttonClassName}
         buttonSize="medium"
         noResultsText="No ingredients found"
-        items={ingredientCatalog}
+        items={ingredients}
         groupItems={(items) => {
           const grouped = Object.groupBy(
             items,
             (ingredient) => ingredient.category || '',
           );
-          return grouped as Record<string, IngredientCatalogEntryForSearch[]>;
+          return grouped as Record<string, IngredientForSearch[]>;
         }}
         getItemLabel={(item) => item.name}
         getItemChecked={(itemId) => selectedIngredients.includes(itemId)}

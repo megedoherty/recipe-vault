@@ -12,9 +12,9 @@ import { updateRecipe } from '@/lib/actions/recipes';
 import {
   Category,
   EditableRecipe,
-  IngredientCatalogEntryForRecipeEdit,
-  IngredientSectionsEditable,
+  IngredientForRecipeEdit,
   InstructionSection,
+  RecipeIngredientSectionsEditable,
 } from '@/types';
 
 import styles from './UpdateRecipeForm.module.css';
@@ -22,20 +22,20 @@ import styles from './UpdateRecipeForm.module.css';
 interface UpdateRecipeFormComponentProps {
   recipeId: string;
   recipe: EditableRecipe;
-  ingredientSections: IngredientSectionsEditable[];
+  ingredientSections: RecipeIngredientSectionsEditable[];
   categories: Category[];
-  ingredientCatalog: IngredientCatalogEntryForRecipeEdit[];
+  ingredients: IngredientForRecipeEdit[];
 }
 
 export default function UpdateRecipeForm({
   recipeId,
   recipe,
   ingredientSections,
-  ingredientCatalog,
+  ingredients,
   categories,
 }: UpdateRecipeFormComponentProps) {
   const [formIngredientSections, setFormIngredientSections] =
-    useState<IngredientSectionsEditable[]>(ingredientSections);
+    useState<RecipeIngredientSectionsEditable[]>(ingredientSections);
   const [formInstructionSections, setFormInstructionSections] = useState<
     InstructionSection[]
   >(recipe.instructions);
@@ -96,7 +96,7 @@ export default function UpdateRecipeForm({
         <IngredientSectionsEditor
           ingredientSections={formIngredientSections}
           setIngredientSections={setFormIngredientSections}
-          ingredientCatalog={ingredientCatalog}
+          ingredients={ingredients}
         />
       </section>
       <section className={styles.sectionContainer}>

@@ -12,9 +12,9 @@ import { addRecipe } from '@/lib/actions/recipes';
 import { parseIngredients, parseInstructions } from '@/lib/utils/parse';
 import {
   Category,
-  IngredientCatalogEntryForRecipeEdit,
-  IngredientSectionsEditable,
+  IngredientForRecipeEdit,
   InstructionSection,
+  RecipeIngredientSectionsEditable,
 } from '@/types';
 
 import ProcessableSection from '../ProcessableSection/ProcessableSection';
@@ -22,15 +22,15 @@ import styles from './CreateRecipeForm.module.css';
 
 interface CreateRecipeFormComponentProps {
   categories: Category[];
-  ingredientCatalog: IngredientCatalogEntryForRecipeEdit[];
+  ingredients: IngredientForRecipeEdit[];
 }
 
 export default function CreateRecipeForm({
   categories,
-  ingredientCatalog,
+  ingredients,
 }: CreateRecipeFormComponentProps) {
   const [ingredientSections, setIngredientSections] = useState<
-    IngredientSectionsEditable[]
+    RecipeIngredientSectionsEditable[]
   >([]);
   const [instructionSections, setInstructionSections] = useState<
     InstructionSection[]
@@ -42,10 +42,7 @@ export default function CreateRecipeForm({
   );
 
   const onProcessIngredients = (ingredientsInput: string) => {
-    const parsedSections = parseIngredients(
-      ingredientsInput,
-      ingredientCatalog,
-    );
+    const parsedSections = parseIngredients(ingredientsInput, ingredients);
     setIngredientSections(parsedSections);
   };
 
@@ -80,7 +77,7 @@ export default function CreateRecipeForm({
           <IngredientSectionsEditor
             ingredientSections={ingredientSections}
             setIngredientSections={setIngredientSections}
-            ingredientCatalog={ingredientCatalog}
+            ingredients={ingredients}
           />
         }
       />

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 
 import Button, { ButtonProps } from '@/components/atoms/Button/Button';
 import Checkbox from '@/components/atoms/Checkbox/Checkbox';
@@ -20,7 +20,7 @@ interface SelectableSearchPopoverProps<T extends SearchItem> {
   searchLabel: string;
   searchId: string;
   // open button
-  buttonText: string;
+  buttonContent: ReactNode;
   buttonClassName?: string;
   buttonSize?: ButtonProps['size'];
   // no results text
@@ -43,7 +43,7 @@ export default function SelectableSearchPopover<T extends SearchItem>({
   searchPlaceholder,
   searchLabel,
   searchId,
-  buttonText,
+  buttonContent,
   buttonSize = 'small',
   buttonClassName,
   noResultsText,
@@ -166,7 +166,7 @@ export default function SelectableSearchPopover<T extends SearchItem>({
         className={buttonClassName}
         ref={buttonRef}
       >
-        {buttonText}
+        {buttonContent}
       </Button>
       {isOpen && (
         <div

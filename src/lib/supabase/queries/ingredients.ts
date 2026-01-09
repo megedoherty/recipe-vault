@@ -1,7 +1,7 @@
 import {
-  IngredientCatalog,
-  IngredientCatalogEntryForRecipeEdit,
-  IngredientCatalogEntryForSearch,
+  IngredientDb,
+  IngredientForRecipeEdit,
+  IngredientForSearch,
 } from '@/types';
 
 import { createClient } from '../server';
@@ -18,10 +18,8 @@ const priorityCategories = [
   'Fats & Oils',
 ];
 
-function sortIngredientCatalog<
-  T extends
-    | IngredientCatalogEntryForRecipeEdit
-    | IngredientCatalogEntryForSearch,
+function sortIngredients<
+  T extends IngredientForRecipeEdit | IngredientForSearch,
 >(data: T[]): T[] {
   data.sort((a, b) => {
     const aPriority = priorityCategories.indexOf(a.category || '');
@@ -54,8 +52,8 @@ function sortIngredientCatalog<
  * When editing or creating a recipe, only return the ingredients that are not children of other ingredients.
  * This is to avoid showing ingredients like "Sugar" and "Granulated Sugar" as separate options.
  */
-export async function getIngredientCatalogForRecipeEdit(): Promise<
-  IngredientCatalogEntryForRecipeEdit[]
+export async function getIngredientsForRecipeEdit(): Promise<
+  IngredientForRecipeEdit[]
 > {
   const supabase = await createClient();
   const { data: allIngredients } = await supabase
@@ -79,7 +77,7 @@ export async function getIngredientCatalogForRecipeEdit(): Promise<
     (ing) => !parentIds.has(ing.id),
   );
 
-  const transformed = sortIngredientCatalog(
+  const transformed = sortIngredients(
     ingredientsWithNoChildren.map((ing) => ({
       id: ing.id.toString(),
       name: ing.name,
@@ -114,14 +112,14 @@ function getAllDescendants(
 }
 
 function buildWithDepth(
-  items: IngredientCatalog[],
-  allItems: IngredientCatalog[],
+  items: IngredientDb[],
+  allItems: IngredientDb[],
   parentToDescendants: Record<string, string[]>,
   depth: number = 0,
   parentIds: string[] = [],
-): IngredientCatalogEntryForSearch[] {
+): IngredientForSearch[] {
   // Build items at this depth
-  const itemsAtDepth: IngredientCatalogEntryForSearch[] = items.map((item) => ({
+  const itemsAtDepth: IngredientForSearch[] = items.map((item) => ({
     id: item.id,
     name: item.name,
     category: item.category,
@@ -131,8 +129,8 @@ function buildWithDepth(
   }));
 
   // Sort items at this depth
-  const sorted = sortIngredientCatalog(itemsAtDepth);
-  const result: IngredientCatalogEntryForSearch[] = [];
+  const sorted = sortIngredients(itemsAtDepth);
+  const result: IngredientForSearch[] = [];
 
   for (const item of sorted) {
     result.push(item);
@@ -161,8 +159,8 @@ function buildWithDepth(
 /**
  * When searching for recipes, return all ingredients. Parents and children are included.
  */
-export async function getIngredientCatalogForSearch(): Promise<
-  IngredientCatalogEntryForSearch[]
+export async function getIngredientsForSearch(): Promise<
+  IngredientForSearch[]
 > {
   const supabase = await createClient();
   const { data: allIngredients } = await supabase

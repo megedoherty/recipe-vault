@@ -8,18 +8,18 @@ import Button from '@/components/atoms/Button/Button';
 import LoadingSpinner from '@/components/atoms/LoadingSpinner/LoadingSpinner';
 import TextInput from '@/components/atoms/TextInput/TextInput';
 import CategorySelect from '@/components/molecules/CategorySelect/CategorySelect';
-import { Category, IngredientCatalogEntryForSearch } from '@/types';
+import { Category, IngredientForSearch } from '@/types';
 
 import styles from './SearchForm.module.css';
 
 interface SearchFormProps {
   categories: Category[];
-  ingredientCatalog: IngredientCatalogEntryForSearch[];
+  ingredients: IngredientForSearch[];
 }
 
 export default function SearchForm({
   categories,
-  ingredientCatalog,
+  ingredients,
 }: SearchFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -114,14 +114,14 @@ export default function SearchForm({
         <IngredientFilter
           key={`included-${includedIngredientsParam || ''}`}
           type="Included"
-          ingredientCatalog={ingredientCatalog}
+          ingredients={ingredients}
           initialValue={includedIngredients}
           buttonClassName={styles.selectableSearchPopoverButton}
         />
         <IngredientFilter
           key={`excluded-${excludedIngredientsParam || ''}`}
           type="Excluded"
-          ingredientCatalog={ingredientCatalog}
+          ingredients={ingredients}
           initialValue={excludedIngredients}
           buttonClassName={styles.selectableSearchPopoverButton}
         />

@@ -1,8 +1,8 @@
 import {
-  EditableIngredient,
-  IngredientCatalogEntryForRecipeEdit,
-  IngredientSectionsEditable,
+  IngredientForRecipeEdit,
   InstructionSection,
+  RecipeEditableIngredient,
+  RecipeIngredientSectionsEditable,
 } from '@/types';
 
 import {
@@ -53,7 +53,7 @@ export function standardizeQuantity(quantity: string): string {
   return replaceFractions(normalized);
 }
 
-type ParsedIngredient = Pick<EditableIngredient, 'name' | 'quantity'>;
+type ParsedIngredient = Pick<RecipeEditableIngredient, 'name' | 'quantity'>;
 
 function parseNameWithQuantity(
   line: string,
@@ -134,56 +134,56 @@ function parseIngredientLine(line: string): ParsedIngredient {
 
 const specialCaseMappings: Array<{
   match: (name: string) => boolean;
-  catalogName: string;
+  ingredientName: string;
 }> = [
   {
     match: (n) =>
       n.includes('egg') && !n.includes('yolk') && !n.includes('white'),
-    catalogName: 'whole egg',
+    ingredientName: 'whole egg',
   },
   {
     match: (n) => n.startsWith('salt') || n.includes('sea salt'),
-    catalogName: 'table salt',
+    ingredientName: 'table salt',
   },
   {
     match: (n) => n.startsWith('vinegar'),
-    catalogName: 'white vinegar',
+    ingredientName: 'white vinegar',
   },
   {
     match: (n) =>
       n.startsWith('confectioners’ sugar') ||
       n.startsWith("confections' sugar"),
-    catalogName: 'powdered sugar',
+    ingredientName: 'powdered sugar',
   },
   {
     match: (n) => n.startsWith('corn syrup'),
-    catalogName: 'light corn syrup',
+    ingredientName: 'light corn syrup',
   },
   {
     match: (n) => n.includes('graham cracker crumbs'),
-    catalogName: 'graham crackers',
+    ingredientName: 'graham crackers',
   },
   {
     match: (n) => n.includes('cinnamon'),
-    catalogName: 'ground cinnamon',
+    ingredientName: 'ground cinnamon',
   },
   {
     match: (n) => n.includes('canola oil'),
-    catalogName: 'vegetable oil',
+    ingredientName: 'vegetable oil',
   },
   {
     match: (n) => n.includes('process cocoa powder'),
-    catalogName: 'dutch processed cocoa powder',
+    ingredientName: 'dutch processed cocoa powder',
   },
   {
     match: (n) => n.includes('unsalted butter') || n.startsWith('butter'),
-    catalogName: 'unsalted butter',
+    ingredientName: 'unsalted butter',
   },
 ];
 
 function findClosestIngredient(
   name: string,
-  ingredientCatalog: IngredientCatalogEntryForRecipeEdit[],
+  allIngredients: IngredientForRecipeEdit[],
 ): string | null {
   // Check some special cases first
   let lowercaseName = name.toLowerCase();
@@ -195,10 +195,10 @@ function findClosestIngredient(
 
   // Handle special cases
   // Check special cases
-  for (const { match, catalogName } of specialCaseMappings) {
+  for (const { match, ingredientName } of specialCaseMappings) {
     if (match(lowercaseName)) {
-      const found = ingredientCatalog.find(
-        (ingredient) => catalogName === ingredient.name,
+      const found = allIngredients.find(
+        (ingredient) => ingredientName === ingredient.name,
       );
       if (found) {
         return found.id;
@@ -208,7 +208,7 @@ function findClosestIngredient(
 
   // Look for an exact match
   const splitName = lowercaseName.split(/,\s*|\s+or\s+|\(/)[0].trim();
-  const exactMatch = ingredientCatalog.find(
+  const exactMatch = allIngredients.find(
     (ingredient) => ingredient.name.toLowerCase() === splitName,
   );
   if (exactMatch) {
@@ -217,7 +217,7 @@ function findClosestIngredient(
 
   // Look for a partial match
   return (
-    ingredientCatalog.find((ingredient) =>
+    allIngredients.find((ingredient) =>
       lowercaseName.includes(ingredient.name.toLowerCase()),
     )?.id ?? null
   );
@@ -225,13 +225,13 @@ function findClosestIngredient(
 
 export function parseIngredients(
   text: string | undefined,
-  ingredientCatalog: IngredientCatalogEntryForRecipeEdit[],
-): IngredientSectionsEditable[] {
+  ingredients: IngredientForRecipeEdit[],
+): RecipeIngredientSectionsEditable[] {
   if (!text) return [];
 
-  const lowercaseIngredientCatalog = ingredientCatalog.map((x) => ({
-    ...x,
-    name: x.name.toLowerCase(),
+  const lowercaseIngredients = ingredients.map((ingredient) => ({
+    ...ingredient,
+    name: ingredient.name.toLowerCase(),
   }));
 
   const lines = text
@@ -239,38 +239,41 @@ export function parseIngredients(
     .filter(Boolean)
     .map((line) => line.replace(/^[\s▢•\-\*\+]\s*/, '')); // Remove special chars from start
 
-  const sections = lines.reduce((acc: IngredientSectionsEditable[], line) => {
-    // Check if this line is a section header (ends with colon)
-    if (line.trim().endsWith(':')) {
-      const sectionName = line.replace(':', '').trim();
-      acc.push({
-        id: crypto.randomUUID(), // used for key in the UI
-        title: sectionName,
-        ingredients: [],
-      });
-    } else {
-      // This is an ingredient line - add it to the current section
-      // If no section exists yet, create a default one
-      if (acc.length === 0) {
-        acc.push({ id: crypto.randomUUID(), title: null, ingredients: [] });
+  const sections = lines.reduce(
+    (acc: RecipeIngredientSectionsEditable[], line) => {
+      // Check if this line is a section header (ends with colon)
+      if (line.trim().endsWith(':')) {
+        const sectionName = line.replace(':', '').trim();
+        acc.push({
+          id: crypto.randomUUID(), // used for key in the UI
+          title: sectionName,
+          ingredients: [],
+        });
+      } else {
+        // This is an ingredient line - add it to the current section
+        // If no section exists yet, create a default one
+        if (acc.length === 0) {
+          acc.push({ id: crypto.randomUUID(), title: null, ingredients: [] });
+        }
+
+        // Parse the ingredient and add it to the last section
+        const parsed = parseIngredientLine(line);
+        acc[acc.length - 1].ingredients.push({
+          name: parsed.name,
+          quantity: parsed.quantity,
+          id: crypto.randomUUID(),
+          section: null,
+          ingredientId: findClosestIngredient(
+            parsed.name,
+            lowercaseIngredients,
+          ),
+        });
       }
 
-      // Parse the ingredient and add it to the last section
-      const parsed = parseIngredientLine(line);
-      acc[acc.length - 1].ingredients.push({
-        name: parsed.name,
-        quantity: parsed.quantity,
-        id: crypto.randomUUID(),
-        section: null,
-        ingredientId: findClosestIngredient(
-          parsed.name,
-          lowercaseIngredientCatalog,
-        ),
-      });
-    }
-
-    return acc;
-  }, []);
+      return acc;
+    },
+    [],
+  );
 
   return sections;
 }

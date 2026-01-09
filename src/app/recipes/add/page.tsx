@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 
 import { getCategories } from '@/lib/supabase/queries/categories';
-import { getIngredientCatalogForRecipeEdit } from '@/lib/supabase/queries/ingredientCatalog';
+import { getIngredientsForRecipeEdit } from '@/lib/supabase/queries/ingredients';
 import { isUserLoggedIn } from '@/lib/supabase/queries/user';
 
 import CreateRecipeForm from './components/CreateRecipeForm/CreateRecipeForm';
@@ -9,7 +9,7 @@ import styles from './page.module.css';
 
 export default async function AddRecipePage() {
   const categories = await getCategories();
-  const ingredientCatalog = await getIngredientCatalogForRecipeEdit();
+  const ingredients = await getIngredientsForRecipeEdit();
   const isLoggedIn = await isUserLoggedIn();
 
   if (!isLoggedIn) {
@@ -20,10 +20,7 @@ export default async function AddRecipePage() {
     <div className={styles.page}>
       <h1>Add Recipe</h1>
       <h2>Add a recipe manually</h2>
-      <CreateRecipeForm
-        categories={categories}
-        ingredientCatalog={ingredientCatalog}
-      />
+      <CreateRecipeForm categories={categories} ingredients={ingredients} />
     </div>
   );
 }
