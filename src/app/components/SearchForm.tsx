@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { FormEvent, useRef, useState, useTransition } from 'react';
+import { FormEvent, useRef, useTransition } from 'react';
 
 import IngredientFilter from '@/app/components/IngredientFilter/IngredientFilter';
 import Button from '@/components/atoms/Button/Button';
@@ -12,7 +12,11 @@ import { Category, Equipment, IngredientForSearch } from '@/types';
 
 import EquipmentFilter from './EquipmentFilter/EquipmentFilter';
 import styles from './SearchForm.module.css';
-import { getStringArraySearchParam, getStringSearchParam } from './utils';
+import {
+  getNumberSearchParam,
+  getStringArraySearchParam,
+  getStringSearchParam,
+} from './utils';
 
 interface SearchFormProps {
   categories: Category[];
@@ -33,6 +37,7 @@ export default function SearchForm({
 
   const name = getStringSearchParam(searchParams, 'name');
   const categoryId = getStringSearchParam(searchParams, 'categoryId');
+  const servings = getNumberSearchParam(searchParams, 'servings');
   const includeIngredients = getStringArraySearchParam(
     searchParams,
     'includeIngredients',

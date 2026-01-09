@@ -78,6 +78,7 @@ export function transformRecipe(recipe: RecipeDisplayDb): RecipeDisplay {
     category: recipe.category?.name ?? null,
     rating: recipe.rating,
     equipment: recipe.recipe_equipment.map((e) => e.equipment.name),
+    servings: recipe.servings,
   };
 }
 

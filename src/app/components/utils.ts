@@ -13,3 +13,11 @@ export function getStringArraySearchParam(
   const paramValue = searchParams.get(paramName);
   return paramValue ? paramValue.split(',') : [];
 }
+
+export function getNumberSearchParam(
+  searchParams: URLSearchParams,
+  paramName: string,
+): number | null {
+  const paramValue = searchParams.get(paramName);
+  return paramValue ? parseInt(paramValue, 10) : null;
+}

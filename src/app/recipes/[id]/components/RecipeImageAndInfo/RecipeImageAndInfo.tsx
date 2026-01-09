@@ -5,6 +5,7 @@ import styles from './RecipeImageAndInfo.module.css';
 interface RecipeImageAndInfoProps {
   category: string | null;
   imageUrl: string | null;
+  servings: number | null;
   name: string;
   equipment: string[];
 }
@@ -13,6 +14,7 @@ export default function RecipeImageAndInfo({
   category,
   equipment,
   imageUrl,
+  servings,
   name,
 }: RecipeImageAndInfoProps) {
   return (
@@ -23,6 +25,12 @@ export default function RecipeImageAndInfo({
             <div className={styles.infoItem}>
               <dt className={styles.infoItemLabel}>Category:</dt>
               <dd>{category}</dd>
+            </div>
+          )}
+          {servings && (
+            <div className={styles.infoItem}>
+              <dt className={styles.infoItemLabel}>Servings:</dt>
+              <dd>{servings}</dd>
             </div>
           )}
           {equipment.length > 0 && (

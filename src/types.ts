@@ -44,6 +44,7 @@ export interface RecipeDisplayDb {
       name: string;
     };
   }[];
+  servings: number | null;
 }
 
 // The type used on the FE when displaying a single recipe
@@ -56,6 +57,7 @@ export interface RecipeDisplay {
   rating: number | null;
   category: string | null;
   equipment: string[];
+  servings: number | null;
 }
 
 // The type used when displaying a list of recipes

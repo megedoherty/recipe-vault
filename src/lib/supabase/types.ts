@@ -110,6 +110,7 @@ export type Database = {
           made: boolean;
           name: string;
           rating: number | null;
+          servings: number | null;
           source_url: string | null;
           updated_at: string | null;
           user_id: string | null;
@@ -125,6 +126,7 @@ export type Database = {
           made?: boolean;
           name: string;
           rating?: number | null;
+          servings?: number | null;
           source_url?: string | null;
           updated_at?: string | null;
           user_id?: string | null;
@@ -140,6 +142,7 @@ export type Database = {
           made?: boolean;
           name?: string;
           rating?: number | null;
+          servings?: number | null;
           source_url?: string | null;
           updated_at?: string | null;
           user_id?: string | null;

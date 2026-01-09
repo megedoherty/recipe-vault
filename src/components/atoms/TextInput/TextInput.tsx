@@ -8,8 +8,8 @@ interface TextInputProps extends InputHTMLAttributes<
   label: string;
   name: string;
   id: string;
-  type: 'text' | 'url' | 'textarea' | 'email' | 'password';
-  defaultValue?: string;
+  type: 'text' | 'url' | 'textarea' | 'email' | 'password' | 'number';
+  defaultValue?: string | number;
   fullWidth?: boolean;
   hideLabel?: boolean;
   className?: string;
