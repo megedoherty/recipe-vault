@@ -4,12 +4,21 @@
   gap: 0.5rem;
 
   @media (width >= 768px) {
-    flex-direction: row;
+    flex-flow: row wrap;
   }
 }
 
-.selectableSearchPopoverButton {
-  min-width: 14rem;
+.ingredientFilterButton {
+  min-width: 12rem;
+}
+
+.equipmentFilterButton {
+  min-width: 9rem;
+}
+
+.buttonsContainer {
+  display: flex;
+  gap: 0.5rem;
 }
 
 .searchButton {

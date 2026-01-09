@@ -1,25 +1,29 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { FormEvent, useRef, useTransition } from 'react';
+import { FormEvent, useRef, useState, useTransition } from 'react';
 
 import IngredientFilter from '@/app/components/IngredientFilter/IngredientFilter';
 import Button from '@/components/atoms/Button/Button';
 import LoadingSpinner from '@/components/atoms/LoadingSpinner/LoadingSpinner';
 import TextInput from '@/components/atoms/TextInput/TextInput';
 import CategorySelect from '@/components/molecules/CategorySelect/CategorySelect';
-import { Category, IngredientForSearch } from '@/types';
+import { Category, Equipment, IngredientForSearch } from '@/types';
 
+import EquipmentFilter from './EquipmentFilter/EquipmentFilter';
 import styles from './SearchForm.module.css';
+import { getStringArraySearchParam, getStringSearchParam } from './utils';
 
 interface SearchFormProps {
   categories: Category[];
   ingredients: IngredientForSearch[];
+  equipment: Equipment[];
 }
 
 export default function SearchForm({
   categories,
   ingredients,
+  equipment,
 }: SearchFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -27,21 +31,17 @@ export default function SearchForm({
   const [isPending, startTransition] = useTransition();
   const [isClearing, startClearTransition] = useTransition();
 
-  const nameParam = searchParams.get('name');
-  const name = typeof nameParam === 'string' ? nameParam : undefined;
-
-  const categoryParam = searchParams.get('categoryId');
-  const categoryId = typeof categoryParam === 'string' ? categoryParam : '';
-
-  const includedIngredientsParam = searchParams.get('includedIngredients');
-  const includedIngredients = includedIngredientsParam
-    ? includedIngredientsParam.split(',')
-    : [];
-
-  const excludedIngredientsParam = searchParams.get('excludedIngredients');
-  const excludedIngredients = excludedIngredientsParam
-    ? excludedIngredientsParam.split(',')
-    : [];
+  const name = getStringSearchParam(searchParams, 'name');
+  const categoryId = getStringSearchParam(searchParams, 'categoryId');
+  const includeIngredients = getStringArraySearchParam(
+    searchParams,
+    'includeIngredients',
+  );
+  const excludeIngredients = getStringArraySearchParam(
+    searchParams,
+    'excludeIngredients',
+  );
+  const equipmentIds = getStringArraySearchParam(searchParams, 'equipment');
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -59,14 +59,19 @@ export default function SearchForm({
       params.set('categoryId', categoryValue);
     }
 
-    const includedValue = formData.get('includedIngredients') as string;
-    if (includedValue) {
-      params.set('includedIngredients', includedValue);
+    const includeValue = formData.get('includeIngredients') as string;
+    if (includeValue) {
+      params.set('includeIngredients', includeValue);
     }
 
-    const excludedValue = formData.get('excludedIngredients') as string;
-    if (excludedValue) {
-      params.set('excludedIngredients', excludedValue);
+    const excludeValue = formData.get('excludeIngredients') as string;
+    if (excludeValue) {
+      params.set('excludeIngredients', excludeValue);
+    }
+
+    const equipmentValue = formData.get('equipment') as string;
+    if (equipmentValue) {
+      params.set('equipment', equipmentValue);
     }
 
     const queryString = params.toString();
@@ -112,50 +117,50 @@ export default function SearchForm({
           defaultValue={categoryId}
         />
         <IngredientFilter
-          key={`included-${includedIngredientsParam || ''}`}
-          type="Included"
+          key={`include-${includeIngredients.join(',')}`}
+          type="Include"
           ingredients={ingredients}
-          initialValue={includedIngredients}
-          buttonClassName={styles.selectableSearchPopoverButton}
+          initialValue={includeIngredients}
+          buttonClassName={styles.ingredientFilterButton}
         />
         <IngredientFilter
-          key={`excluded-${excludedIngredientsParam || ''}`}
-          type="Excluded"
+          key={`exclude-${excludeIngredients.join(',')}`}
+          type="Exclude"
           ingredients={ingredients}
-          initialValue={excludedIngredients}
-          buttonClassName={styles.selectableSearchPopoverButton}
+          initialValue={excludeIngredients}
+          buttonClassName={styles.ingredientFilterButton}
         />
-        <Button
-          variant="primary"
-          type="submit"
-          disabled={isPending}
-          className={styles.searchButton}
-        >
-          {isPending ? (
+        <EquipmentFilter
+          key={`equipment-${equipmentIds.join(',')}`}
+          equipment={equipment}
+          initialValue={equipmentIds}
+          buttonClassName={styles.equipmentFilterButton}
+        />
+        <div className={styles.buttonsContainer}>
+          <Button
+            variant="primary"
+            type="submit"
+            disabled={isPending}
+            className={styles.searchButton}
+          >
             <>
               Search
-              <LoadingSpinner size="small" />
+              {isPending && <LoadingSpinner size="small" />}
             </>
-          ) : (
-            'Search'
-          )}
-        </Button>
-        <Button
-          type="button"
-          variant="secondary"
-          onClick={clearFilters}
-          disabled={isClearing}
-          className={styles.clearButton}
-        >
-          {isClearing ? (
+          </Button>
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={clearFilters}
+            disabled={isClearing}
+            className={styles.clearButton}
+          >
             <>
               Clear
-              <LoadingSpinner size="small" />
+              {isClearing && <LoadingSpinner size="small" />}
             </>
-          ) : (
-            'Clear'
-          )}
-        </Button>
+          </Button>
+        </div>
       </form>
     </search>
   );

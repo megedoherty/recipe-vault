@@ -6,7 +6,7 @@ import SelectableSearchPopover from '@/components/molecules/SelectableSearchPopo
 import { IngredientForSearch } from '@/types';
 
 interface IngredientFilterProps {
-  type: 'Included' | 'Excluded';
+  type: 'Include' | 'Exclude';
   ingredients: IngredientForSearch[];
   initialValue?: string[];
   buttonClassName?: string;

@@ -95,15 +95,17 @@ export async function getRecipeIngredientsForEdit(
 interface GetAllRecipesParams {
   name?: string;
   categoryId?: number;
-  includedIngredients?: string;
-  excludedIngredients?: string;
+  includeIngredients?: string;
+  excludeIngredients?: string;
+  equipment?: string;
 }
 
 export async function getAllRecipes({
   name,
   categoryId,
-  includedIngredients,
-  excludedIngredients,
+  includeIngredients,
+  excludeIngredients,
+  equipment,
 }: GetAllRecipesParams = {}): Promise<RecipeSummary[]> {
   const supabase = await createClient();
   let query = supabase
@@ -118,10 +120,15 @@ export async function getAllRecipes({
     query = query.eq('category_id', categoryId);
   }
 
+  // Collect all recipe ID filters
   let includedRecipeIds: string[] = [];
-  if (includedIngredients && includedIngredients.length > 0) {
+  let excludedRecipeIds: string[] = [];
+  let equipmentRecipeIds: string[] = [];
+
+  // Handle included ingredients (must have ALL)
+  if (includeIngredients && includeIngredients.length > 0) {
     // Convert string IDs to numbers (ingredients uses number IDs)
-    const ingredientIds = includedIngredients
+    const ingredientIds = includeIngredients
       .split(',')
       .map((id) => parseInt(id, 10));
 
@@ -165,9 +172,9 @@ export async function getAllRecipes({
     }
   }
 
-  let excludedRecipeIds: string[] = [];
-  if (excludedIngredients && excludedIngredients.length > 0) {
-    const excludedIngredientIds = excludedIngredients
+  // Handle excluded ingredients (must not have ANY)
+  if (excludeIngredients && excludeIngredients.length > 0) {
+    const excludedIngredientIds = excludeIngredients
       .split(',')
       .map((id) => parseInt(id, 10));
 
@@ -179,20 +186,76 @@ export async function getAllRecipes({
       .overrideTypes<Array<{ recipe_id: string }>>();
 
     if (excludedRecipes && excludedRecipes.length > 0) {
-      const recipeIds = [...new Set(excludedRecipes.map((r) => r.recipe_id))];
-      excludedRecipeIds = recipeIds;
+      excludedRecipeIds = [...new Set(excludedRecipes.map((r) => r.recipe_id))];
     }
   }
 
+  // Handle equipment (must have ALL selected equipment)
+  if (equipment && equipment.length > 0) {
+    const equipmentIdNumbers = equipment
+      .split(',')
+      .map((id) => parseInt(id, 10));
+
+    const { data: recipeEquipment } = await supabase
+      .from('recipe_equipment')
+      .select('recipe_id, equipment_id')
+      .in('equipment_id', equipmentIdNumbers)
+      .not('recipe_id', 'is', null);
+
+    if (recipeEquipment && recipeEquipment.length > 0) {
+      // Group by recipe_id and count unique equipment per recipe
+      const recipeToEquipment = recipeEquipment.reduce(
+        (acc, re) => {
+          if (!acc[re.recipe_id]) {
+            acc[re.recipe_id] = new Set();
+          }
+          acc[re.recipe_id].add(re.equipment_id);
+          return acc;
+        },
+        {} as Record<string, Set<number>>,
+      );
+
+      // Filter to recipes that have ALL selected equipment
+      const recipeIds = Object.entries(recipeToEquipment)
+        .filter(
+          ([, equipmentSet]) => equipmentSet.size === equipmentIdNumbers.length,
+        )
+        .map(([recipeId]) => recipeId);
+
+      if (recipeIds.length > 0) {
+        equipmentRecipeIds = recipeIds;
+      } else {
+        return [];
+      }
+    } else {
+      return [];
+    }
+  }
+
+  // Combine all filters: find intersection of all included filters, then remove excluded
   let finalRecipeIds: string[] | undefined;
-  if (includedRecipeIds.length > 0) {
-    // Filter out any recipes that have excluded ingredients
-    finalRecipeIds = includedRecipeIds.filter(
+
+  if (includedRecipeIds.length > 0 || equipmentRecipeIds.length > 0) {
+    // Start with the first non-empty filter
+    let combinedIds: string[] = [];
+
+    if (includedRecipeIds.length > 0 && equipmentRecipeIds.length > 0) {
+      // Find intersection: recipes that match BOTH ingredient AND equipment filters
+      combinedIds = includedRecipeIds.filter((id) =>
+        equipmentRecipeIds.includes(id),
+      );
+    } else if (includedRecipeIds.length > 0) {
+      combinedIds = includedRecipeIds;
+    } else if (equipmentRecipeIds.length > 0) {
+      combinedIds = equipmentRecipeIds;
+    }
+
+    // Remove recipes with excluded ingredients
+    finalRecipeIds = combinedIds.filter(
       (id) => !excludedRecipeIds.includes(id),
     );
   } else if (excludedRecipeIds.length > 0) {
-    // No included ingredients, but we need to exclude some
-    // We'll handle this with a query filter instead
+    // Only excluded ingredients filter - use query filter
     finalRecipeIds = undefined;
     query = query.not('id', 'in', `(${excludedRecipeIds.join(',')})`);
   }
