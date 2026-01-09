@@ -6,12 +6,14 @@ import { useActionState, useMemo, useState } from 'react';
 import Button from '@/components/atoms/Button/Button';
 import TextInput from '@/components/atoms/TextInput/TextInput';
 import CategorySelect from '@/components/molecules/CategorySelect/CategorySelect';
+import EquipmentSelect from '@/components/organisms/EquipmentSelect/EquipmentSelect';
 import IngredientSectionsEditor from '@/components/organisms/IngredientSectionsEditor/IngredientSectionsEditor';
 import InstructionsSectionsEditor from '@/components/organisms/InstructionsSectionsEditor/InstructionsSectionsEditor';
 import { addRecipe } from '@/lib/actions/recipes';
 import { parseIngredients, parseInstructions } from '@/lib/utils/parse';
 import {
   Category,
+  Equipment,
   IngredientForRecipeEdit,
   InstructionSection,
   RecipeIngredientSectionsEditable,
@@ -23,11 +25,13 @@ import styles from './CreateRecipeForm.module.css';
 interface CreateRecipeFormComponentProps {
   categories: Category[];
   ingredients: IngredientForRecipeEdit[];
+  equipment: Equipment[];
 }
 
 export default function CreateRecipeForm({
   categories,
   ingredients,
+  equipment,
 }: CreateRecipeFormComponentProps) {
   const [ingredientSections, setIngredientSections] = useState<
     RecipeIngredientSectionsEditable[]
@@ -35,9 +39,15 @@ export default function CreateRecipeForm({
   const [instructionSections, setInstructionSections] = useState<
     InstructionSection[]
   >([]);
+  const [selectedEquipment, setSelectedEquipment] = useState<string[]>([]);
 
   const [state, formAction, isPending] = useActionState(
-    addRecipe.bind(null, ingredientSections, instructionSections),
+    addRecipe.bind(
+      null,
+      ingredientSections,
+      instructionSections,
+      selectedEquipment,
+    ),
     null,
   );
 
@@ -69,6 +79,11 @@ export default function CreateRecipeForm({
       <section className={styles.sectionContainer}>
         <h2>Organization</h2>
         <CategorySelect categories={categories} showEmptyOption />
+        <EquipmentSelect
+          equipment={equipment}
+          selectedEquipment={selectedEquipment}
+          setSelectedEquipment={setSelectedEquipment}
+        />
       </section>
       <ProcessableSection
         title="Ingredients"

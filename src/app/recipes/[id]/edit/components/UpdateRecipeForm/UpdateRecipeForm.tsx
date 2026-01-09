@@ -6,12 +6,14 @@ import { useActionState, useMemo, useState } from 'react';
 import Button from '@/components/atoms/Button/Button';
 import TextInput from '@/components/atoms/TextInput/TextInput';
 import CategorySelect from '@/components/molecules/CategorySelect/CategorySelect';
+import EquipmentSelect from '@/components/organisms/EquipmentSelect/EquipmentSelect';
 import IngredientSectionsEditor from '@/components/organisms/IngredientSectionsEditor/IngredientSectionsEditor';
 import InstructionsSectionsEditor from '@/components/organisms/InstructionsSectionsEditor/InstructionsSectionsEditor';
 import { updateRecipe } from '@/lib/actions/recipes';
 import {
   Category,
   EditableRecipe,
+  Equipment,
   IngredientForRecipeEdit,
   InstructionSection,
   RecipeIngredientSectionsEditable,
@@ -25,6 +27,7 @@ interface UpdateRecipeFormComponentProps {
   ingredientSections: RecipeIngredientSectionsEditable[];
   categories: Category[];
   ingredients: IngredientForRecipeEdit[];
+  equipment: Equipment[];
 }
 
 export default function UpdateRecipeForm({
@@ -33,12 +36,16 @@ export default function UpdateRecipeForm({
   ingredientSections,
   ingredients,
   categories,
+  equipment,
 }: UpdateRecipeFormComponentProps) {
   const [formIngredientSections, setFormIngredientSections] =
     useState<RecipeIngredientSectionsEditable[]>(ingredientSections);
   const [formInstructionSections, setFormInstructionSections] = useState<
     InstructionSection[]
   >(recipe.instructions);
+  const [selectedEquipment, setSelectedEquipment] = useState<string[]>(
+    recipe.equipmentIds,
+  );
 
   const [state, formAction, isPending] = useActionState(
     updateRecipe.bind(
@@ -46,6 +53,7 @@ export default function UpdateRecipeForm({
       recipeId,
       formIngredientSections,
       formInstructionSections,
+      selectedEquipment,
     ),
     null,
   );
@@ -89,6 +97,11 @@ export default function UpdateRecipeForm({
           defaultValue={recipe.categoryId?.toString() ?? ''}
           categories={categories}
           showEmptyOption
+        />
+        <EquipmentSelect
+          equipment={equipment}
+          selectedEquipment={selectedEquipment}
+          setSelectedEquipment={setSelectedEquipment}
         />
       </section>
       <section className={styles.sectionContainer}>

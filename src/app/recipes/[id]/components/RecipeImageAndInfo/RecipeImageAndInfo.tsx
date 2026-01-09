@@ -6,21 +6,35 @@ interface RecipeImageAndInfoProps {
   category: string | null;
   imageUrl: string | null;
   name: string;
+  equipment: string[];
 }
 
 export default function RecipeImageAndInfo({
   category,
+  equipment,
   imageUrl,
   name,
 }: RecipeImageAndInfoProps) {
   return (
     <div className={styles.container}>
       <aside>
-        <dl>
+        <dl className={styles.infoContainer}>
           {category && (
             <div className={styles.infoItem}>
-              <dt>Category:</dt>
+              <dt className={styles.infoItemLabel}>Category:</dt>
               <dd>{category}</dd>
+            </div>
+          )}
+          {equipment.length > 0 && (
+            <div>
+              <dt className={styles.infoItemLabel}>Equipment:</dt>
+              <dd>
+                <ul className={styles.infoItemList}>
+                  {equipment.map((e) => (
+                    <li key={e}>{e}</li>
+                  ))}
+                </ul>
+              </dd>
             </div>
           )}
         </dl>

@@ -35,6 +35,7 @@ interface SelectableSearchPopoverProps<T extends SearchItem> {
   // unique props
   canSelectMultiple?: boolean;
   containerClassName?: string;
+  openDirection?: 'left' | 'right';
 }
 
 export default function SelectableSearchPopover<T extends SearchItem>({
@@ -55,6 +56,7 @@ export default function SelectableSearchPopover<T extends SearchItem>({
   onToggleItem,
   canSelectMultiple = false,
   containerClassName = '',
+  openDirection = 'right',
 }: SelectableSearchPopoverProps<T>) {
   const [isOpen, setIsOpen] = useState(false);
   const wasOpenRef = useRef(false);
@@ -170,7 +172,7 @@ export default function SelectableSearchPopover<T extends SearchItem>({
       </Button>
       {isOpen && (
         <div
-          className={styles.popoverContainer}
+          className={`${styles.popoverContainer} ${styles[`open-${openDirection}`]}`}
           ref={popoverRef}
           id={popoverId}
           role="listbox"

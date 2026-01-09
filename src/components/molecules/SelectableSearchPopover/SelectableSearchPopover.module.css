@@ -6,13 +6,20 @@
   position: absolute;
   z-index: 2;
   top: calc(100% + 0.25rem);
-  right: 0;
   background-color: var(--background);
   border: 1px solid var(--border-default);
   border-radius: var(--border-radius-default);
   width: 20rem;
   max-width: 80vw;
   padding: 0 0 0.5rem;
+
+  &.open-left {
+    left: 0;
+  }
+
+  &.open-right {
+    right: 0;
+  }
 }
 
 .inputContainer {
@@ -29,6 +36,10 @@
 
 .itemSection {
   border-top: 1px solid var(--border-default);
+
+  &:not(:has(.sectionName)) {
+    padding-block-start: 0.25rem;
+  }
 }
 
 .sectionName {

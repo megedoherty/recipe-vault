@@ -88,6 +88,7 @@ const createIngredientsInsert = (
 export async function addRecipe(
   ingredientSections: RecipeIngredientSectionsEditable[],
   instructionSections: InstructionSection[],
+  selectedEquipment: string[],
   prevState: ActionsResponse | null,
   formData: FormData,
 ): Promise<ActionsResponse> {
@@ -147,6 +148,24 @@ export async function addRecipe(
     };
   }
 
+  // Insert the equipment into the equipment table
+  const { error: equipmentError } = await supabase
+    .from('recipe_equipment')
+    .insert(
+      selectedEquipment.map((equipmentId) => ({
+        recipe_id: data.id,
+        equipment_id: parseInt(equipmentId),
+      })),
+    );
+
+  if (equipmentError) {
+    console.error(equipmentError);
+    return {
+      success: false,
+      error: equipmentError?.message ?? 'Failed to create equipment',
+    };
+  }
+
   redirect(`/recipes/${data.id}`);
 }
 
@@ -161,6 +180,7 @@ export async function updateRecipe(
   recipeId: string,
   ingredientSections: RecipeIngredientSectionsEditable[],
   instructionSections: InstructionSection[],
+  selectedEquipment: string[],
   prevState: ActionsResponse | null,
   formData: FormData,
 ): Promise<ActionsResponse> {
@@ -256,6 +276,40 @@ export async function updateRecipe(
       success: false,
       error: ingredientError?.message ?? 'Failed to update ingredients',
     };
+  }
+
+  // Update the equipment - delete all existing equipment and insert the new ones
+  const { error: deleteEquipmentError } = await supabase
+    .from('recipe_equipment')
+    .delete()
+    .eq('recipe_id', recipeId);
+
+  if (deleteEquipmentError) {
+    console.error(deleteEquipmentError);
+    return {
+      success: false,
+      error: deleteEquipmentError.message ?? 'Failed to delete equipment',
+    };
+  }
+
+  // Insert the selected equipment (only if there are any)
+  if (selectedEquipment.length > 0) {
+    const { error: equipmentError } = await supabase
+      .from('recipe_equipment')
+      .insert(
+        selectedEquipment.map((equipmentId) => ({
+          recipe_id: recipeId,
+          equipment_id: parseInt(equipmentId, 10),
+        })),
+      );
+
+    if (equipmentError) {
+      console.error(equipmentError);
+      return {
+        success: false,
+        error: equipmentError.message ?? 'Failed to update equipment',
+      };
+    }
   }
 
   redirect(`/recipes/${recipeData.id}`);

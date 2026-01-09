@@ -9,10 +9,24 @@
   }
 }
 
+.infoContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
 .infoItem {
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
+}
+
+.infoItemLabel {
+  font-weight: 600;
+}
+
+.infoItemList {
+  margin-inline-start: 1.25rem;
 }
 
 .imageContainer {

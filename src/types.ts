@@ -39,6 +39,11 @@ export interface RecipeDisplayDb {
   instructions: Json;
   instruction_section_order: Json;
   category: { name: string } | null;
+  recipe_equipment: {
+    equipment: {
+      name: string;
+    };
+  }[];
 }
 
 // The type used on the FE when displaying a single recipe
@@ -50,6 +55,7 @@ export interface RecipeDisplay {
   instructions: InstructionSection[];
   rating: number | null;
   category: string | null;
+  equipment: string[];
 }
 
 // The type used when displaying a list of recipes
@@ -70,6 +76,9 @@ export interface EditableRecipeDb {
   instruction_section_order: Json;
   category_id: number | null;
   ingredient_section_order: Json;
+  recipe_equipment: {
+    equipment_id: number;
+  }[];
 }
 
 // The type used on the FE when editing a recipe
@@ -79,6 +88,7 @@ export interface EditableRecipe {
   sourceUrl: string | null;
   instructions: InstructionSection[];
   categoryId: number | null;
+  equipmentIds: string[];
 }
 
 ////////////////////////////////////////////////////////////
@@ -160,4 +170,14 @@ export interface IngredientForSearch {
   childrenIds: string[];
   parentIds: string[];
   depth: number;
+}
+
+////////////////////////////////////////////////////////////
+// Equipment types
+////////////////////////////////////////////////////////////
+
+export type EquipmentDb = Tables<'equipment'>;
+export interface Equipment {
+  id: string;
+  name: string;
 }

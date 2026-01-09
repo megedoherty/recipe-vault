@@ -70,6 +70,7 @@ export default function IngredientFilter({
         onToggleItem={onToggleIngredient}
         canSelectMultiple
         getIndentationLevel={(item) => item.depth ?? 0}
+        openDirection="left"
       />
       <input
         key={inputName}

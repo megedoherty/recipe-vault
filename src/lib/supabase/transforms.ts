@@ -77,6 +77,7 @@ export function transformRecipe(recipe: RecipeDisplayDb): RecipeDisplay {
     instructions,
     category: recipe.category?.name ?? null,
     rating: recipe.rating,
+    equipment: recipe.recipe_equipment.map((e) => e.equipment.name),
   };
 }
 
@@ -106,6 +107,7 @@ export function transformRecipeForEdit(
     sourceUrl: recipe.source_url,
     instructions,
     categoryId: recipe.category_id,
+    equipmentIds: recipe.recipe_equipment.map((e) => e.equipment_id.toString()),
   };
 }
 
