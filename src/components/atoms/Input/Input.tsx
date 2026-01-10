@@ -1,8 +1,8 @@
 import { InputHTMLAttributes } from 'react';
 
-import styles from './TextInput.module.css';
+import styles from './Input.module.css';
 
-interface TextInputProps extends InputHTMLAttributes<
+interface InputProps extends InputHTMLAttributes<
   HTMLInputElement | HTMLTextAreaElement
 > {
   label: string;
@@ -13,9 +13,10 @@ interface TextInputProps extends InputHTMLAttributes<
   fullWidth?: boolean;
   hideLabel?: boolean;
   className?: string;
+  hasError?: boolean;
 }
 
-export default function TextInput({
+export default function Input({
   label,
   name,
   id,
@@ -24,9 +25,13 @@ export default function TextInput({
   fullWidth,
   hideLabel,
   className = '',
+  hasError,
   ...props
-}: TextInputProps) {
+}: InputProps) {
   const fullWidthClass = fullWidth ? styles.fullWidth : '';
+  const errorClass = hasError ? styles.error : '';
+
+  const sharedClasses = `${fullWidthClass} ${errorClass}`;
 
   return (
     <div className={`${styles.container} ${fullWidthClass} ${className}`}>
@@ -38,7 +43,7 @@ export default function TextInput({
           id={id}
           name={name}
           defaultValue={defaultValue}
-          className={`${styles.textarea} ${fullWidthClass}`}
+          className={`${styles.textarea} ${sharedClasses}`}
           {...props}
         />
       ) : (
@@ -47,7 +52,7 @@ export default function TextInput({
           id={id}
           name={name}
           defaultValue={defaultValue}
-          className={`${styles.input} ${fullWidthClass}`}
+          className={`${styles.input} ${sharedClasses}`}
           {...props}
         />
       )}

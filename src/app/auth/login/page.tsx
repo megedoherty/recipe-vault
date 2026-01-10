@@ -1,5 +1,5 @@
 import Button from '@/components/atoms/Button/Button';
-import TextInput from '@/components/atoms/TextInput/TextInput';
+import Input from '@/components/atoms/Input/Input';
 import { signIn } from '@/lib/actions/auth';
 
 import styles from './page.module.css';
@@ -9,7 +9,7 @@ export default function LoginPage() {
     <div className={styles.page}>
       <h1>Log In</h1>
       <form action={signIn} className={styles.form}>
-        <TextInput
+        <Input
           label="Email"
           id="email"
           type="email"
@@ -18,7 +18,7 @@ export default function LoginPage() {
           fullWidth
           placeholder="Email"
         />
-        <TextInput
+        <Input
           label="Password"
           id="password"
           type="password"

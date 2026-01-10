@@ -78,6 +78,16 @@
   min-width: 9rem;
 }
 
+.inputContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.label {
+  font-weight: 600;
+}
+
 /* Animations */
 
 /* Starting style for the open state */

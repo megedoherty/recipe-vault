@@ -1,11 +1,12 @@
-import { useCallback, useRef, useState } from 'react';
+import { RefObject, useCallback, useRef, useState } from 'react';
 
 import Button from '@/components/atoms/Button/Button';
 import XIcon from '@/components/atoms/icons/XIcon';
-import { Equipment, IngredientForSearch } from '@/types';
+import { Equipment, IngredientForSearch, ServingsRange } from '@/types';
 
 import EquipmentFilter from '../EquipmentFilter/EquipmentFilter';
 import IngredientFilter from '../IngredientFilter/IngredientFilter';
+import ServingsFilter from '../ServingsFilter/ServingsFilter';
 import styles from './SearchFiltersModal.module.css';
 
 interface SearchFiltersModalProps {
@@ -13,6 +14,10 @@ interface SearchFiltersModalProps {
   equipment: Equipment[];
   excludeIngredientsInitialValue: string[];
   equipmentIdsInitialValue: string[];
+  minServingsInitialValue?: number;
+  maxServingsInitialValue?: number;
+  servingsRange: ServingsRange;
+  formRef: RefObject<HTMLFormElement | null>;
 }
 
 export default function SearchFiltersModal({
@@ -20,14 +25,22 @@ export default function SearchFiltersModal({
   equipment,
   excludeIngredientsInitialValue,
   equipmentIdsInitialValue,
+  minServingsInitialValue,
+  maxServingsInitialValue,
+  servingsRange,
+  formRef,
 }: SearchFiltersModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const [activeFilters, setActiveFilters] = useState(() => [
-    ...(excludeIngredientsInitialValue.length > 0
-      ? ['excludeIngredients']
-      : []),
-    ...(equipmentIdsInitialValue.length > 0 ? ['equipment'] : []),
-  ]);
+  const [activeFilters, setActiveFilters] = useState(() => {
+    return [
+      ...(excludeIngredientsInitialValue.length > 0
+        ? ['excludeIngredients']
+        : []),
+      ...(equipmentIdsInitialValue.length > 0 ? ['equipment'] : []),
+      ...(minServingsInitialValue !== undefined ? ['minServings'] : []),
+      ...(maxServingsInitialValue !== undefined ? ['maxServings'] : []),
+    ];
+  });
 
   const updateActiveFilters = useCallback(
     (filterName: string, isActive: boolean) => {
@@ -78,6 +91,16 @@ export default function SearchFiltersModal({
             initialValue={equipmentIdsInitialValue}
             buttonClassName={styles.equipmentFilterButton}
             updateActiveFilters={updateActiveFilters}
+          />
+          <ServingsFilter
+            key={`servings-${minServingsInitialValue}-${maxServingsInitialValue}`}
+            minInitialValue={minServingsInitialValue}
+            maxInitialValue={maxServingsInitialValue}
+            containerClassName={styles.servingsFilterContainer}
+            labelClassName={styles.servingsFilterLabel}
+            servingsRange={servingsRange}
+            updateActiveFilters={updateActiveFilters}
+            formRef={formRef}
           />
         </div>
       </dialog>

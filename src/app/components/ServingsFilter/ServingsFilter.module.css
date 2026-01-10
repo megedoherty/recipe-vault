@@ -1,0 +1,16 @@
+.rangeContainer {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-inline-start: 0.5rem;
+}
+
+.numberInput {
+  width: 4rem;
+}
+
+.errorMessage {
+  color: var(--error);
+  font-size: var(--font-size-small);
+  margin-inline-start: 0.5rem;
+}

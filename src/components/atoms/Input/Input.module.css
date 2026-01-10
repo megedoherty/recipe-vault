@@ -1,0 +1,44 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+.input {
+  height: 100%;
+
+  &::placeholder {
+    color: var(--text-muted);
+  }
+}
+
+.textarea {
+  resize: none;
+  field-sizing: content;
+}
+
+.input,
+.textarea {
+  border: 1px solid var(--input-border-color, var(--border-default));
+  border-radius: 0.25rem;
+  background-color: var(--background-elevated);
+  font-size: var(--font-size-small);
+  color: var(--input-color, inherit);
+  padding: 0.5rem;
+  font-family: var(--font-family-body);
+
+  &:focus {
+    outline: none;
+    border-color: var(--accent);
+    background-color: var(--active-surface);
+  }
+
+  &.error {
+    --input-border-color: var(--error);
+    --input-color: var(--error);
+  }
+}

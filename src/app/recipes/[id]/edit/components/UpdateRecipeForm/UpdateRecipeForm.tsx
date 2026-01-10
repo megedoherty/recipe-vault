@@ -4,7 +4,7 @@ import Form from 'next/form';
 import { useActionState, useMemo, useState } from 'react';
 
 import Button from '@/components/atoms/Button/Button';
-import TextInput from '@/components/atoms/TextInput/TextInput';
+import Input from '@/components/atoms/Input/Input';
 import CategorySelect from '@/components/molecules/CategorySelect/CategorySelect';
 import EquipmentSelect from '@/components/organisms/EquipmentSelect/EquipmentSelect';
 import IngredientSectionsEditor from '@/components/organisms/IngredientSectionsEditor/IngredientSectionsEditor';
@@ -66,7 +66,7 @@ export default function UpdateRecipeForm({
     <Form action={formAction} className={styles.form}>
       <section className={styles.sectionContainer}>
         <h2>Basic Information</h2>
-        <TextInput
+        <Input
           label="Name"
           name="name"
           id="name"
@@ -74,7 +74,7 @@ export default function UpdateRecipeForm({
           defaultValue={recipe.name}
           fullWidth
         />
-        <TextInput
+        <Input
           label="Source URL"
           name="sourceUrl"
           id="sourceUrl"
@@ -82,7 +82,7 @@ export default function UpdateRecipeForm({
           defaultValue={recipe.sourceUrl ?? ''}
           fullWidth
         />
-        <TextInput
+        <Input
           label="Image URL"
           name="imageUrl"
           id="imageUrl"

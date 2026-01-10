@@ -4,7 +4,7 @@ import Form from 'next/form';
 import { useActionState, useMemo, useState } from 'react';
 
 import Button from '@/components/atoms/Button/Button';
-import TextInput from '@/components/atoms/TextInput/TextInput';
+import Input from '@/components/atoms/Input/Input';
 import CategorySelect from '@/components/molecules/CategorySelect/CategorySelect';
 import EquipmentSelect from '@/components/organisms/EquipmentSelect/EquipmentSelect';
 import IngredientSectionsEditor from '@/components/organisms/IngredientSectionsEditor/IngredientSectionsEditor';
@@ -68,7 +68,7 @@ export default function CreateRecipeForm({
   return (
     <Form action={formAction} className={styles.form}>
       {state?.error && <p>{state.error}</p>}
-      <TextInput
+      <Input
         label="Name"
         name="name"
         id="name"

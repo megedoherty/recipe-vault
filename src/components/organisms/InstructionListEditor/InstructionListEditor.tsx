@@ -9,7 +9,7 @@ import Button from '@/components/atoms/Button/Button';
 import Chip from '@/components/atoms/Chip/Chip';
 import UpDownArrowIcon from '@/components/atoms/icons/UpDownArrowIcon';
 import XIcon from '@/components/atoms/icons/XIcon';
-import TextInput from '@/components/atoms/TextInput/TextInput';
+import Input from '@/components/atoms/Input/Input';
 import SelectableSearchPopover from '@/components/molecules/SelectableSearchPopover/SelectableSearchPopover';
 import { InstructionSection, RecipeEditableIngredient } from '@/types';
 
@@ -121,7 +121,7 @@ export default function InstructionListEditor({
                     >
                       <UpDownArrowIcon />
                     </Button>
-                    <TextInput
+                    <Input
                       label="Step"
                       name={`${section.title}-step-${stepIndex}`}
                       id={`${section.title}-step-${stepIndex}`}

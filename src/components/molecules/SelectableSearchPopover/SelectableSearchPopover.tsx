@@ -2,7 +2,7 @@ import { ReactNode, useEffect, useRef, useState } from 'react';
 
 import Button, { ButtonProps } from '@/components/atoms/Button/Button';
 import Checkbox from '@/components/atoms/Checkbox/Checkbox';
-import TextInput from '@/components/atoms/TextInput/TextInput';
+import Input from '@/components/atoms/Input/Input';
 
 import styles from './SelectableSearchPopover.module.css';
 
@@ -179,7 +179,7 @@ export default function SelectableSearchPopover<T extends SearchItem>({
           aria-label={popoverAriaLabel}
         >
           <div className={styles.inputContainer}>
-            <TextInput
+            <Input
               label={searchLabel}
               placeholder={searchPlaceholder}
               value={searchTerm}

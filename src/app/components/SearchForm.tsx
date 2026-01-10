@@ -5,10 +5,15 @@ import { FormEvent, useRef, useTransition } from 'react';
 
 import IngredientFilter from '@/app/components/IngredientFilter/IngredientFilter';
 import Button from '@/components/atoms/Button/Button';
+import Input from '@/components/atoms/Input/Input';
 import LoadingSpinner from '@/components/atoms/LoadingSpinner/LoadingSpinner';
-import TextInput from '@/components/atoms/TextInput/TextInput';
 import CategorySelect from '@/components/molecules/CategorySelect/CategorySelect';
-import { Category, Equipment, IngredientForSearch } from '@/types';
+import {
+  Category,
+  Equipment,
+  IngredientForSearch,
+  ServingsRange,
+} from '@/types';
 
 import SearchFiltersModal from './SearchFiltersModal/SearchFiltersModal';
 import styles from './SearchForm.module.css';
@@ -22,12 +27,14 @@ interface SearchFormProps {
   categories: Category[];
   ingredients: IngredientForSearch[];
   equipment: Equipment[];
+  servingsRange: ServingsRange;
 }
 
 export default function SearchForm({
   categories,
   ingredients,
   equipment,
+  servingsRange,
 }: SearchFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -37,7 +44,8 @@ export default function SearchForm({
 
   const name = getStringSearchParam(searchParams, 'name');
   const categoryId = getStringSearchParam(searchParams, 'categoryId');
-  const servings = getNumberSearchParam(searchParams, 'servings');
+  const minServings = getNumberSearchParam(searchParams, 'minServings');
+  const maxServings = getNumberSearchParam(searchParams, 'maxServings');
   const includeIngredients = getStringArraySearchParam(
     searchParams,
     'includeIngredients',
@@ -79,6 +87,25 @@ export default function SearchForm({
       params.set('equipment', equipmentValue);
     }
 
+    const minServingsValue = formData.get('minServings') as string;
+    const maxServingsValue = formData.get('maxServings') as string;
+
+    const minNum = minServingsValue ? Number(minServingsValue) : undefined;
+    const maxNum = maxServingsValue ? Number(maxServingsValue) : undefined;
+
+    const isValid =
+      minNum === undefined ||
+      maxNum === undefined ||
+      (!isNaN(minNum) && !isNaN(maxNum) && minNum <= maxNum);
+
+    if (isValid && minServingsValue) {
+      params.set('minServings', minServingsValue);
+    }
+
+    if (isValid && maxServingsValue) {
+      params.set('maxServings', maxServingsValue);
+    }
+
     const queryString = params.toString();
     startTransition(() => {
       router.replace(queryString ? `/?${queryString}` : '/');
@@ -96,9 +123,13 @@ export default function SearchForm({
     );
 
     if (!isEmpty) {
-      startClearTransition(() => {
-        router.replace('/');
-      });
+      // Only redirect if there are search params
+      if (searchParams.toString() !== '') {
+        startClearTransition(() => {
+          router.replace('/');
+        });
+      }
+
       formRef.current?.reset();
     }
   };
@@ -106,7 +137,7 @@ export default function SearchForm({
   return (
     <search>
       <form ref={formRef} onSubmit={handleSubmit} className={styles.form}>
-        <TextInput
+        <Input
           label="Recipe name"
           type="text"
           id="recipeName"
@@ -133,6 +164,10 @@ export default function SearchForm({
           equipment={equipment}
           excludeIngredientsInitialValue={excludeIngredients}
           equipmentIdsInitialValue={equipmentIds}
+          minServingsInitialValue={minServings ?? undefined}
+          maxServingsInitialValue={maxServings ?? undefined}
+          servingsRange={servingsRange}
+          formRef={formRef}
         />
         <div className={styles.buttonsContainer}>
           <Button

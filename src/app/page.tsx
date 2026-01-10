@@ -5,6 +5,7 @@ import LoadingSpinner from '@/components/atoms/LoadingSpinner/LoadingSpinner';
 import { getCategories } from '@/lib/supabase/queries/categories';
 import { getEquipment } from '@/lib/supabase/queries/equipment';
 import { getIngredientsForSearch } from '@/lib/supabase/queries/ingredients';
+import { getServingsRange } from '@/lib/supabase/queries/recipes';
 
 import RecipesList from './components/RecipesList/RecipesList';
 import SearchForm from './components/SearchForm';
@@ -15,6 +16,7 @@ export default async function Home({ searchParams }: PageProps<'/'>) {
   const categories = await getCategories();
   const ingredients = await getIngredientsForSearch();
   const equipment = await getEquipment();
+  const servingsRange = await getServingsRange();
 
   return (
     <div className={styles.page}>
@@ -23,6 +25,7 @@ export default async function Home({ searchParams }: PageProps<'/'>) {
         categories={categories}
         ingredients={ingredients}
         equipment={equipment}
+        servingsRange={servingsRange}
       />
       <Suspense
         key={JSON.stringify(query)}

@@ -93,6 +93,11 @@ export interface EditableRecipe {
   equipmentIds: string[];
 }
 
+export interface ServingsRange {
+  min: number;
+  max: number;
+}
+
 ////////////////////////////////////////////////////////////
 // Recipe ingredient types
 ////////////////////////////////////////////////////////////

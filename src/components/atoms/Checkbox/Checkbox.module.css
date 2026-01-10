@@ -20,6 +20,9 @@
   appearance: none;
   height: var(--checkbox-size);
   width: var(--checkbox-size);
+  border: 1px solid var(--border-default);
+  border-radius: 0.25rem;
+  background-color: var(--background-elevated);
 
   &:hover {
     background-color: var(--hover-surface);

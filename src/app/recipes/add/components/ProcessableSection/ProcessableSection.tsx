@@ -2,7 +2,7 @@ import { ReactNode, useState } from 'react';
 
 import Button from '@/components/atoms/Button/Button';
 import Hint from '@/components/atoms/Hint/Hint';
-import TextInput from '@/components/atoms/TextInput/TextInput';
+import Input from '@/components/atoms/Input/Input';
 
 import styles from './ProcessableSection.module.css';
 
@@ -35,7 +35,7 @@ export default function ProcessableSection({
             end it with a colon. We&apos;ll turn your list into editable rows so
             you can review, edit, and add to before saving.
           </Hint>
-          <TextInput
+          <Input
             label={`All ${title}`}
             name="ingredients"
             id="ingredients"

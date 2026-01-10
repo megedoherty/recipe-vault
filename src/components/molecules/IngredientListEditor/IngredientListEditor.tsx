@@ -9,7 +9,7 @@ import { Dispatch, SetStateAction } from 'react';
 import Button from '@/components/atoms/Button/Button';
 import UpDownArrowIcon from '@/components/atoms/icons/UpDownArrowIcon';
 import XIcon from '@/components/atoms/icons/XIcon';
-import TextInput from '@/components/atoms/TextInput/TextInput';
+import Input from '@/components/atoms/Input/Input';
 import SelectableSearchPopover from '@/components/molecules/SelectableSearchPopover/SelectableSearchPopover';
 import {
   IngredientForRecipeEdit,
@@ -132,7 +132,7 @@ export default function IngredientListEditor({
                     >
                       <UpDownArrowIcon />
                     </Button>
-                    <TextInput
+                    <Input
                       className={styles.quantityInput}
                       label="Quantity"
                       name={`${section.title}-quantity-${ingredientIndex}`}
@@ -149,7 +149,7 @@ export default function IngredientListEditor({
                       }
                       hideLabel
                     />
-                    <TextInput
+                    <Input
                       label="Ingredient"
                       className={styles.ingredientInput}
                       name={`section-${section.title}-ingredient-${ingredientIndex}`}

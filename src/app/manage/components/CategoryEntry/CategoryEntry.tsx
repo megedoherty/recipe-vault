@@ -11,8 +11,8 @@ import {
 import Button from '@/components/atoms/Button/Button';
 import EditIcon from '@/components/atoms/icons/EditIcon';
 import XIcon from '@/components/atoms/icons/XIcon';
+import Input from '@/components/atoms/Input/Input';
 import LoadingSpinner from '@/components/atoms/LoadingSpinner/LoadingSpinner';
-import TextInput from '@/components/atoms/TextInput/TextInput';
 import { addCategory, updateCategory } from '@/lib/actions/categories';
 import { Category } from '@/types';
 
@@ -82,7 +82,7 @@ export default function CategoryEntry({
     <li className={styles.item}>
       {isEditing ? (
         <>
-          <TextInput
+          <Input
             name="name"
             label="Name"
             placeholder="Category Name"

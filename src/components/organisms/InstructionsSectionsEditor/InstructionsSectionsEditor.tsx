@@ -3,7 +3,7 @@ import { Dispatch, SetStateAction } from 'react';
 import Button from '@/components/atoms/Button/Button';
 import PlusIcon from '@/components/atoms/icons/PlusIcon';
 import TrashIcon from '@/components/atoms/icons/TrashIcon';
-import TextInput from '@/components/atoms/TextInput/TextInput';
+import Input from '@/components/atoms/Input/Input';
 import InstructionListEditor from '@/components/organisms/InstructionListEditor/InstructionListEditor';
 import { InstructionSection, RecipeEditableIngredient } from '@/types';
 
@@ -83,7 +83,7 @@ export default function IngredientSectionsEditor({
                 <TrashIcon />
               </Button>
             </div>
-            <TextInput
+            <Input
               label="Title"
               name={`section-${sectionIndex}`}
               id={`section-${sectionIndex}`}

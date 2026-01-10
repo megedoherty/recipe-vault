@@ -4,6 +4,7 @@ import {
   RecipeIngredientSections,
   RecipeIngredientSectionsEditable,
   RecipeSummary,
+  ServingsRange,
 } from '@/types';
 
 import { createClient } from '../server';
@@ -98,6 +99,8 @@ interface GetAllRecipesParams {
   includeIngredients?: string;
   excludeIngredients?: string;
   equipment?: string;
+  minServings?: number;
+  maxServings?: number;
 }
 
 export async function getAllRecipes({
@@ -106,6 +109,8 @@ export async function getAllRecipes({
   includeIngredients,
   excludeIngredients,
   equipment,
+  minServings,
+  maxServings,
 }: GetAllRecipesParams = {}): Promise<RecipeSummary[]> {
   const supabase = await createClient();
   let query = supabase
@@ -118,6 +123,14 @@ export async function getAllRecipes({
 
   if (categoryId) {
     query = query.eq('category_id', categoryId);
+  }
+
+  if (minServings) {
+    query = query.gte('servings', minServings);
+  }
+
+  if (maxServings) {
+    query = query.lte('servings', maxServings);
   }
 
   // Collect all recipe ID filters
@@ -280,4 +293,25 @@ export async function getAllRecipes({
         made: recipe.made,
       }))
     : [];
+}
+
+export async function getServingsRange(): Promise<ServingsRange> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from('recipe')
+    .select('servings')
+    .not('servings', 'is', null);
+
+  if (!data || data.length === 0) {
+    return { min: 0, max: 0 };
+  }
+
+  const servings = data
+    .map((r) => r.servings)
+    .filter((s): s is number => s !== null);
+
+  return {
+    min: Math.min(...servings),
+    max: Math.max(...servings),
+  };
 }
