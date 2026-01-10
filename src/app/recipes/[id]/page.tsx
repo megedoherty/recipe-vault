@@ -47,6 +47,7 @@ export default async function RecipePage({
         category={recipe.category}
         equipment={recipe.equipment}
         servings={recipe.servings}
+        storage={recipe.storage}
         imageUrl={imageUrl}
         name={name}
       />

@@ -112,6 +112,7 @@ export type Database = {
           rating: number | null;
           servings: number | null;
           source_url: string | null;
+          storage: Json | null;
           updated_at: string | null;
           user_id: string | null;
         };
@@ -128,6 +129,7 @@ export type Database = {
           rating?: number | null;
           servings?: number | null;
           source_url?: string | null;
+          storage?: Json | null;
           updated_at?: string | null;
           user_id?: string | null;
         };
@@ -144,6 +146,7 @@ export type Database = {
           rating?: number | null;
           servings?: number | null;
           source_url?: string | null;
+          storage?: Json | null;
           updated_at?: string | null;
           user_id?: string | null;
         };

@@ -9,6 +9,7 @@ import {
   RecipeIngredientSections,
   RecipeIngredientSectionsEditable,
   Step,
+  StorageInfo,
 } from '@/types';
 
 import { sortByOrder } from '../utils/sort';
@@ -51,6 +52,21 @@ function isValidIngredientSectionOrder(data: unknown): data is string[] {
   return Array.isArray(data) && data.every((item) => typeof item === 'string');
 }
 
+function isValidStorage(data: unknown): data is StorageInfo[] {
+  return Array.isArray(data) && data.every((item) => isValidStorageItem(item));
+}
+
+function isValidStorageItem(data: unknown): data is StorageInfo {
+  return (
+    typeof data === 'object' &&
+    data !== null &&
+    'location' in data &&
+    'days' in data
+  );
+}
+
+const STORAGE_LOCATION_ORDER = ['Room temperature', 'Fridge'];
+
 export function transformRecipe(recipe: RecipeDisplayDb): RecipeDisplay {
   const rawInstructions = isValidInstructionSection(recipe.instructions)
     ? (recipe.instructions as InstructionSection[])
@@ -69,6 +85,12 @@ export function transformRecipe(recipe: RecipeDisplayDb): RecipeDisplay {
         )
       : rawInstructions;
 
+  const storage: StorageInfo[] = isValidStorage(recipe.storage)
+    ? recipe.storage.sort(
+        sortByOrder(STORAGE_LOCATION_ORDER, (info) => info.location),
+      )
+    : [];
+
   return {
     name: recipe.name,
     made: recipe.made,
@@ -79,6 +101,7 @@ export function transformRecipe(recipe: RecipeDisplayDb): RecipeDisplay {
     rating: recipe.rating,
     equipment: recipe.recipe_equipment.map((e) => e.equipment.name),
     servings: recipe.servings,
+    storage,
   };
 }
 

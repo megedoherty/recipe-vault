@@ -1,11 +1,14 @@
 import Image from 'next/image';
 
+import { StorageInfo } from '@/types';
+
 import styles from './RecipeImageAndInfo.module.css';
 
 interface RecipeImageAndInfoProps {
   category: string | null;
   imageUrl: string | null;
   servings: number | null;
+  storage: StorageInfo[];
   name: string;
   equipment: string[];
 }
@@ -15,6 +18,7 @@ export default function RecipeImageAndInfo({
   equipment,
   imageUrl,
   servings,
+  storage,
   name,
 }: RecipeImageAndInfoProps) {
   return (
@@ -40,6 +44,20 @@ export default function RecipeImageAndInfo({
                 <ul className={styles.infoItemList}>
                   {equipment.map((e) => (
                     <li key={e}>{e}</li>
+                  ))}
+                </ul>
+              </dd>
+            </div>
+          )}
+          {storage.length > 0 && (
+            <div>
+              <dt className={styles.infoItemLabel}>Storage:</dt>
+              <dd>
+                <ul className={styles.infoItemList}>
+                  {storage.map((s) => (
+                    <li key={s.location}>
+                      {s.location} - {s.days} days
+                    </li>
                   ))}
                 </ul>
               </dd>

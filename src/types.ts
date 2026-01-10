@@ -18,6 +18,11 @@ export interface Step {
   ingredientIds?: string[];
 }
 
+export interface StorageInfo {
+  location: 'Room temperature' | 'Fridge' | 'Freezer';
+  days: number | null;
+}
+
 // The type used when ingredients are grouped on the FE
 type RecipeIngredientSectionBase<T> = {
   title: string | null;
@@ -45,6 +50,7 @@ export interface RecipeDisplayDb {
     };
   }[];
   servings: number | null;
+  storage: Json;
 }
 
 // The type used on the FE when displaying a single recipe
@@ -58,6 +64,7 @@ export interface RecipeDisplay {
   category: string | null;
   equipment: string[];
   servings: number | null;
+  storage: StorageInfo[];
 }
 
 // The type used when displaying a list of recipes
