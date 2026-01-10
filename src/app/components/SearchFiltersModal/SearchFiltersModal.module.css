@@ -1,0 +1,99 @@
+.button {
+  min-width: 11.5rem;
+}
+
+.dialog {
+  --dialog-width: 98vw;
+  --dialog-height: 90vh;
+  --dialog-inset: auto 0 0;
+  --dialog-border: 1px solid var(--border-default);
+  --dialog-transform: translateY(100%);
+  --dialog-border-radius: var(--border-radius-default)
+    var(--border-radius-default) 0 0;
+
+  inset: var(--dialog-inset);
+  width: var(--dialog-width);
+  max-width: var(--dialog-width);
+  height: var(--dialog-height);
+  max-height: var(--dialog-height);
+  border: var(--dialog-border);
+  margin: 0 auto;
+  padding: 1rem;
+  border-radius: var(--dialog-border-radius);
+  border-bottom: none;
+  overflow-y: auto;
+
+  /* Final state of the exit animation */
+  transform: var(--dialog-transform);
+  transition: all 0.4s allow-discrete;
+
+  &[open] {
+    transform: translateY(0);
+  }
+
+  @media (width >= 768px) {
+    --dialog-width: 35rem;
+    --dialog-height: 100vh;
+    --dialog-inset: auto 0 auto auto;
+    --dialog-border: none;
+    --dialog-transform: translateX(100%);
+    --dialog-border-radius: var(--border-radius-default) 0 0
+      var(--border-radius-default);
+  }
+
+  &::backdrop {
+    background-color: var(--backdrop);
+    backdrop-filter: blur(0.25rem);
+    opacity: 0;
+    transition:
+      display 0.3s allow-discrete,
+      overlay 0.3s allow-discrete,
+      opacity 0.3s;
+  }
+
+  &[open]::backdrop {
+    opacity: 1;
+  }
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.ingredientFilterButton {
+  min-width: 12rem;
+}
+
+.equipmentFilterButton {
+  min-width: 9rem;
+}
+
+/* Animations */
+
+/* Starting style for the open state */
+@starting-style {
+  .dialog[open] {
+    transform: translateY(100%);
+
+    @media (width >= 768px) {
+      transform: translateX(100%);
+    }
+  }
+}
+
+/* Starting style for the backdrop */
+@starting-style {
+  .dialog[open]::backdrop {
+    opacity: 0;
+  }
+}

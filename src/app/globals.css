@@ -100,3 +100,7 @@ textarea {
     background-color: var(--active-surface);
   }
 }
+
+html:has(dialog[open]) {
+  overflow: hidden;
+}

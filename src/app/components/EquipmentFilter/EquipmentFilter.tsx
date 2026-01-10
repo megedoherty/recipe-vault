@@ -1,23 +1,35 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import SelectableSearchPopover from '@/components/molecules/SelectableSearchPopover/SelectableSearchPopover';
 import { Equipment } from '@/types';
 
-import styles from './EquipmentSelect.module.css';
-
-interface EquipmentSelectProps {
+interface EquipmentFilterProps {
   equipment: Equipment[];
   initialValue?: string[];
   buttonClassName?: string;
+  updateActiveFilters?: (filterName: string, isActive: boolean) => void;
 }
 
-export default function EquipmentSelect({
+export default function EquipmentFilter({
   equipment,
   initialValue = [],
   buttonClassName,
-}: EquipmentSelectProps) {
+  updateActiveFilters,
+}: EquipmentFilterProps) {
   const [selectedEquipment, setSelectedEquipment] =
     useState<string[]>(initialValue);
+
+  // Sync state when initialValue changes (e.g., when form is cleared)
+  useEffect(() => {
+    setSelectedEquipment(initialValue);
+  }, [initialValue]);
+
+  // Update parent component when selected equipment changes
+  useEffect(() => {
+    if (updateActiveFilters) {
+      updateActiveFilters('equipment', selectedEquipment.length > 0);
+    }
+  }, [selectedEquipment.length, updateActiveFilters]);
 
   return (
     <>

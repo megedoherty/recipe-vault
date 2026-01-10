@@ -19,6 +19,7 @@
 .buttonsContainer {
   display: flex;
   gap: 0.5rem;
+  margin-inline-start: auto;
 }
 
 .searchButton {

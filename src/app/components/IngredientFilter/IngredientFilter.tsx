@@ -1,15 +1,21 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import SelectableSearchPopover from '@/components/molecules/SelectableSearchPopover/SelectableSearchPopover';
 import { IngredientForSearch } from '@/types';
 
 interface IngredientFilterProps {
+  // The type of filter (Include or Exclude ingredients)
   type: 'Include' | 'Exclude';
+  // All the ingredients to display in the popover
   ingredients: IngredientForSearch[];
+  // The initial value of the filter
   initialValue?: string[];
+  // The class name for the button that opens the popover
   buttonClassName?: string;
+  // Lets the parent component know when this filter has active selections
+  updateActiveFilters?: (filterName: string, isActive: boolean) => void;
 }
 
 export default function IngredientFilter({
@@ -17,9 +23,14 @@ export default function IngredientFilter({
   ingredients,
   initialValue = [],
   buttonClassName,
+  updateActiveFilters,
 }: IngredientFilterProps) {
   const [selectedIngredients, setSelectedIngredients] =
     useState<string[]>(initialValue);
+
+  useEffect(() => {
+    setSelectedIngredients(initialValue);
+  }, [initialValue]);
 
   const onToggleIngredient = (itemId: string) => {
     const ingredientInfo = ingredients.find((i) => i.id === itemId);
@@ -44,6 +55,12 @@ export default function IngredientFilter({
   const buttonTextPrefix = `${type} Ingredients`;
   const popoverId = `${type}-ingredients-popover`;
   const searchId = `${type}-ingredients-search`;
+
+  useEffect(() => {
+    if (updateActiveFilters) {
+      updateActiveFilters(inputName, selectedIngredients.length > 0);
+    }
+  }, [selectedIngredients.length, updateActiveFilters, inputName]);
 
   return (
     <>

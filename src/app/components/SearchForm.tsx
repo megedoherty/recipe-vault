@@ -10,7 +10,7 @@ import TextInput from '@/components/atoms/TextInput/TextInput';
 import CategorySelect from '@/components/molecules/CategorySelect/CategorySelect';
 import { Category, Equipment, IngredientForSearch } from '@/types';
 
-import EquipmentFilter from './EquipmentFilter/EquipmentFilter';
+import SearchFiltersModal from './SearchFiltersModal/SearchFiltersModal';
 import styles from './SearchForm.module.css';
 import {
   getNumberSearchParam,
@@ -128,18 +128,11 @@ export default function SearchForm({
           initialValue={includeIngredients}
           buttonClassName={styles.ingredientFilterButton}
         />
-        <IngredientFilter
-          key={`exclude-${excludeIngredients.join(',')}`}
-          type="Exclude"
+        <SearchFiltersModal
           ingredients={ingredients}
-          initialValue={excludeIngredients}
-          buttonClassName={styles.ingredientFilterButton}
-        />
-        <EquipmentFilter
-          key={`equipment-${equipmentIds.join(',')}`}
           equipment={equipment}
-          initialValue={equipmentIds}
-          buttonClassName={styles.equipmentFilterButton}
+          excludeIngredientsInitialValue={excludeIngredients}
+          equipmentIdsInitialValue={equipmentIds}
         />
         <div className={styles.buttonsContainer}>
           <Button
