@@ -109,6 +109,7 @@ export function transformRecipeForEdit(
     instructions,
     categoryId: recipe.category_id,
     equipmentIds: recipe.recipe_equipment.map((e) => e.equipment_id.toString()),
+    servings: recipe.servings,
   };
 }
 

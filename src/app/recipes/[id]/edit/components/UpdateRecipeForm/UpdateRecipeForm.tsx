@@ -98,6 +98,15 @@ export default function UpdateRecipeForm({
           categories={categories}
           showEmptyOption
         />
+        <Input
+          label="Servings"
+          name="servings"
+          id="servings"
+          type="number"
+          defaultValue={recipe.servings?.toString() ?? ''}
+          direction="horizontal"
+          inputClassName={styles.servingsInput}
+        />
         <EquipmentSelect
           equipment={equipment}
           selectedEquipment={selectedEquipment}

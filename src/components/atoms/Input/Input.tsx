@@ -12,8 +12,10 @@ interface InputProps extends InputHTMLAttributes<
   defaultValue?: string | number;
   fullWidth?: boolean;
   hideLabel?: boolean;
-  className?: string;
+  containerClassName?: string;
+  inputClassName?: string;
   hasError?: boolean;
+  direction?: 'horizontal' | 'vertical';
 }
 
 export default function Input({
@@ -24,17 +26,22 @@ export default function Input({
   defaultValue,
   fullWidth,
   hideLabel,
-  className = '',
+  containerClassName = '',
+  inputClassName = '',
   hasError,
+  direction = 'vertical',
   ...props
 }: InputProps) {
   const fullWidthClass = fullWidth ? styles.fullWidth : '';
   const errorClass = hasError ? styles.error : '';
 
-  const sharedClasses = `${fullWidthClass} ${errorClass}`;
+  const sharedClasses =
+    `${fullWidthClass} ${errorClass} ${inputClassName}`.trim();
 
   return (
-    <div className={`${styles.container} ${fullWidthClass} ${className}`}>
+    <div
+      className={`${styles.container} ${fullWidthClass} ${containerClassName} ${styles[direction]}`}
+    >
       <label htmlFor={id} className={hideLabel ? 'sr-only' : ''}>
         {label}
       </label>

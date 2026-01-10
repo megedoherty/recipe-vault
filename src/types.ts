@@ -81,6 +81,7 @@ export interface EditableRecipeDb {
   recipe_equipment: {
     equipment_id: number;
   }[];
+  servings: number | null;
 }
 
 // The type used on the FE when editing a recipe
@@ -91,6 +92,7 @@ export interface EditableRecipe {
   instructions: InstructionSection[];
   categoryId: number | null;
   equipmentIds: string[];
+  servings: number | null;
 }
 
 export interface ServingsRange {

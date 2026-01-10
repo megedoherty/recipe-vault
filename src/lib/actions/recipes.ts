@@ -95,6 +95,7 @@ export async function addRecipe(
   const rawFormData = Object.fromEntries(formData);
   const recipeName = rawFormData.name as string;
   const category_id = Number(rawFormData.categoryId);
+  const servings = Number(rawFormData.servings);
 
   const supabase = await createClient();
   const { data: userData } = await supabase.auth.getUser();
@@ -119,6 +120,7 @@ export async function addRecipe(
       instructions: cleanInstructionSections(instructionSections),
       ingredient_section_order: ingredientSectionOrder,
       instruction_section_order: instructionSectionOrder,
+      servings,
     })
     .select('id')
     .single();
@@ -189,6 +191,7 @@ export async function updateRecipe(
   const image_url = rawFormData.imageUrl as string;
   const source_url = rawFormData.sourceUrl as string;
   const category_id = Number(rawFormData.categoryId);
+  const servings = Number(rawFormData.servings);
 
   // Extract section order
   const instructionSectionOrder = instructionSections.map(
@@ -239,6 +242,7 @@ export async function updateRecipe(
       category_id,
       ingredient_section_order: ingredientSectionOrder,
       instruction_section_order: instructionSectionOrder,
+      servings,
     })
     .eq('id', recipeId)
     .select()

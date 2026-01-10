@@ -79,6 +79,14 @@ export default function CreateRecipeForm({
       <section className={styles.sectionContainer}>
         <h2>Organization</h2>
         <CategorySelect categories={categories} showEmptyOption />
+        <Input
+          label="Servings"
+          name="servings"
+          id="servings"
+          type="number"
+          direction="horizontal"
+          inputClassName={styles.servingsInput}
+        />
         <EquipmentSelect
           equipment={equipment}
           selectedEquipment={selectedEquipment}

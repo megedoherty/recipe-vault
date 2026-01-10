@@ -17,14 +17,14 @@ export default function EquipmentSelect({
   equipment,
 }: EquipmentSelectProps) {
   return (
-    <div>
+    <div className={styles.container}>
       <SelectableSearchPopover
         popoverId="equipment-picker-popover"
         popoverAriaLabel="Equipment picker"
         searchPlaceholder="Equipment name"
         searchLabel="Search equipment"
         searchId="equipment-picker-search"
-        buttonContent="Select equipment"
+        buttonContent="Equipment"
         openDirection="left"
         noResultsText="No equipment found"
         items={equipment}
@@ -44,7 +44,7 @@ export default function EquipmentSelect({
         canSelectMultiple
       />
       <p className={styles.selectedEquipment}>
-        Selected equipment:{' '}
+        {'- '}
         {selectedEquipment.length === 0
           ? 'None'
           : equipment

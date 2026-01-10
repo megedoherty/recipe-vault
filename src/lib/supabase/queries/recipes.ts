@@ -37,7 +37,7 @@ export async function getRecipeForEdit(
   const { data } = await supabase
     .from('recipe')
     .select(
-      'name, image_url, source_url, instructions, category_id, ingredient_section_order, instruction_section_order, recipe_equipment(equipment_id)',
+      'name, image_url, source_url, instructions, category_id, ingredient_section_order, instruction_section_order, recipe_equipment(equipment_id), servings',
     )
     .eq('id', id)
     .single();
