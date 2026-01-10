@@ -1,34 +1,19 @@
-'use client';
-
-import { useRef, useState, useTransition } from 'react';
-
-import { updateRecipeRating } from '@/lib/actions/recipes';
+import { useRef } from 'react';
 
 import styles from './RatingInput.module.css';
 
 interface RatingInputProps {
-  recipeId: string;
-  initialRating: number | null;
+  rating: number;
+  onRatingChange: (newRating: number) => void;
+  isDisabled?: boolean;
 }
 
 export default function RatingInput({
-  recipeId,
-  initialRating,
+  rating,
+  onRatingChange,
+  isDisabled = false,
 }: RatingInputProps) {
-  const [rating, setRating] = useState(initialRating || 0);
-  const [isPending, startTransition] = useTransition();
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-
-  const handleChange = (newRating: number) => {
-    startTransition(async () => {
-      try {
-        await updateRecipeRating(recipeId, newRating);
-        setRating(newRating);
-      } catch (error) {
-        console.error(error);
-      }
-    });
-  };
 
   const handleKeyDown = (e: React.KeyboardEvent, currentIndex: number) => {
     if (
@@ -54,12 +39,12 @@ export default function RatingInput({
     // Only change value on Enter or Space
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
-      handleChange(currentIndex + 1);
+      onRatingChange(currentIndex + 1);
     }
   };
 
   return (
-    <form className={styles.ratingSelect}>
+    <div className={styles.ratingSelect}>
       {Array.from({ length: 5 }, (_, index) => {
         const starValue = index + 1;
         const isFilled = rating >= starValue;
@@ -73,10 +58,10 @@ export default function RatingInput({
               name="rating"
               id={`rating-${starValue}`}
               value={starValue}
-              onChange={() => handleChange(starValue)}
+              onChange={() => onRatingChange(starValue)}
               onKeyDown={(e) => handleKeyDown(e, index)}
               checked={rating === starValue}
-              disabled={isPending}
+              disabled={isDisabled}
               className="sr-only"
             />
             <label htmlFor={`rating-${starValue}`} className={styles.label}>
@@ -105,6 +90,6 @@ export default function RatingInput({
           </div>
         );
       })}
-    </form>
+    </div>
   );
 }

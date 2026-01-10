@@ -1,7 +1,5 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 
-import { updateRecipeRating } from '@/lib/actions/recipes';
-
 import RatingInput from './RatingInput';
 
 jest.mock('@/lib/actions/recipes', () => ({
@@ -9,8 +7,9 @@ jest.mock('@/lib/actions/recipes', () => ({
 }));
 
 const defaultProps = {
-  recipeId: '1',
-  initialRating: null,
+  rating: 0,
+  onRatingChange: jest.fn(),
+  isDisabled: false,
 };
 
 describe('RatingInput', () => {
@@ -24,7 +23,7 @@ describe('RatingInput', () => {
   });
 
   it('should render the stars as filled if initialRating is not null', () => {
-    render(<RatingInput {...defaultProps} initialRating={1} />);
+    render(<RatingInput {...defaultProps} rating={1} />);
     expect(screen.getByRole('radio', { name: '1 star' })).toBeChecked();
     expect(screen.getByRole('radio', { name: '2 stars' })).not.toBeChecked();
     expect(screen.getByRole('radio', { name: '3 stars' })).not.toBeChecked();
@@ -46,28 +45,7 @@ describe('RatingInput', () => {
     await act(async () => {
       fireEvent.click(screen.getByRole('radio', { name: '1 star' }));
     });
-    expect(updateRecipeRating).toHaveBeenCalledWith(defaultProps.recipeId, 1);
-  });
-
-  it('should log an error if the updateRecipeRating action fails', async () => {
-    const mockUpdateRecipeRating = updateRecipeRating as jest.MockedFunction<
-      typeof updateRecipeRating
-    >;
-    const consoleErrorSpy = jest
-      .spyOn(console, 'error')
-      .mockImplementation(() => {});
-    mockUpdateRecipeRating.mockRejectedValue(
-      new Error('Failed to update recipe rating'),
-    );
-
-    render(<RatingInput {...defaultProps} />);
-    await act(async () => {
-      fireEvent.click(screen.getByRole('radio', { name: '1 star' }));
-    });
-
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      new Error('Failed to update recipe rating'),
-    );
+    expect(defaultProps.onRatingChange).toHaveBeenCalledWith(1);
   });
 
   it('should not move focus to the previous input when the left or up arrow key is pressed if the first input is focused', async () => {
@@ -146,7 +124,7 @@ describe('RatingInput', () => {
         key: 'Enter',
       });
     });
-    expect(updateRecipeRating).toHaveBeenCalledWith(defaultProps.recipeId, 1);
+    expect(defaultProps.onRatingChange).toHaveBeenCalledWith(1);
   });
 
   it('should change the rating when the space key is pressed', async () => {
@@ -157,6 +135,6 @@ describe('RatingInput', () => {
       });
     });
 
-    expect(updateRecipeRating).toHaveBeenCalledWith(defaultProps.recipeId, 1);
+    expect(defaultProps.onRatingChange).toHaveBeenCalledWith(1);
   });
 });

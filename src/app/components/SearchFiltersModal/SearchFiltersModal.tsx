@@ -7,6 +7,7 @@ import { Equipment, IngredientForSearch, ServingsRange } from '@/types';
 import EquipmentFilter from '../EquipmentFilter/EquipmentFilter';
 import IngredientFilter from '../IngredientFilter/IngredientFilter';
 import MadeFilter from '../MadeFilter/MadeFilter';
+import RatingFilter from '../RatingFilter/RatingFilter';
 import ServingsFilter from '../ServingsFilter/ServingsFilter';
 import styles from './SearchFiltersModal.module.css';
 
@@ -19,6 +20,7 @@ interface SearchFiltersModalProps {
   maxServingsInitialValue?: number;
   madeInitialValue?: 'yes' | 'no';
   servingsRange: ServingsRange;
+  ratingInitialValue?: number;
   formRef: RefObject<HTMLFormElement | null>;
 }
 
@@ -30,6 +32,7 @@ export default function SearchFiltersModal({
   minServingsInitialValue,
   maxServingsInitialValue,
   madeInitialValue,
+  ratingInitialValue,
   servingsRange,
   formRef,
 }: SearchFiltersModalProps) {
@@ -87,6 +90,12 @@ export default function SearchFiltersModal({
             initialValue={madeInitialValue}
             formRef={formRef}
             key={`made-${madeInitialValue}`}
+          />
+          <RatingFilter
+            ratingInitialValue={ratingInitialValue ?? 0}
+            updateActiveFilters={updateActiveFilters}
+            labelClassName={styles.label}
+            formRef={formRef}
           />
           <ServingsFilter
             key={`servings-${minServingsInitialValue}-${maxServingsInitialValue}`}

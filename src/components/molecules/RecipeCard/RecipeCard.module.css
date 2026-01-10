@@ -60,6 +60,7 @@
   position: absolute;
   top: calc(var(--image-height) - 2rem);
   right: 0.5rem;
+  pointer-events: none;
 }
 
 .made,

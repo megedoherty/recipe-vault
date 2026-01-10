@@ -81,5 +81,10 @@ export function generateQueryString(e: FormEvent<HTMLFormElement>) {
     params.set('made', 'false');
   }
 
+  const ratingValue = formData.get('rating') as string;
+  if (ratingValue) {
+    params.set('minRating', ratingValue);
+  }
+
   return params.toString();
 }

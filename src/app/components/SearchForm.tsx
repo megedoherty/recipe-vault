@@ -66,9 +66,11 @@ export default function SearchForm({
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     const queryString = generateQueryString(e);
-    startTransition(() => {
-      router.replace(queryString ? `/?${queryString}` : '/');
-    });
+    if (queryString !== searchParams.toString()) {
+      startTransition(() => {
+        router.replace(queryString ? `/?${queryString}` : '/');
+      });
+    }
   };
 
   const clearFilters = () => {

@@ -3,7 +3,7 @@ import EditIcon from '@/components/atoms/icons/EditIcon';
 
 import DeleteButton from '../DeleteButton/DeleteButton';
 import MadeCheckbox from '../MadeCheckbox/MadeCheckbox';
-import RatingInput from '../RatingInput/RatingInput';
+import RatingInput from '../RatingInputForm/RatingInputForm';
 import styles from './RecipeHeader.module.css';
 
 interface RecipeHeaderProps {

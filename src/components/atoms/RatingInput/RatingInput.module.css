@@ -3,7 +3,7 @@
   flex-direction: row;
 }
 
-.itemWrapper:focus-within {
+.itemWrapper:has(input:focus-visible) {
   outline: 5px auto Highlight;
   outline: 5px auto -webkit-focus-ring-color;
 }
@@ -40,7 +40,7 @@
 
 /* When hovering over or focusing any rating item, make all stars gold */
 .ratingSelect:has(.itemWrapper:hover),
-.ratingSelect:has(.itemWrapper:focus-within) {
+.ratingSelect:has(.itemWrapper:has(input:focus-visible)) {
   .starIconPath {
     --star-icon-color: var(--star-gold);
     --star-icon-fill: var(--star-gold);
@@ -52,8 +52,8 @@
   .itemWrapper:hover
   ~ .itemWrapper
   .starIconPath,
-.ratingSelect:has(.itemWrapper:focus-within)
-  .itemWrapper:focus-within
+.ratingSelect:has(.itemWrapper:has(input:focus-visible))
+  .itemWrapper:has(input:focus-visible)
   ~ .itemWrapper
   .starIconPath {
   --star-icon-color: currentcolor;
