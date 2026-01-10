@@ -6,6 +6,7 @@ import { useActionState, useMemo, useState } from 'react';
 import Button from '@/components/atoms/Button/Button';
 import Input from '@/components/atoms/Input/Input';
 import CategorySelect from '@/components/molecules/CategorySelect/CategorySelect';
+import StorageInfoEditor from '@/components/molecules/StorageInfoEditor/StorageInfoEditor';
 import EquipmentSelect from '@/components/organisms/EquipmentSelect/EquipmentSelect';
 import IngredientSectionsEditor from '@/components/organisms/IngredientSectionsEditor/IngredientSectionsEditor';
 import InstructionsSectionsEditor from '@/components/organisms/InstructionsSectionsEditor/InstructionsSectionsEditor';
@@ -86,11 +87,24 @@ export default function CreateRecipeForm({
           type="number"
           direction="horizontal"
           inputClassName={styles.servingsInput}
+          min={0}
         />
         <EquipmentSelect
           equipment={equipment}
           selectedEquipment={selectedEquipment}
           setSelectedEquipment={setSelectedEquipment}
+        />
+        <StorageInfoEditor
+          storage={[
+            {
+              location: 'Room Temperature',
+              days: null,
+            },
+            {
+              location: 'Fridge',
+              days: null,
+            },
+          ]}
         />
       </section>
       <ProcessableSection

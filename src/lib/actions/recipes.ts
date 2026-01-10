@@ -111,6 +111,17 @@ export async function addRecipe(
   );
   const ingredientSectionOrder = ingredientSections.map((s) => s.title);
 
+  const storage = [
+    {
+      location: 'Room Temperature',
+      days: Number(rawFormData['Room Temperature'] as string),
+    },
+    {
+      location: 'Fridge',
+      days: Number(rawFormData['Fridge'] as string),
+    },
+  ].filter((info) => info.days !== null && info.days > 0);
+
   const { data, error } = await supabase
     .from('recipe')
     .insert({
@@ -121,6 +132,7 @@ export async function addRecipe(
       ingredient_section_order: ingredientSectionOrder,
       instruction_section_order: instructionSectionOrder,
       servings,
+      storage,
     })
     .select('id')
     .single();
@@ -193,6 +205,17 @@ export async function updateRecipe(
   const category_id = Number(rawFormData.categoryId);
   const servings = Number(rawFormData.servings);
 
+  const storage = [
+    {
+      location: 'Room Temperature',
+      days: Number(rawFormData['Room Temperature'] as string),
+    },
+    {
+      location: 'Fridge',
+      days: Number(rawFormData['Fridge'] as string),
+    },
+  ].filter((info) => info.days !== null && info.days > 0);
+
   // Extract section order
   const instructionSectionOrder = instructionSections.map(
     (section) => section.id,
@@ -243,6 +266,7 @@ export async function updateRecipe(
       ingredient_section_order: ingredientSectionOrder,
       instruction_section_order: instructionSectionOrder,
       servings,
+      storage,
     })
     .eq('id', recipeId)
     .select()

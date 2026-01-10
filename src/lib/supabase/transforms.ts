@@ -1,7 +1,9 @@
+import { storageLocations } from '@/constants';
 import {
   EditableRecipe,
   EditableRecipeDb,
   InstructionSection,
+  isStorageLocation,
   RecipeDisplay,
   RecipeDisplayDb,
   RecipeEditableIngredientDb,
@@ -61,11 +63,11 @@ function isValidStorageItem(data: unknown): data is StorageInfo {
     typeof data === 'object' &&
     data !== null &&
     'location' in data &&
-    'days' in data
+    'days' in data &&
+    typeof data.location === 'string' &&
+    isStorageLocation(data.location)
   );
 }
-
-const STORAGE_LOCATION_ORDER = ['Room temperature', 'Fridge'];
 
 export function transformRecipe(recipe: RecipeDisplayDb): RecipeDisplay {
   const rawInstructions = isValidInstructionSection(recipe.instructions)
@@ -87,7 +89,7 @@ export function transformRecipe(recipe: RecipeDisplayDb): RecipeDisplay {
 
   const storage: StorageInfo[] = isValidStorage(recipe.storage)
     ? recipe.storage.sort(
-        sortByOrder(STORAGE_LOCATION_ORDER, (info) => info.location),
+        sortByOrder(storageLocations, (info) => info.location),
       )
     : [];
 
@@ -125,6 +127,16 @@ export function transformRecipeForEdit(
         )
       : rawInstructions;
 
+  const storage: StorageInfo[] = isValidStorage(recipe.storage)
+    ? recipe.storage
+    : [];
+
+  for (const location of storageLocations) {
+    if (!storage.some((info) => info.location === location)) {
+      storage.push({ location, days: null });
+    }
+  }
+
   return {
     name: recipe.name,
     imageUrl: recipe.image_url,
@@ -133,6 +145,7 @@ export function transformRecipeForEdit(
     categoryId: recipe.category_id,
     equipmentIds: recipe.recipe_equipment.map((e) => e.equipment_id.toString()),
     servings: recipe.servings,
+    storage: isValidStorage(recipe.storage) ? recipe.storage : [],
   };
 }
 

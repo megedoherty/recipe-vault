@@ -6,6 +6,7 @@ import { useActionState, useMemo, useState } from 'react';
 import Button from '@/components/atoms/Button/Button';
 import Input from '@/components/atoms/Input/Input';
 import CategorySelect from '@/components/molecules/CategorySelect/CategorySelect';
+import StorageInfoEditor from '@/components/molecules/StorageInfoEditor/StorageInfoEditor';
 import EquipmentSelect from '@/components/organisms/EquipmentSelect/EquipmentSelect';
 import IngredientSectionsEditor from '@/components/organisms/IngredientSectionsEditor/IngredientSectionsEditor';
 import InstructionsSectionsEditor from '@/components/organisms/InstructionsSectionsEditor/InstructionsSectionsEditor';
@@ -92,7 +93,7 @@ export default function UpdateRecipeForm({
         />
       </section>
       <section className={styles.sectionContainer}>
-        <h2>Organization</h2>
+        <h2>Organization and Details</h2>
         <CategorySelect
           defaultValue={recipe.categoryId?.toString() ?? ''}
           categories={categories}
@@ -106,12 +107,14 @@ export default function UpdateRecipeForm({
           defaultValue={recipe.servings?.toString() ?? ''}
           direction="horizontal"
           inputClassName={styles.servingsInput}
+          min={0}
         />
         <EquipmentSelect
           equipment={equipment}
           selectedEquipment={selectedEquipment}
           setSelectedEquipment={setSelectedEquipment}
         />
+        <StorageInfoEditor storage={recipe.storage} />
       </section>
       <section className={styles.sectionContainer}>
         <h2>Ingredients</h2>

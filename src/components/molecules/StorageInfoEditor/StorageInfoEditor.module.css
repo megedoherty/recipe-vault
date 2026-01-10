@@ -1,0 +1,15 @@
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 0 0.5rem;
+}
+
+.listItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.daysInput {
+  width: 4rem;
+}

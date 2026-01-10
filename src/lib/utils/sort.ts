@@ -3,7 +3,7 @@
  * Items not in the order array are placed at the end, maintaining their relative order.
  */
 export function sortByOrder<T>(
-  order: string[],
+  order: readonly string[],
   getKey: (item: T) => string | null,
 ): (a: T, b: T) => number {
   return (a, b) => {

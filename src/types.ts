@@ -1,5 +1,7 @@
 import { Json, Tables } from '@/lib/supabase/types';
 
+import { storageLocations } from './constants';
+
 ////////////////////////////////////////////////////////////
 // FE unique types
 ////////////////////////////////////////////////////////////
@@ -18,9 +20,17 @@ export interface Step {
   ingredientIds?: string[];
 }
 
+export type StorageLocation = (typeof storageLocations)[number];
+
 export interface StorageInfo {
-  location: 'Room temperature' | 'Fridge' | 'Freezer';
+  location: StorageLocation;
   days: number | null;
+}
+
+export function isStorageLocation(
+  location: string,
+): location is StorageLocation {
+  return storageLocations.includes(location as StorageLocation);
 }
 
 // The type used when ingredients are grouped on the FE
@@ -89,6 +99,7 @@ export interface EditableRecipeDb {
     equipment_id: number;
   }[];
   servings: number | null;
+  storage: Json;
 }
 
 // The type used on the FE when editing a recipe
@@ -100,6 +111,7 @@ export interface EditableRecipe {
   categoryId: number | null;
   equipmentIds: string[];
   servings: number | null;
+  storage: StorageInfo[];
 }
 
 export interface ServingsRange {
