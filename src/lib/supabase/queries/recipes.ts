@@ -101,6 +101,7 @@ interface GetAllRecipesParams {
   equipment?: string;
   minServings?: number;
   maxServings?: number;
+  made?: boolean;
 }
 
 export async function getAllRecipes({
@@ -111,6 +112,7 @@ export async function getAllRecipes({
   equipment,
   minServings,
   maxServings,
+  made,
 }: GetAllRecipesParams = {}): Promise<RecipeSummary[]> {
   const supabase = await createClient();
   let query = supabase
@@ -131,6 +133,10 @@ export async function getAllRecipes({
 
   if (maxServings) {
     query = query.lte('servings', maxServings);
+  }
+
+  if (made !== undefined) {
+    query = query.eq('made', made);
   }
 
   // Collect all recipe ID filters

@@ -87,7 +87,7 @@ export default function ServingsFilter({
           value={minValue ?? ''}
           onChange={handleMinChange}
           hideLabel
-          className={styles.numberInput}
+          containerClassName={styles.numberInput}
           min={servingsRange.min}
           max={servingsRange.max}
           aria-invalid={!isValid}
@@ -104,7 +104,7 @@ export default function ServingsFilter({
           value={maxValue ?? ''}
           onChange={handleMaxChange}
           hideLabel
-          className={styles.numberInput}
+          containerClassName={styles.numberInput}
           min={servingsRange.min}
           max={servingsRange.max}
           aria-invalid={!isValid}

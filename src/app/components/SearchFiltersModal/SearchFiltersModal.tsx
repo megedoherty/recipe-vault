@@ -6,6 +6,7 @@ import { Equipment, IngredientForSearch, ServingsRange } from '@/types';
 
 import EquipmentFilter from '../EquipmentFilter/EquipmentFilter';
 import IngredientFilter from '../IngredientFilter/IngredientFilter';
+import MadeFilter from '../MadeFilter/MadeFilter';
 import ServingsFilter from '../ServingsFilter/ServingsFilter';
 import styles from './SearchFiltersModal.module.css';
 
@@ -16,6 +17,7 @@ interface SearchFiltersModalProps {
   equipmentIdsInitialValue: string[];
   minServingsInitialValue?: number;
   maxServingsInitialValue?: number;
+  madeInitialValue?: 'yes' | 'no';
   servingsRange: ServingsRange;
   formRef: RefObject<HTMLFormElement | null>;
 }
@@ -27,6 +29,7 @@ export default function SearchFiltersModal({
   equipmentIdsInitialValue,
   minServingsInitialValue,
   maxServingsInitialValue,
+  madeInitialValue,
   servingsRange,
   formRef,
 }: SearchFiltersModalProps) {
@@ -39,6 +42,7 @@ export default function SearchFiltersModal({
       ...(equipmentIdsInitialValue.length > 0 ? ['equipment'] : []),
       ...(minServingsInitialValue !== undefined ? ['minServings'] : []),
       ...(maxServingsInitialValue !== undefined ? ['maxServings'] : []),
+      ...(madeInitialValue !== undefined ? ['made'] : []),
     ];
   });
 
@@ -77,6 +81,23 @@ export default function SearchFiltersModal({
               <XIcon />
             </Button>
           </header>
+          <MadeFilter
+            labelClassName={styles.label}
+            updateActiveFilters={updateActiveFilters}
+            initialValue={madeInitialValue}
+            formRef={formRef}
+            key={`made-${madeInitialValue}`}
+          />
+          <ServingsFilter
+            key={`servings-${minServingsInitialValue}-${maxServingsInitialValue}`}
+            minInitialValue={minServingsInitialValue}
+            maxInitialValue={maxServingsInitialValue}
+            containerClassName={styles.servingsFilterContainer}
+            labelClassName={styles.label}
+            servingsRange={servingsRange}
+            updateActiveFilters={updateActiveFilters}
+            formRef={formRef}
+          />
           <IngredientFilter
             key={`exclude-${excludeIngredientsInitialValue.join(',')}`}
             type="Exclude"
@@ -91,16 +112,6 @@ export default function SearchFiltersModal({
             initialValue={equipmentIdsInitialValue}
             buttonClassName={styles.equipmentFilterButton}
             updateActiveFilters={updateActiveFilters}
-          />
-          <ServingsFilter
-            key={`servings-${minServingsInitialValue}-${maxServingsInitialValue}`}
-            minInitialValue={minServingsInitialValue}
-            maxInitialValue={maxServingsInitialValue}
-            containerClassName={styles.servingsFilterContainer}
-            labelClassName={styles.servingsFilterLabel}
-            servingsRange={servingsRange}
-            updateActiveFilters={updateActiveFilters}
-            formRef={formRef}
           />
         </div>
       </dialog>

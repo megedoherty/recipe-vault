@@ -133,7 +133,7 @@ export default function IngredientListEditor({
                       <UpDownArrowIcon />
                     </Button>
                     <Input
-                      className={styles.quantityInput}
+                      containerClassName={styles.quantityInput}
                       label="Quantity"
                       name={`${section.title}-quantity-${ingredientIndex}`}
                       id={`${section.title}-quantity-${ingredientIndex}`}
@@ -151,7 +151,7 @@ export default function IngredientListEditor({
                     />
                     <Input
                       label="Ingredient"
-                      className={styles.ingredientInput}
+                      containerClassName={styles.ingredientInput}
                       name={`section-${section.title}-ingredient-${ingredientIndex}`}
                       id={`${section.title}-ingredient-${ingredientIndex}`}
                       type="text"
