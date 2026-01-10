@@ -129,6 +129,16 @@ export default function CreateRecipeForm({
           />
         }
       />
+      <section className={styles.sectionContainer}>
+        <h2>Notes</h2>
+        <Input
+          label="Notes"
+          name="notes"
+          id="notes"
+          type="textarea"
+          hideLabel
+        />
+      </section>
       <Button
         variant="primary"
         type="submit"

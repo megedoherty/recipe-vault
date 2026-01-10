@@ -104,6 +104,7 @@ export function transformRecipe(recipe: RecipeDisplayDb): RecipeDisplay {
     equipment: recipe.recipe_equipment.map((e) => e.equipment.name),
     servings: recipe.servings,
     storage,
+    notes: recipe.notes,
   };
 }
 
@@ -146,6 +147,7 @@ export function transformRecipeForEdit(
     equipmentIds: recipe.recipe_equipment.map((e) => e.equipment_id.toString()),
     servings: recipe.servings,
     storage: isValidStorage(recipe.storage) ? recipe.storage : [],
+    notes: recipe.notes,
   };
 }
 

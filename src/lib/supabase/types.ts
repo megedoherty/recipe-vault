@@ -109,6 +109,7 @@ export type Database = {
           instructions: Json | null;
           made: boolean;
           name: string;
+          notes: string | null;
           rating: number | null;
           servings: number | null;
           source_url: string | null;
@@ -126,6 +127,7 @@ export type Database = {
           instructions?: Json | null;
           made?: boolean;
           name: string;
+          notes?: string | null;
           rating?: number | null;
           servings?: number | null;
           source_url?: string | null;
@@ -143,6 +145,7 @@ export type Database = {
           instructions?: Json | null;
           made?: boolean;
           name?: string;
+          notes?: string | null;
           rating?: number | null;
           servings?: number | null;
           source_url?: string | null;

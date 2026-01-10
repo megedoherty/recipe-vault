@@ -61,6 +61,7 @@ export interface RecipeDisplayDb {
   }[];
   servings: number | null;
   storage: Json;
+  notes: string | null;
 }
 
 // The type used on the FE when displaying a single recipe
@@ -75,6 +76,7 @@ export interface RecipeDisplay {
   equipment: string[];
   servings: number | null;
   storage: StorageInfo[];
+  notes: string | null;
 }
 
 // The type used when displaying a list of recipes
@@ -100,6 +102,7 @@ export interface EditableRecipeDb {
   }[];
   servings: number | null;
   storage: Json;
+  notes: string | null;
 }
 
 // The type used on the FE when editing a recipe
@@ -112,6 +115,7 @@ export interface EditableRecipe {
   equipmentIds: string[];
   servings: number | null;
   storage: StorageInfo[];
+  notes: string | null;
 }
 
 export interface ServingsRange {

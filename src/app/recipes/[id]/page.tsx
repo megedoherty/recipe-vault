@@ -31,7 +31,9 @@ export default async function RecipePage({
     return <div>Recipe not found</div>;
   }
 
-  const { name, instructions, made, imageUrl, sourceUrl, rating } = recipe;
+  const { name, instructions, made, imageUrl, sourceUrl, rating, notes } =
+    recipe;
+  console.log('🚀 ~ RecipePage ~ notes:', notes);
 
   return (
     <div className={styles.page}>
@@ -51,7 +53,7 @@ export default async function RecipePage({
         imageUrl={imageUrl}
         name={name}
       />
-      <section className={styles.ingredientsContainer}>
+      <section className={styles.sectionContainer}>
         <h2>Ingredients</h2>
         {ingredientSections?.map((ingredientSection) => (
           <section key={ingredientSection.title}>
@@ -64,6 +66,17 @@ export default async function RecipePage({
         instructions={instructions}
         ingredientMap={ingredientMap}
       />
+      {notes && (
+        <section className={`${styles.sectionContainer} ${styles.notes}`}>
+          <h2>Notes</h2>
+          {notes.split('\n').map((line, index) => {
+            if (line.trim() === '') {
+              return null;
+            }
+            return <p key={index}>{line}</p>;
+          })}
+        </section>
+      )}
     </div>
   );
 }

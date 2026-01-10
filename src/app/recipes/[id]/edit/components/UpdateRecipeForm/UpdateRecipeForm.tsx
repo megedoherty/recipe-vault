@@ -132,6 +132,17 @@ export default function UpdateRecipeForm({
           ingredients={allIngredients}
         />
       </section>
+      <section className={styles.sectionContainer}>
+        <h2>Notes</h2>
+        <Input
+          label="Notes"
+          name="notes"
+          id="notes"
+          type="textarea"
+          hideLabel
+          defaultValue={recipe.notes ?? ''}
+        />
+      </section>
       {state?.error && <p>{state.error}</p>}
       <Button
         variant="primary"
