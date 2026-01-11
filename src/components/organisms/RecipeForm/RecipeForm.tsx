@@ -3,11 +3,11 @@
 import Form from 'next/form';
 import { useActionState, useMemo, useState } from 'react';
 
-import ProcessableSection from '@/app/recipes/add/components/ProcessableSection/ProcessableSection';
 import Button from '@/components/atoms/Button/Button';
 import Input from '@/components/atoms/Input/Input';
 import Select from '@/components/atoms/Select/Select';
 import CategorySelect from '@/components/molecules/CategorySelect/CategorySelect';
+import ProcessableSection from '@/components/molecules/ProcessableSection/ProcessableSection';
 import StorageInfoEditor from '@/components/molecules/StorageInfoEditor/StorageInfoEditor';
 import EquipmentSelect from '@/components/organisms/EquipmentSelect/EquipmentSelect';
 import IngredientSectionsEditor from '@/components/organisms/IngredientSectionsEditor/IngredientSectionsEditor';

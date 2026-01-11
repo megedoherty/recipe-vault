@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
 
+import RecipeForm from '@/components/organisms/RecipeForm/RecipeForm';
 import { getCategories } from '@/lib/supabase/queries/categories';
 import { getEquipment } from '@/lib/supabase/queries/equipment';
 import { getIngredientsForRecipeEdit } from '@/lib/supabase/queries/ingredients';
@@ -7,7 +8,6 @@ import { getMealTypes } from '@/lib/supabase/queries/mealTypes';
 import { getOccasions } from '@/lib/supabase/queries/occasions';
 import { isUserLoggedIn } from '@/lib/supabase/queries/user';
 
-import CreateRecipeForm from './components/CreateRecipeForm/CreateRecipeForm';
 import styles from './page.module.css';
 
 export default async function AddRecipePage() {
@@ -27,7 +27,8 @@ export default async function AddRecipePage() {
     <div className={styles.page}>
       <h1>Add Recipe</h1>
       <h2>Add a recipe manually</h2>
-      <CreateRecipeForm
+      <RecipeForm
+        mode="create"
         categories={categories}
         ingredients={ingredients}
         equipment={equipment}

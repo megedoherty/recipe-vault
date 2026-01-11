@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
+import RecipeForm from '@/components/organisms/RecipeForm/RecipeForm';
 import { getCategories } from '@/lib/supabase/queries/categories';
 import { getEquipment } from '@/lib/supabase/queries/equipment';
 import { getIngredientsForRecipeEdit } from '@/lib/supabase/queries/ingredients';
@@ -12,7 +13,6 @@ import {
 } from '@/lib/supabase/queries/recipes';
 import { isUserLoggedIn } from '@/lib/supabase/queries/user';
 
-import UpdateRecipeForm from './components/UpdateRecipeForm/UpdateRecipeForm';
 import styles from './page.module.css';
 
 export default async function EditRecipePage({
@@ -40,10 +40,11 @@ export default async function EditRecipePage({
   return (
     <div className={styles.page}>
       <h1>Edit Recipe</h1>
-      <UpdateRecipeForm
+      <RecipeForm
+        mode="update"
         recipeId={id}
-        recipe={recipe}
-        ingredientSections={ingredientSections}
+        initialRecipe={recipe}
+        initialIngredientSections={ingredientSections}
         categories={categories}
         ingredients={ingredients}
         equipment={equipment}
