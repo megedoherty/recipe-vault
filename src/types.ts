@@ -62,6 +62,9 @@ export interface RecipeDisplayDb {
   servings: number | null;
   storage: Json;
   notes: string | null;
+  meal_type: {
+    name: string | null;
+  } | null;
 }
 
 // The type used on the FE when displaying a single recipe
@@ -77,6 +80,7 @@ export interface RecipeDisplay {
   servings: number | null;
   storage: StorageInfo[];
   notes: string | null;
+  mealType: string | null;
 }
 
 // The type used when displaying a list of recipes
@@ -103,6 +107,7 @@ export interface EditableRecipeDb {
   servings: number | null;
   storage: Json;
   notes: string | null;
+  meal_type_id: number | null;
 }
 
 // The type used on the FE when editing a recipe
@@ -116,6 +121,7 @@ export interface EditableRecipe {
   servings: number | null;
   storage: StorageInfo[];
   notes: string | null;
+  mealTypeId: number | null;
 }
 
 export interface ServingsRange {
@@ -213,3 +219,9 @@ export interface Equipment {
   id: string;
   name: string;
 }
+
+////////////////////////////////////////////////////////////
+// Meal type types
+////////////////////////////////////////////////////////////
+
+export type MealType = Tables<'meal_type'>;

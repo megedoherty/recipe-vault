@@ -36,5 +36,6 @@
 }
 
 .image {
+  border-radius: var(--border-radius-default);
   object-fit: cover;
 }

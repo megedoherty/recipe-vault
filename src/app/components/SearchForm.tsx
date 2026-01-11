@@ -3,15 +3,16 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { FormEvent, useRef, useTransition } from 'react';
 
-import IngredientFilter from '@/app/components/IngredientFilter/IngredientFilter';
 import Button from '@/components/atoms/Button/Button';
 import Input from '@/components/atoms/Input/Input';
 import LoadingSpinner from '@/components/atoms/LoadingSpinner/LoadingSpinner';
+import Select from '@/components/atoms/Select/Select';
 import CategorySelect from '@/components/molecules/CategorySelect/CategorySelect';
 import {
   Category,
   Equipment,
   IngredientForSearch,
+  MealType,
   ServingsRange,
 } from '@/types';
 
@@ -29,6 +30,7 @@ interface SearchFormProps {
   ingredients: IngredientForSearch[];
   equipment: Equipment[];
   servingsRange: ServingsRange;
+  mealTypes: MealType[];
 }
 
 export default function SearchForm({
@@ -36,6 +38,7 @@ export default function SearchForm({
   ingredients,
   equipment,
   servingsRange,
+  mealTypes,
 }: SearchFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -45,6 +48,7 @@ export default function SearchForm({
 
   const name = getStringSearchParam(searchParams, 'name');
   const categoryId = getStringSearchParam(searchParams, 'categoryId');
+  const mealTypeId = getStringSearchParam(searchParams, 'mealTypeId');
   const made = getStringSearchParam(searchParams, 'made');
   let madeValue: 'yes' | 'no' | undefined = undefined;
   if (made === 'true') {
@@ -107,18 +111,23 @@ export default function SearchForm({
           defaultValue={name}
           hideLabel
         />
+        <Select
+          label="Category"
+          name="mealTypeId"
+          id="mealTypeId"
+          defaultValue={mealTypeId}
+          hideLabel
+          options={mealTypes.map((mealType) => ({
+            value: mealType.id.toString(),
+            label: mealType.name,
+          }))}
+          emptyOption={{ value: '', label: 'Select a meal type' }}
+        />
         <CategorySelect
           categories={categories}
           showEmptyOption
           hideLabel
           defaultValue={categoryId}
-        />
-        <IngredientFilter
-          key={`include-${includeIngredients.join(',')}`}
-          type="Include"
-          ingredients={ingredients}
-          initialValue={includeIngredients}
-          buttonClassName={styles.ingredientFilterButton}
         />
         <SearchFiltersModal
           ingredients={ingredients}
@@ -128,6 +137,7 @@ export default function SearchForm({
           equipmentIdsInitialValue={equipmentIds}
           minServingsInitialValue={minServings ?? undefined}
           maxServingsInitialValue={maxServings ?? undefined}
+          includeIngredientsInitialValue={includeIngredients}
           servingsRange={servingsRange}
           formRef={formRef}
         />

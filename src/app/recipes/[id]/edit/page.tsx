@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import { getCategories } from '@/lib/supabase/queries/categories';
 import { getEquipment } from '@/lib/supabase/queries/equipment';
 import { getIngredientsForRecipeEdit } from '@/lib/supabase/queries/ingredients';
+import { getMealTypes } from '@/lib/supabase/queries/mealTypes';
 import {
   getRecipeForEdit,
   getRecipeIngredientsForEdit,
@@ -22,6 +23,7 @@ export default async function EditRecipePage({
   const categories = await getCategories();
   const ingredients = await getIngredientsForRecipeEdit();
   const equipment = await getEquipment();
+  const mealTypes = await getMealTypes();
 
   const isLoggedIn = await isUserLoggedIn();
 
@@ -43,6 +45,7 @@ export default async function EditRecipePage({
         categories={categories}
         ingredients={ingredients}
         equipment={equipment}
+        mealTypes={mealTypes}
       />
     </div>
   );

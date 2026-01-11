@@ -11,6 +11,7 @@ interface RecipeImageAndInfoProps {
   storage: StorageInfo[];
   name: string;
   equipment: string[];
+  mealType: string | null;
 }
 
 export default function RecipeImageAndInfo({
@@ -20,11 +21,18 @@ export default function RecipeImageAndInfo({
   servings,
   storage,
   name,
+  mealType,
 }: RecipeImageAndInfoProps) {
   return (
     <div className={styles.container}>
       <aside>
         <dl className={styles.infoContainer}>
+          {mealType && (
+            <div className={styles.infoItem}>
+              <dt className={styles.infoItemLabel}>Meal Type:</dt>
+              <dd>{mealType}</dd>
+            </div>
+          )}
           {category && (
             <div className={styles.infoItem}>
               <dt className={styles.infoItemLabel}>Category:</dt>

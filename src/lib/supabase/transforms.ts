@@ -105,6 +105,7 @@ export function transformRecipe(recipe: RecipeDisplayDb): RecipeDisplay {
     servings: recipe.servings,
     storage,
     notes: recipe.notes,
+    mealType: recipe.meal_type?.name ?? null,
   };
 }
 
@@ -148,6 +149,7 @@ export function transformRecipeForEdit(
     servings: recipe.servings,
     storage: isValidStorage(recipe.storage) ? recipe.storage : [],
     notes: recipe.notes,
+    mealTypeId: recipe.meal_type_id,
   };
 }
 

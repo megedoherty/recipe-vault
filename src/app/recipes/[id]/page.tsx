@@ -50,6 +50,7 @@ export default async function RecipePage({
         storage={recipe.storage}
         imageUrl={imageUrl}
         name={name}
+        mealType={recipe.mealType}
       />
       <IngredientsAndInstructionsSection
         ingredientSections={ingredientSections}

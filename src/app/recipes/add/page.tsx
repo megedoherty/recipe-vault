@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import { getCategories } from '@/lib/supabase/queries/categories';
 import { getEquipment } from '@/lib/supabase/queries/equipment';
 import { getIngredientsForRecipeEdit } from '@/lib/supabase/queries/ingredients';
+import { getMealTypes } from '@/lib/supabase/queries/mealTypes';
 import { isUserLoggedIn } from '@/lib/supabase/queries/user';
 
 import CreateRecipeForm from './components/CreateRecipeForm/CreateRecipeForm';
@@ -12,6 +13,7 @@ export default async function AddRecipePage() {
   const categories = await getCategories();
   const ingredients = await getIngredientsForRecipeEdit();
   const equipment = await getEquipment();
+  const mealTypes = await getMealTypes();
 
   const isLoggedIn = await isUserLoggedIn();
 
@@ -27,6 +29,7 @@ export default async function AddRecipePage() {
         categories={categories}
         ingredients={ingredients}
         equipment={equipment}
+        mealTypes={mealTypes}
       />
     </div>
   );

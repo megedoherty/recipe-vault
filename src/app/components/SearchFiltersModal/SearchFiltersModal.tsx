@@ -15,6 +15,7 @@ interface SearchFiltersModalProps {
   ingredients: IngredientForSearch[];
   equipment: Equipment[];
   excludeIngredientsInitialValue: string[];
+  includeIngredientsInitialValue: string[];
   equipmentIdsInitialValue: string[];
   minServingsInitialValue?: number;
   maxServingsInitialValue?: number;
@@ -29,6 +30,7 @@ export default function SearchFiltersModal({
   equipment,
   excludeIngredientsInitialValue,
   equipmentIdsInitialValue,
+  includeIngredientsInitialValue,
   minServingsInitialValue,
   maxServingsInitialValue,
   madeInitialValue,
@@ -107,6 +109,14 @@ export default function SearchFiltersModal({
             updateActiveFilters={updateActiveFilters}
             formRef={formRef}
           />
+          <IngredientFilter
+            key={`include-${includeIngredientsInitialValue.join(',')}`}
+            type="Include"
+            ingredients={ingredients}
+            initialValue={includeIngredientsInitialValue}
+            buttonClassName={styles.ingredientFilterButton}
+          />
+
           <IngredientFilter
             key={`exclude-${excludeIngredientsInitialValue.join(',')}`}
             type="Exclude"

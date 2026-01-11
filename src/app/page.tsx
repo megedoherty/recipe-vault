@@ -5,6 +5,7 @@ import LoadingSpinner from '@/components/atoms/LoadingSpinner/LoadingSpinner';
 import { getCategories } from '@/lib/supabase/queries/categories';
 import { getEquipment } from '@/lib/supabase/queries/equipment';
 import { getIngredientsForSearch } from '@/lib/supabase/queries/ingredients';
+import { getMealTypes } from '@/lib/supabase/queries/mealTypes';
 import { getServingsRange } from '@/lib/supabase/queries/recipes';
 
 import RecipesList from './components/RecipesList/RecipesList';
@@ -16,6 +17,7 @@ export default async function Home({ searchParams }: PageProps<'/'>) {
   const categories = await getCategories();
   const ingredients = await getIngredientsForSearch();
   const equipment = await getEquipment();
+  const mealTypes = await getMealTypes();
   const servingsRange = await getServingsRange();
 
   return (
@@ -26,6 +28,7 @@ export default async function Home({ searchParams }: PageProps<'/'>) {
         ingredients={ingredients}
         equipment={equipment}
         servingsRange={servingsRange}
+        mealTypes={mealTypes}
       />
       <Suspense
         key={JSON.stringify(query)}

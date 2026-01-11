@@ -35,5 +35,6 @@
 .checkboxContainer {
   &.selected {
     color: var(--accent);
+    font-weight: 500;
   }
 }

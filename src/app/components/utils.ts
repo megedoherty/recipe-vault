@@ -86,5 +86,10 @@ export function generateQueryString(e: FormEvent<HTMLFormElement>) {
     params.set('minRating', ratingValue);
   }
 
+  const mealTypeIdValue = formData.get('mealTypeId') as string;
+  if (mealTypeIdValue) {
+    params.set('mealTypeId', mealTypeIdValue);
+  }
+
   return params.toString();
 }

@@ -5,6 +5,7 @@ import { useActionState, useMemo, useState } from 'react';
 
 import Button from '@/components/atoms/Button/Button';
 import Input from '@/components/atoms/Input/Input';
+import Select from '@/components/atoms/Select/Select';
 import CategorySelect from '@/components/molecules/CategorySelect/CategorySelect';
 import StorageInfoEditor from '@/components/molecules/StorageInfoEditor/StorageInfoEditor';
 import EquipmentSelect from '@/components/organisms/EquipmentSelect/EquipmentSelect';
@@ -17,6 +18,7 @@ import {
   Equipment,
   IngredientForRecipeEdit,
   InstructionSection,
+  MealType,
   RecipeIngredientSectionsEditable,
 } from '@/types';
 
@@ -29,6 +31,7 @@ interface UpdateRecipeFormComponentProps {
   categories: Category[];
   ingredients: IngredientForRecipeEdit[];
   equipment: Equipment[];
+  mealTypes: MealType[];
 }
 
 export default function UpdateRecipeForm({
@@ -38,6 +41,7 @@ export default function UpdateRecipeForm({
   ingredients,
   categories,
   equipment,
+  mealTypes,
 }: UpdateRecipeFormComponentProps) {
   const [formIngredientSections, setFormIngredientSections] =
     useState<RecipeIngredientSectionsEditable[]>(ingredientSections);
@@ -94,6 +98,17 @@ export default function UpdateRecipeForm({
       </section>
       <section className={styles.sectionContainer}>
         <h2>Organization and Details</h2>
+        <Select
+          label="Meal Type"
+          name="mealTypeId"
+          id="mealType"
+          options={mealTypes.map((mealType) => ({
+            value: mealType.id.toString(),
+            label: mealType.name,
+          }))}
+          defaultValue={recipe.mealTypeId?.toString() ?? ''}
+          emptyOption={{ value: '', label: 'Select a meal type' }}
+        />
         <CategorySelect
           defaultValue={recipe.categoryId?.toString() ?? ''}
           categories={categories}

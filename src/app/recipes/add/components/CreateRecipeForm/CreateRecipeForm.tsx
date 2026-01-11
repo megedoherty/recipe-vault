@@ -5,6 +5,7 @@ import { useActionState, useMemo, useState } from 'react';
 
 import Button from '@/components/atoms/Button/Button';
 import Input from '@/components/atoms/Input/Input';
+import Select from '@/components/atoms/Select/Select';
 import CategorySelect from '@/components/molecules/CategorySelect/CategorySelect';
 import StorageInfoEditor from '@/components/molecules/StorageInfoEditor/StorageInfoEditor';
 import EquipmentSelect from '@/components/organisms/EquipmentSelect/EquipmentSelect';
@@ -17,6 +18,7 @@ import {
   Equipment,
   IngredientForRecipeEdit,
   InstructionSection,
+  MealType,
   RecipeIngredientSectionsEditable,
 } from '@/types';
 
@@ -27,12 +29,14 @@ interface CreateRecipeFormComponentProps {
   categories: Category[];
   ingredients: IngredientForRecipeEdit[];
   equipment: Equipment[];
+  mealTypes: MealType[];
 }
 
 export default function CreateRecipeForm({
   categories,
   ingredients,
   equipment,
+  mealTypes,
 }: CreateRecipeFormComponentProps) {
   const [ingredientSections, setIngredientSections] = useState<
     RecipeIngredientSectionsEditable[]
@@ -79,6 +83,17 @@ export default function CreateRecipeForm({
       />
       <section className={styles.sectionContainer}>
         <h2>Organization</h2>
+        <Select
+          label="Meal Type"
+          name="mealTypeId"
+          id="mealType"
+          defaultValue=""
+          options={mealTypes.map((mealType) => ({
+            value: mealType.id.toString(),
+            label: mealType.name,
+          }))}
+          emptyOption={{ value: '', label: 'Select a meal type' }}
+        />
         <CategorySelect categories={categories} showEmptyOption />
         <Input
           label="Servings"
