@@ -6,8 +6,7 @@ import {
 } from '@/lib/supabase/queries/recipes';
 import { isUserLoggedIn } from '@/lib/supabase/queries/user';
 
-import IngredientsList from './components/IngredientsList/IngredientsList';
-import InstructionsSection from './components/InstructionsSection/InstructionsSection';
+import IngredientsAndInstructionsSection from './components/IngredientsAndInstructionsSection/IngredientsAndInstructionsSection';
 import RecipeHeader from './components/RecipeHeader/RecipeHeader';
 import RecipeImageAndInfo from './components/RecipeImageAndInfo/RecipeImageAndInfo';
 import styles from './page.module.css';
@@ -33,7 +32,6 @@ export default async function RecipePage({
 
   const { name, instructions, made, imageUrl, sourceUrl, rating, notes } =
     recipe;
-  console.log('🚀 ~ RecipePage ~ notes:', notes);
 
   return (
     <div className={styles.page}>
@@ -53,18 +51,11 @@ export default async function RecipePage({
         imageUrl={imageUrl}
         name={name}
       />
-      <section className={styles.sectionContainer}>
-        <h2>Ingredients</h2>
-        {ingredientSections?.map((ingredientSection) => (
-          <section key={ingredientSection.title}>
-            {ingredientSection.title && <h3>{ingredientSection.title}</h3>}
-            <IngredientsList ingredients={ingredientSection.ingredients} />
-          </section>
-        ))}
-      </section>
-      <InstructionsSection
+      <IngredientsAndInstructionsSection
+        ingredientSections={ingredientSections}
         instructions={instructions}
         ingredientMap={ingredientMap}
+        containerClassName={styles.sectionContainer}
       />
       {notes && (
         <section className={`${styles.sectionContainer} ${styles.notes}`}>

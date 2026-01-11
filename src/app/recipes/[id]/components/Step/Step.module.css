@@ -1,0 +1,74 @@
+.step {
+  --marker-background: var(--background-elevated);
+  --marker-color: var(--text-primary);
+  --button-background: transparent;
+
+  counter-increment: item;
+
+  &.selected {
+    --button-background: var(--active-surface);
+    --marker-background: var(--accent);
+    --marker-color: var(--text-inverse);
+  }
+
+  &.done {
+    --step-text-color: var(--text-muted);
+    --step-ingredients-color: var(--text-muted);
+    --marker-background: var(--success);
+    --marker-color: var(--text-inverse);
+
+    opacity: 0.5;
+  }
+}
+
+.stepButton {
+  text-align: left;
+  background: var(--button-background, transparent);
+  width: 100%;
+
+  .step:not(.selected) & {
+    &:hover {
+      --button-background: var(--background-card);
+    }
+  }
+
+  .step.selected & {
+    &:hover {
+      opacity: 0.9;
+    }
+  }
+
+  &::before {
+    --marker-size: 1.75rem;
+
+    background: var(--marker-background);
+    min-width: var(--marker-size);
+    width: var(--marker-size);
+    height: var(--marker-size);
+    color: var(--marker-color);
+    box-shadow: var(--shadow-sm);
+    content: counter(item);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0.75rem;
+    border-radius: 100%;
+  }
+}
+
+.stepText {
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  color: var(--step-text-color, var(--text-primary));
+}
+
+.stepIngredients {
+  display: var(--step-ingredients-display, block);
+  color: var(--step-ingredients-color, var(--text-secondary));
+  font-size: var(--font-size-small);
+  line-height: var(--line-height-base);
+
+  @media (width >= 768px) {
+    --step-ingredients-display: none;
+  }
+}

@@ -86,6 +86,7 @@ export default function SelectableSearchPopover<T extends SearchItem>({
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isOpen) {
         setIsOpen(false);
+        e.preventDefault();
       }
     };
 

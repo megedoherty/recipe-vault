@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 
-import StepIngredients from './StepIngredients';
+import Step from './Step';
 
 const defaultProps = {
   ingredientIds: undefined,
@@ -22,12 +22,12 @@ const defaultProps = {
 
 describe('StepIngredients', () => {
   it('should render nothing if no ingredient ids are provided', () => {
-    const { container } = render(<StepIngredients {...defaultProps} />);
+    const { container } = render(<Step {...defaultProps} />);
     expect(container.firstChild).toBeNull();
   });
 
   it('should render the ingredients used if ingredient ids are provided', () => {
-    render(<StepIngredients {...defaultProps} ingredientIds={['1', '2']} />);
+    render(<Step {...defaultProps} ingredientIds={['1', '2']} />);
     expect(
       screen.getByText('1 Ingredient 1, 2 Ingredient 2'),
     ).toBeInTheDocument();
@@ -35,7 +35,7 @@ describe('StepIngredients', () => {
 
   it('should render the ingredients even if no quantities', () => {
     render(
-      <StepIngredients
+      <Step
         ingredientIds={['1']}
         ingredients={{
           '1': {

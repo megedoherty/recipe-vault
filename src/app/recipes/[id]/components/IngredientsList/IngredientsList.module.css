@@ -11,8 +11,29 @@
   margin-block-start: calc(5 / 16 * 1rem);
   height: var(--font-size-base);
   width: var(--font-size-base);
+
+  &:checked + label {
+    text-decoration: line-through;
+  }
+
+  &:checked:not(.selected) {
+    background-color: var(--success);
+    border-color: var(--success);
+    opacity: 0.5;
+  }
+
+  &:checked:not(.selected) + label {
+    color: var(--text-muted);
+    opacity: 0.5;
+  }
+
+  &.selected {
+    border-color: var(--accent);
+  }
 }
 
-.checkbox:checked + label {
-  text-decoration: line-through;
+.checkboxContainer {
+  &.selected {
+    color: var(--accent);
+  }
 }

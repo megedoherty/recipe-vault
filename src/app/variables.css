@@ -3,15 +3,16 @@
   --background-card: #fbf8f4;
   --background-elevated: #fff;
   --text-primary: #3b2f25;
-  --text-secondary: #7a6f66;
+  --text-secondary: #6c635a;
   --text-muted: #a39a91;
   --text-inverse: #fff;
-  --accent: #d8a25a;
+  --accent: #826136;
   --accent-muted: #f2e4cc;
   --border-default: #e3ddd5;
   --divider: #ece6df;
   --hover-surface: #f1ece6;
-  --active-surface: #e9e2da;
+  --hover-surface-subtle: #fdfcfa;
+  --active-surface: #f6f3ef;
   --button-primary-text: var(--text-primary);
   --button-secondary-hover: #f1ece6;
   --button-secondary-active: #e5ded5;
@@ -62,6 +63,7 @@
     --border-default: #3a342e;
     --divider: #2b2622;
     --hover-surface: #2a2622;
+    --hover-surface-subtle: #1b1916;
     --active-surface: #332e29;
     --button-primary-text: var(--text-inverse);
     --button-secondary-hover: #3a342e;

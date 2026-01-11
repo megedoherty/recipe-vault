@@ -73,3 +73,14 @@ h3 {
 html:has(dialog[open]) {
   overflow: hidden;
 }
+
+button {
+  font-size: inherit;
+  font-family: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  padding: 0.5rem;
+  border-radius: var(--border-radius-default);
+}

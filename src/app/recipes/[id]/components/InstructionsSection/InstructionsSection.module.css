@@ -5,9 +5,10 @@
 }
 
 .instructionsList {
-  list-style: decimal;
-  padding: 0 1rem 0 2rem;
+  padding: 0.5rem;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  list-style: none;
+  counter-reset: item;
 }
