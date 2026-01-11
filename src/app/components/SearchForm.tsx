@@ -71,6 +71,7 @@ export default function SearchForm({
     'excludeIngredients',
   );
   const equipmentIds = getStringArraySearchParam(searchParams, 'equipment');
+  const includeAllUsers = searchParams.get('includeAllUsers') === 'true';
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     const queryString = generateQueryString(e);
@@ -146,6 +147,7 @@ export default function SearchForm({
           occasionIdInitialValue={occasionId}
           servingsRange={servingsRange}
           formRef={formRef}
+          includeAllUsersInitialValue={includeAllUsers}
         />
         <div className={styles.buttonsContainer}>
           <Button

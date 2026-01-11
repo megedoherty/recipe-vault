@@ -11,6 +11,10 @@
     --checkbox-size: 1rem;
     --check-font-size: 0.75rem;
   }
+
+  &.align-start {
+    align-items: center;
+  }
 }
 
 .checkbox {

@@ -5,8 +5,6 @@ import { ChangeEvent, useState, useTransition } from 'react';
 import Checkbox from '@/components/atoms/Checkbox/Checkbox';
 import { toggleRecipeMade } from '@/lib/actions/recipes';
 
-import styles from './MadeCheckbox.module.css';
-
 interface MadeCheckboxProps {
   recipeId: string;
   initialChecked: boolean;
@@ -39,7 +37,7 @@ export default function MadeCheckbox({
       checked={checked}
       onChange={handleChange}
       disabled={isPending}
-      containerClassName={styles.container}
+      alignItems="start"
     />
   );
 }

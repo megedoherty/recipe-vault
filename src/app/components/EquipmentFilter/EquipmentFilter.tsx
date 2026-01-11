@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { RefObject, useEffect, useState } from 'react';
 
 import SelectableSearchPopover from '@/components/molecules/SelectableSearchPopover/SelectableSearchPopover';
 import { Equipment } from '@/types';
@@ -8,6 +8,7 @@ interface EquipmentFilterProps {
   initialValue?: string[];
   buttonClassName?: string;
   updateActiveFilters?: (filterName: string, isActive: boolean) => void;
+  formRef?: RefObject<HTMLFormElement | null>;
 }
 
 export default function EquipmentFilter({
@@ -15,6 +16,7 @@ export default function EquipmentFilter({
   initialValue = [],
   buttonClassName,
   updateActiveFilters,
+  formRef,
 }: EquipmentFilterProps) {
   const [selectedEquipment, setSelectedEquipment] =
     useState<string[]>(initialValue);
@@ -30,6 +32,27 @@ export default function EquipmentFilter({
       updateActiveFilters('equipment', selectedEquipment.length > 0);
     }
   }, [selectedEquipment.length, updateActiveFilters]);
+
+  // Handle form reset
+  useEffect(() => {
+    if (!formRef?.current) {
+      return;
+    }
+
+    const handleReset = () => {
+      setSelectedEquipment([]);
+      if (updateActiveFilters) {
+        updateActiveFilters('equipment', false);
+      }
+    };
+
+    const form = formRef.current;
+    form.addEventListener('reset', handleReset);
+
+    return () => {
+      form.removeEventListener('reset', handleReset);
+    };
+  }, [formRef, updateActiveFilters]);
 
   return (
     <>

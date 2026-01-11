@@ -96,5 +96,11 @@ export function generateQueryString(e: FormEvent<HTMLFormElement>) {
     params.set('occasionId', occasionIdValue);
   }
 
+  // Checkbox: only include if checked (value will be 'true' when checked)
+  const includeAllUsersValue = formData.get('includeAllUsers');
+  if (includeAllUsersValue === 'true') {
+    params.set('includeAllUsers', 'true');
+  }
+
   return params.toString();
 }

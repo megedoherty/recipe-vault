@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { RefObject, useEffect, useState } from 'react';
 
 import SelectableSearchPopover from '@/components/molecules/SelectableSearchPopover/SelectableSearchPopover';
 import { IngredientForSearch } from '@/types';
@@ -16,6 +16,8 @@ interface IngredientFilterProps {
   buttonClassName?: string;
   // Lets the parent component know when this filter has active selections
   updateActiveFilters?: (filterName: string, isActive: boolean) => void;
+  // Reference to the form element for reset handling
+  formRef?: RefObject<HTMLFormElement | null>;
 }
 
 export default function IngredientFilter({
@@ -24,13 +26,39 @@ export default function IngredientFilter({
   initialValue = [],
   buttonClassName,
   updateActiveFilters,
+  formRef,
 }: IngredientFilterProps) {
   const [selectedIngredients, setSelectedIngredients] =
     useState<string[]>(initialValue);
 
+  const inputName = `${type.toLowerCase()}Ingredients`;
+  const buttonTextPrefix = `${type} Ingredients`;
+  const popoverId = `${type}-ingredients-popover`;
+  const searchId = `${type}-ingredients-search`;
+
   useEffect(() => {
     setSelectedIngredients(initialValue);
   }, [initialValue]);
+
+  useEffect(() => {
+    if (!formRef?.current) {
+      return;
+    }
+
+    const handleReset = () => {
+      setSelectedIngredients([]);
+      if (updateActiveFilters) {
+        updateActiveFilters(inputName, false);
+      }
+    };
+
+    const form = formRef.current;
+    form.addEventListener('reset', handleReset);
+
+    return () => {
+      form.removeEventListener('reset', handleReset);
+    };
+  }, [formRef, updateActiveFilters, inputName]);
 
   const onToggleIngredient = (itemId: string) => {
     const ingredientInfo = ingredients.find((i) => i.id === itemId);
@@ -50,11 +78,6 @@ export default function IngredientFilter({
       }
     });
   };
-
-  const inputName = `${type.toLowerCase()}Ingredients`;
-  const buttonTextPrefix = `${type} Ingredients`;
-  const popoverId = `${type}-ingredients-popover`;
-  const searchId = `${type}-ingredients-search`;
 
   useEffect(() => {
     if (updateActiveFilters) {

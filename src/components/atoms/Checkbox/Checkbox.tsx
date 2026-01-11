@@ -9,6 +9,7 @@ interface CheckboxProps extends InputHTMLAttributes<HTMLInputElement> {
   id: string;
   containerClassName?: string;
   checkboxClassName?: string;
+  alignItems?: 'center' | 'start';
 }
 
 export default function Checkbox({
@@ -17,11 +18,12 @@ export default function Checkbox({
   checkboxSize = 'medium',
   containerClassName = '',
   checkboxClassName = '',
+  alignItems = 'center',
   ...props
 }: CheckboxProps) {
   return (
     <div
-      className={`${containerClassName} ${styles.container} ${styles[checkboxSize]}`}
+      className={`${containerClassName} ${styles.container} ${styles[checkboxSize]} ${styles[`align-${alignItems}`]}`}
     >
       <input
         type="checkbox"

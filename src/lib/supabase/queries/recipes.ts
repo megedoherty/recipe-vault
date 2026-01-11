@@ -105,6 +105,7 @@ interface GetAllRecipesParams {
   minRating?: number;
   mealTypeId?: number;
   occasionId?: number;
+  includeAllUsers?: boolean;
 }
 
 export async function getAllRecipes({
@@ -119,11 +120,20 @@ export async function getAllRecipes({
   minRating,
   mealTypeId,
   occasionId,
+  includeAllUsers = false,
 }: GetAllRecipesParams = {}): Promise<RecipeSummary[]> {
   const supabase = await createClient();
   let query = supabase
     .from('recipe')
     .select('id, name, image_url, rating, made');
+
+  // Filter by user_id by default unless includeAllUsers is true
+  if (!includeAllUsers) {
+    const { data: claimsData } = await supabase.auth.getClaims();
+    if (claimsData?.claims?.sub) {
+      query = query.eq('user_id', claimsData.claims.sub);
+    }
+  }
 
   if (name) {
     query = query.ilike('name', `%${name}%`);

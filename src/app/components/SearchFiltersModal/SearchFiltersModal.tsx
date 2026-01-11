@@ -9,6 +9,7 @@ import {
   ServingsRange,
 } from '@/types';
 
+import AllUsersFilter from '../AllUsersFilter/AllUsersFilter';
 import EquipmentFilter from '../EquipmentFilter/EquipmentFilter';
 import IngredientFilter from '../IngredientFilter/IngredientFilter';
 import MadeFilter from '../MadeFilter/MadeFilter';
@@ -31,6 +32,7 @@ interface SearchFiltersModalProps {
   formRef: RefObject<HTMLFormElement | null>;
   occasions: Occasion[];
   occasionIdInitialValue: string;
+  includeAllUsersInitialValue: boolean;
 }
 
 export default function SearchFiltersModal({
@@ -47,12 +49,13 @@ export default function SearchFiltersModal({
   occasions,
   occasionIdInitialValue,
   formRef,
+  includeAllUsersInitialValue,
 }: SearchFiltersModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [activeFilters, setActiveFilters] = useState(() => {
     return [
       ...(includeIngredientsInitialValue.length > 0
-        ? ['excludeIngredients']
+        ? ['includeIngredients']
         : []),
       ...(excludeIngredientsInitialValue.length > 0
         ? ['excludeIngredients']
@@ -62,6 +65,7 @@ export default function SearchFiltersModal({
       ...(maxServingsInitialValue !== undefined ? ['maxServings'] : []),
       ...(madeInitialValue !== undefined ? ['made'] : []),
       ...(occasionIdInitialValue ? ['occasion'] : []),
+      ...(includeAllUsersInitialValue ? ['includeAllUsers'] : []),
     ];
   });
 
@@ -100,6 +104,12 @@ export default function SearchFiltersModal({
               <XIcon />
             </Button>
           </header>
+          <AllUsersFilter
+            key={`includeAllUsers-${includeAllUsersInitialValue}`}
+            initialValue={includeAllUsersInitialValue}
+            updateActiveFilters={updateActiveFilters}
+            formRef={formRef}
+          />
           <MadeFilter
             labelClassName={styles.label}
             updateActiveFilters={updateActiveFilters}
@@ -130,6 +140,7 @@ export default function SearchFiltersModal({
             initialValue={includeIngredientsInitialValue}
             buttonClassName={styles.ingredientFilterButton}
             updateActiveFilters={updateActiveFilters}
+            formRef={formRef}
           />
 
           <IngredientFilter
@@ -139,6 +150,7 @@ export default function SearchFiltersModal({
             initialValue={excludeIngredientsInitialValue}
             buttonClassName={styles.ingredientFilterButton}
             updateActiveFilters={updateActiveFilters}
+            formRef={formRef}
           />
           <EquipmentFilter
             key={`equipment-${equipmentIdsInitialValue.join(',')}`}
@@ -146,6 +158,7 @@ export default function SearchFiltersModal({
             initialValue={equipmentIdsInitialValue}
             buttonClassName={styles.equipmentFilterButton}
             updateActiveFilters={updateActiveFilters}
+            formRef={formRef}
           />
           <OccasionFilter
             key={`occasion-${occasionIdInitialValue}`}
