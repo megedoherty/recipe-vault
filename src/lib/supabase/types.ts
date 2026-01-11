@@ -113,6 +113,21 @@ export type Database = {
         };
         Relationships: [];
       };
+      occasion: {
+        Row: {
+          id: number;
+          name: string;
+        };
+        Insert: {
+          id?: number;
+          name: string;
+        };
+        Update: {
+          id?: number;
+          name?: string;
+        };
+        Relationships: [];
+      };
       recipe: {
         Row: {
           category_id: number | null;
@@ -126,6 +141,7 @@ export type Database = {
           meal_type_id: number | null;
           name: string;
           notes: string | null;
+          occasion_id: number | null;
           rating: number | null;
           servings: number | null;
           source_url: string | null;
@@ -145,6 +161,7 @@ export type Database = {
           meal_type_id?: number | null;
           name: string;
           notes?: string | null;
+          occasion_id?: number | null;
           rating?: number | null;
           servings?: number | null;
           source_url?: string | null;
@@ -164,6 +181,7 @@ export type Database = {
           meal_type_id?: number | null;
           name?: string;
           notes?: string | null;
+          occasion_id?: number | null;
           rating?: number | null;
           servings?: number | null;
           source_url?: string | null;
@@ -184,6 +202,13 @@ export type Database = {
             columns: ['meal_type_id'];
             isOneToOne: false;
             referencedRelation: 'meal_type';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'recipe_ocassion_id_fkey';
+            columns: ['occasion_id'];
+            isOneToOne: false;
+            referencedRelation: 'occasion';
             referencedColumns: ['id'];
           },
         ];

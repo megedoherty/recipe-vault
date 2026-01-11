@@ -2,11 +2,17 @@ import { RefObject, useCallback, useRef, useState } from 'react';
 
 import Button from '@/components/atoms/Button/Button';
 import XIcon from '@/components/atoms/icons/XIcon';
-import { Equipment, IngredientForSearch, ServingsRange } from '@/types';
+import {
+  Equipment,
+  IngredientForSearch,
+  Occasion,
+  ServingsRange,
+} from '@/types';
 
 import EquipmentFilter from '../EquipmentFilter/EquipmentFilter';
 import IngredientFilter from '../IngredientFilter/IngredientFilter';
 import MadeFilter from '../MadeFilter/MadeFilter';
+import OccasionFilter from '../OccasionFilter/OccasionFilter';
 import RatingFilter from '../RatingFilter/RatingFilter';
 import ServingsFilter from '../ServingsFilter/ServingsFilter';
 import styles from './SearchFiltersModal.module.css';
@@ -23,6 +29,8 @@ interface SearchFiltersModalProps {
   servingsRange: ServingsRange;
   ratingInitialValue?: number;
   formRef: RefObject<HTMLFormElement | null>;
+  occasions: Occasion[];
+  occasionIdInitialValue: string;
 }
 
 export default function SearchFiltersModal({
@@ -36,11 +44,16 @@ export default function SearchFiltersModal({
   madeInitialValue,
   ratingInitialValue,
   servingsRange,
+  occasions,
+  occasionIdInitialValue,
   formRef,
 }: SearchFiltersModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [activeFilters, setActiveFilters] = useState(() => {
     return [
+      ...(includeIngredientsInitialValue.length > 0
+        ? ['excludeIngredients']
+        : []),
       ...(excludeIngredientsInitialValue.length > 0
         ? ['excludeIngredients']
         : []),
@@ -48,6 +61,7 @@ export default function SearchFiltersModal({
       ...(minServingsInitialValue !== undefined ? ['minServings'] : []),
       ...(maxServingsInitialValue !== undefined ? ['maxServings'] : []),
       ...(madeInitialValue !== undefined ? ['made'] : []),
+      ...(occasionIdInitialValue ? ['occasion'] : []),
     ];
   });
 
@@ -115,6 +129,7 @@ export default function SearchFiltersModal({
             ingredients={ingredients}
             initialValue={includeIngredientsInitialValue}
             buttonClassName={styles.ingredientFilterButton}
+            updateActiveFilters={updateActiveFilters}
           />
 
           <IngredientFilter
@@ -131,6 +146,14 @@ export default function SearchFiltersModal({
             initialValue={equipmentIdsInitialValue}
             buttonClassName={styles.equipmentFilterButton}
             updateActiveFilters={updateActiveFilters}
+          />
+          <OccasionFilter
+            key={`occasion-${occasionIdInitialValue}`}
+            occasions={occasions}
+            initialValue={occasionIdInitialValue}
+            labelClassName={styles.label}
+            updateActiveFilters={updateActiveFilters}
+            formRef={formRef}
           />
         </div>
       </dialog>

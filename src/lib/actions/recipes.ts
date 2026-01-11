@@ -98,6 +98,7 @@ export async function addRecipe(
   const servings = Number(rawFormData.servings);
   const notes = rawFormData.notes as string;
   const meal_type_id = Number(rawFormData.mealTypeId);
+  const occasion_id = Number(rawFormData.occasionId);
 
   const supabase = await createClient();
   const { data: userData } = await supabase.auth.getUser();
@@ -137,6 +138,7 @@ export async function addRecipe(
       storage,
       notes,
       meal_type_id,
+      occasion_id,
     })
     .select('id')
     .single();
@@ -210,6 +212,7 @@ export async function updateRecipe(
   const servings = Number(rawFormData.servings);
   const notes = rawFormData.notes as string;
   const meal_type_id = Number(rawFormData.mealTypeId);
+  const occasion_id = Number(rawFormData.occasionId);
 
   const storage = [
     {
@@ -275,6 +278,7 @@ export async function updateRecipe(
       storage,
       notes,
       meal_type_id,
+      occasion_id,
     })
     .eq('id', recipeId)
     .select()

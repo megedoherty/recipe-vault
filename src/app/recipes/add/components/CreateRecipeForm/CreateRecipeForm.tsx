@@ -19,6 +19,7 @@ import {
   IngredientForRecipeEdit,
   InstructionSection,
   MealType,
+  Occasion,
   RecipeIngredientSectionsEditable,
 } from '@/types';
 
@@ -30,6 +31,7 @@ interface CreateRecipeFormComponentProps {
   ingredients: IngredientForRecipeEdit[];
   equipment: Equipment[];
   mealTypes: MealType[];
+  occasions: Occasion[];
 }
 
 export default function CreateRecipeForm({
@@ -37,6 +39,7 @@ export default function CreateRecipeForm({
   ingredients,
   equipment,
   mealTypes,
+  occasions,
 }: CreateRecipeFormComponentProps) {
   const [ingredientSections, setIngredientSections] = useState<
     RecipeIngredientSectionsEditable[]
@@ -82,7 +85,7 @@ export default function CreateRecipeForm({
         fullWidth
       />
       <section className={styles.sectionContainer}>
-        <h2>Organization</h2>
+        <h2>Organization and Details</h2>
         <Select
           label="Meal Type"
           name="mealTypeId"
@@ -95,6 +98,17 @@ export default function CreateRecipeForm({
           emptyOption={{ value: '', label: 'Select a meal type' }}
         />
         <CategorySelect categories={categories} showEmptyOption />
+        <Select
+          label="Occasion"
+          name="occasionId"
+          id="occasionId"
+          defaultValue=""
+          options={occasions.map((occasion) => ({
+            value: occasion.id.toString(),
+            label: occasion.name,
+          }))}
+          emptyOption={{ value: '', label: 'Select an occasion' }}
+        />
         <Input
           label="Servings"
           name="servings"

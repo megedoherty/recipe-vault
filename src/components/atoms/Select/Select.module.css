@@ -1,7 +1,16 @@
 .container {
   display: flex;
-  gap: 0.5rem;
-  align-items: center;
+
+  &.vertical {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  &.horizontal {
+    align-items: center;
+    flex-direction: row;
+    gap: 0.5rem;
+  }
 }
 
 .select {

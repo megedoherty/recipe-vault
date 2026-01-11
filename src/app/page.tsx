@@ -6,6 +6,7 @@ import { getCategories } from '@/lib/supabase/queries/categories';
 import { getEquipment } from '@/lib/supabase/queries/equipment';
 import { getIngredientsForSearch } from '@/lib/supabase/queries/ingredients';
 import { getMealTypes } from '@/lib/supabase/queries/mealTypes';
+import { getOccasions } from '@/lib/supabase/queries/occasions';
 import { getServingsRange } from '@/lib/supabase/queries/recipes';
 
 import RecipesList from './components/RecipesList/RecipesList';
@@ -19,6 +20,7 @@ export default async function Home({ searchParams }: PageProps<'/'>) {
   const equipment = await getEquipment();
   const mealTypes = await getMealTypes();
   const servingsRange = await getServingsRange();
+  const occasions = await getOccasions();
 
   return (
     <div className={styles.page}>
@@ -28,6 +30,7 @@ export default async function Home({ searchParams }: PageProps<'/'>) {
         ingredients={ingredients}
         equipment={equipment}
         servingsRange={servingsRange}
+        occasions={occasions}
         mealTypes={mealTypes}
       />
       <Suspense

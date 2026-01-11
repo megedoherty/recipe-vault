@@ -91,5 +91,10 @@ export function generateQueryString(e: FormEvent<HTMLFormElement>) {
     params.set('mealTypeId', mealTypeIdValue);
   }
 
+  const occasionIdValue = formData.get('occasionId') as string;
+  if (occasionIdValue) {
+    params.set('occasionId', occasionIdValue);
+  }
+
   return params.toString();
 }

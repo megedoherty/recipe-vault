@@ -8,6 +8,7 @@ interface RecipeImageAndInfoProps {
   category: string | null;
   imageUrl: string | null;
   servings: number | null;
+  occasion: string | null;
   storage: StorageInfo[];
   name: string;
   equipment: string[];
@@ -21,6 +22,7 @@ export default function RecipeImageAndInfo({
   servings,
   storage,
   name,
+  occasion,
   mealType,
 }: RecipeImageAndInfoProps) {
   return (
@@ -37,6 +39,12 @@ export default function RecipeImageAndInfo({
             <div className={styles.infoItem}>
               <dt className={styles.infoItemLabel}>Category:</dt>
               <dd>{category}</dd>
+            </div>
+          )}
+          {occasion && (
+            <div className={styles.infoItem}>
+              <dt className={styles.infoItemLabel}>Occasion:</dt>
+              <dd>{occasion}</dd>
             </div>
           )}
           {servings && (

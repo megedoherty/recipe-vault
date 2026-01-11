@@ -22,7 +22,7 @@ export async function getRecipeForDisplay(
   const { data } = await supabase
     .from('recipe')
     .select(
-      'image_url, instructions, name, made, rating, source_url, category(name), instruction_section_order, recipe_equipment(equipment(name)), servings, storage, notes, meal_type(name)',
+      'image_url, instructions, name, made, rating, source_url, category(name), instruction_section_order, recipe_equipment(equipment(name)), servings, storage, notes, meal_type(name), occasion(name)',
     )
     .eq('id', id)
     .single();
@@ -37,7 +37,7 @@ export async function getRecipeForEdit(
   const { data } = await supabase
     .from('recipe')
     .select(
-      'name, image_url, source_url, instructions, category_id, ingredient_section_order, instruction_section_order, recipe_equipment(equipment_id), servings, storage, notes, meal_type_id',
+      'name, image_url, source_url, instructions, category_id, ingredient_section_order, instruction_section_order, recipe_equipment(equipment_id), servings, storage, notes, meal_type_id, occasion_id',
     )
     .eq('id', id)
     .single();
@@ -104,6 +104,7 @@ interface GetAllRecipesParams {
   made?: boolean;
   minRating?: number;
   mealTypeId?: number;
+  occasionId?: number;
 }
 
 export async function getAllRecipes({
@@ -117,6 +118,7 @@ export async function getAllRecipes({
   made,
   minRating,
   mealTypeId,
+  occasionId,
 }: GetAllRecipesParams = {}): Promise<RecipeSummary[]> {
   const supabase = await createClient();
   let query = supabase
@@ -149,6 +151,10 @@ export async function getAllRecipes({
 
   if (mealTypeId) {
     query = query.eq('meal_type_id', mealTypeId);
+  }
+
+  if (occasionId) {
+    query = query.eq('occasion_id', occasionId);
   }
 
   // Collect all recipe ID filters

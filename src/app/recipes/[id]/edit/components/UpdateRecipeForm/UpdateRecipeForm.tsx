@@ -19,6 +19,7 @@ import {
   IngredientForRecipeEdit,
   InstructionSection,
   MealType,
+  Occasion,
   RecipeIngredientSectionsEditable,
 } from '@/types';
 
@@ -32,6 +33,7 @@ interface UpdateRecipeFormComponentProps {
   ingredients: IngredientForRecipeEdit[];
   equipment: Equipment[];
   mealTypes: MealType[];
+  occasions: Occasion[];
 }
 
 export default function UpdateRecipeForm({
@@ -42,6 +44,7 @@ export default function UpdateRecipeForm({
   categories,
   equipment,
   mealTypes,
+  occasions,
 }: UpdateRecipeFormComponentProps) {
   const [formIngredientSections, setFormIngredientSections] =
     useState<RecipeIngredientSectionsEditable[]>(ingredientSections);
@@ -113,6 +116,17 @@ export default function UpdateRecipeForm({
           defaultValue={recipe.categoryId?.toString() ?? ''}
           categories={categories}
           showEmptyOption
+        />
+        <Select
+          label="Occasion"
+          name="occasionId"
+          id="occasionId"
+          defaultValue={recipe.occasionId?.toString() ?? ''}
+          options={occasions.map((occasion) => ({
+            value: occasion.id.toString(),
+            label: occasion.name,
+          }))}
+          emptyOption={{ value: '', label: 'Select an occasion' }}
         />
         <Input
           label="Servings"

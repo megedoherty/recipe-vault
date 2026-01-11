@@ -13,6 +13,7 @@ import {
   Equipment,
   IngredientForSearch,
   MealType,
+  Occasion,
   ServingsRange,
 } from '@/types';
 
@@ -31,6 +32,7 @@ interface SearchFormProps {
   equipment: Equipment[];
   servingsRange: ServingsRange;
   mealTypes: MealType[];
+  occasions: Occasion[];
 }
 
 export default function SearchForm({
@@ -39,6 +41,7 @@ export default function SearchForm({
   equipment,
   servingsRange,
   mealTypes,
+  occasions,
 }: SearchFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -49,6 +52,7 @@ export default function SearchForm({
   const name = getStringSearchParam(searchParams, 'name');
   const categoryId = getStringSearchParam(searchParams, 'categoryId');
   const mealTypeId = getStringSearchParam(searchParams, 'mealTypeId');
+  const occasionId = getStringSearchParam(searchParams, 'occasionId');
   const made = getStringSearchParam(searchParams, 'made');
   let madeValue: 'yes' | 'no' | undefined = undefined;
   if (made === 'true') {
@@ -138,6 +142,8 @@ export default function SearchForm({
           minServingsInitialValue={minServings ?? undefined}
           maxServingsInitialValue={maxServings ?? undefined}
           includeIngredientsInitialValue={includeIngredients}
+          occasions={occasions}
+          occasionIdInitialValue={occasionId}
           servingsRange={servingsRange}
           formRef={formRef}
         />
