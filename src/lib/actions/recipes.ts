@@ -94,6 +94,8 @@ export async function addRecipe(
 ): Promise<ActionsResponse> {
   const rawFormData = Object.fromEntries(formData);
   const recipeName = rawFormData.name as string;
+  const source_url = rawFormData.sourceUrl as string;
+  const image_url = rawFormData.imageUrl as string;
   const category_id = Number(rawFormData.categoryId);
   const servings = Number(rawFormData.servings);
   const notes = rawFormData.notes as string;
@@ -131,6 +133,8 @@ export async function addRecipe(
       user_id: user.id,
       name: recipeName,
       category_id,
+      source_url,
+      image_url,
       instructions: cleanInstructionSections(instructionSections),
       ingredient_section_order: ingredientSectionOrder,
       instruction_section_order: instructionSectionOrder,
