@@ -2,6 +2,7 @@
 
 import { redirect } from 'next/navigation';
 
+import { uploadImageFromUrl } from '@/lib/actions/images';
 import { createClient } from '@/lib/supabase/server';
 import {
   InstructionSection,
@@ -95,7 +96,7 @@ export async function addRecipe(
   const rawFormData = Object.fromEntries(formData);
   const recipeName = rawFormData.name as string;
   const source_url = rawFormData.sourceUrl as string;
-  const image_url = rawFormData.imageUrl as string;
+  const imageUrlInput = rawFormData.imageUrl as string;
   const category_id = Number(rawFormData.categoryId);
   const servings = Number(rawFormData.servings);
   const notes = rawFormData.notes as string;
@@ -127,6 +128,7 @@ export async function addRecipe(
     },
   ].filter((info) => info.days !== null && info.days > 0);
 
+  // Create recipe first to get the ID
   const { data, error } = await supabase
     .from('recipe')
     .insert({
@@ -134,7 +136,7 @@ export async function addRecipe(
       name: recipeName,
       category_id,
       source_url,
-      image_url,
+      image_url: imageUrlInput || null, // Temporary, will update if upload succeeds
       instructions: cleanInstructionSections(instructionSections),
       ingredient_section_order: ingredientSectionOrder,
       instruction_section_order: instructionSectionOrder,
@@ -153,6 +155,18 @@ export async function addRecipe(
       success: false,
       error: error?.message ?? 'Failed to create recipe',
     };
+  }
+
+  // Upload image if provided and not already a Supabase URL
+  if (imageUrlInput && !imageUrlInput.trim().includes('supabase.co')) {
+    const uploadedUrl = await uploadImageFromUrl(imageUrlInput, data.id);
+    if (uploadedUrl) {
+      // Update recipe with uploaded image URL
+      await supabase
+        .from('recipe')
+        .update({ image_url: uploadedUrl })
+        .eq('id', data.id);
+    }
   }
 
   const ingredients: RecipeIngredientDb[] = createIngredientsInsert(
@@ -210,7 +224,7 @@ export async function updateRecipe(
 ): Promise<ActionsResponse> {
   const rawFormData = Object.fromEntries(formData);
   const name = rawFormData.name as string;
-  const image_url = rawFormData.imageUrl as string;
+  const imageUrlInput = rawFormData.imageUrl as string;
   const source_url = rawFormData.sourceUrl as string;
   const category_id = Number(rawFormData.categoryId);
   const servings = Number(rawFormData.servings);
@@ -238,6 +252,28 @@ export async function updateRecipe(
     .filter((title) => title !== null);
 
   const supabase = await createClient();
+
+  // Get current recipe to compare image URL
+  const { data: currentRecipe } = await supabase
+    .from('recipe')
+    .select('image_url')
+    .eq('id', recipeId)
+    .single();
+
+  const currentImageUrl = currentRecipe?.image_url || '';
+
+  // Only upload if image has changed and is not already a Supabase URL
+  let image_url = imageUrlInput;
+  if (
+    imageUrlInput &&
+    imageUrlInput !== currentImageUrl &&
+    !imageUrlInput.trim().includes('supabase.co')
+  ) {
+    const uploadedUrl = await uploadImageFromUrl(imageUrlInput, recipeId);
+    if (uploadedUrl) {
+      image_url = uploadedUrl;
+    }
+  }
 
   // Check if we need to delete any ingredients BEFORE updating the recipe
   // so we can remove their IDs from instruction steps
