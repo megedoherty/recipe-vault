@@ -438,10 +438,31 @@ export async function updateRecipeRating(
  */
 export async function deleteRecipe(recipeId: string): Promise<void> {
   const supabase = await createClient();
-  const { error } = await supabase.from('recipe').delete().eq('id', recipeId);
+  const { data: recipe, error: recipeError } = await supabase
+    .from('recipe')
+    .delete()
+    .eq('id', recipeId)
+    .select()
+    .single();
 
-  if (error) {
-    throw new Error(error?.message ?? 'Failed to delete recipe');
+  if (recipeError) {
+    throw new Error(recipeError?.message ?? 'Failed to delete recipe');
+  }
+
+  const imageUrl = recipe?.image_url;
+
+  if (imageUrl && imageUrl.includes('supabase.co')) {
+    const urlParts = imageUrl.split('/recipe-images/');
+    if (urlParts.length === 2) {
+      const fileName = urlParts[1].split('?')[0];
+      const { error: storageError } = await supabase.storage
+        .from('recipe-images')
+        .remove([fileName]);
+
+      if (storageError) {
+        console.error('Error deleting image from storage:', storageError);
+      }
+    }
   }
 
   redirect('/');
