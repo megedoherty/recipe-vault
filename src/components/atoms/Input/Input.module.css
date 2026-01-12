@@ -53,4 +53,8 @@
     --input-border-color: var(--error);
     --input-color: var(--error);
   }
+
+  &:disabled {
+    --input-color: var(--text-muted);
+  }
 }

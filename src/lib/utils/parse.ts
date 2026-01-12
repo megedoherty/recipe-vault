@@ -43,6 +43,7 @@ function replaceFractions(text: string): string {
     return FRACTION_MAP[fraction] || match;
   });
 }
+
 export function standardizeQuantity(quantity: string): string {
   // Remove "and" from mixed fractions (e.g., "1 and 1/2" -> "1 1/2")
   // Only match "and" when it's between a number and a fraction
@@ -50,7 +51,9 @@ export function standardizeQuantity(quantity: string): string {
     .replace(/(\d+)\s+and\s+(\d+\s*\/\s*\d+)/gi, '$1 $2')
     .toLowerCase();
 
-  return replaceFractions(normalized);
+  const withSpacedGrams = normalized.replace(/(\d+)(g\b)/g, '$1 $2');
+
+  return replaceFractions(withSpacedGrams);
 }
 
 type ParsedIngredient = Pick<RecipeEditableIngredient, 'name' | 'quantity'>;
@@ -150,10 +153,16 @@ const specialCaseMappings: Array<{
     ingredientName: 'white vinegar',
   },
   {
-    match: (n) =>
-      n.startsWith('confectioners’ sugar') ||
-      n.startsWith("confections' sugar"),
+    match: (n) => n.startsWith('confectioner'),
     ingredientName: 'powdered sugar',
+  },
+  {
+    match: (n) => n.startsWith('brown sugar'),
+    ingredientName: 'light brown sugar',
+  },
+  {
+    match: (n) => n.startsWith('sugar'),
+    ingredientName: 'granulated sugar',
   },
   {
     match: (n) => n.startsWith('corn syrup'),

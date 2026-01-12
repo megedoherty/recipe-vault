@@ -130,6 +130,18 @@ export interface EditableRecipe {
   occasionId: number | null;
 }
 
+/**
+ * Intermediate type used on the FE when parsing a recipe from a URL
+ * 1. Ingredients are combined for a convenient return
+ * 2. Returns multiple images for user selection
+ */
+export interface ParsedRecipe {
+  recipe: EditableRecipe;
+  ingredients: RecipeIngredientSectionsEditable[];
+  imageUrls: string[] | null;
+}
+
+// The type used on the FE when displaying the servings range
 export interface ServingsRange {
   min: number;
   max: number;

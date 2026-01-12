@@ -7,11 +7,13 @@ import Button from '@/components/atoms/Button/Button';
 import Input from '@/components/atoms/Input/Input';
 import Select from '@/components/atoms/Select/Select';
 import CategorySelect from '@/components/molecules/CategorySelect/CategorySelect';
+import ImagePicker from '@/components/molecules/ImagePicker/ImagePicker';
 import ProcessableSection from '@/components/molecules/ProcessableSection/ProcessableSection';
 import StorageInfoEditor from '@/components/molecules/StorageInfoEditor/StorageInfoEditor';
 import EquipmentSelect from '@/components/organisms/EquipmentSelect/EquipmentSelect';
 import IngredientSectionsEditor from '@/components/organisms/IngredientSectionsEditor/IngredientSectionsEditor';
 import InstructionsSectionsEditor from '@/components/organisms/InstructionsSectionsEditor/InstructionsSectionsEditor';
+import { defaultStorage } from '@/constants';
 import { addRecipe, updateRecipe } from '@/lib/actions/recipes';
 import { parseIngredients, parseInstructions } from '@/lib/utils/parse';
 import {
@@ -23,7 +25,6 @@ import {
   MealType,
   Occasion,
   RecipeIngredientSectionsEditable,
-  StorageInfo,
 } from '@/types';
 
 import styles from './RecipeForm.module.css';
@@ -38,6 +39,7 @@ interface RecipeFormProps {
   equipment: Equipment[];
   mealTypes: MealType[];
   occasions: Occasion[];
+  imageOptions?: string[];
 }
 
 export default function RecipeForm({
@@ -50,6 +52,7 @@ export default function RecipeForm({
   equipment,
   mealTypes,
   occasions,
+  imageOptions,
 }: RecipeFormProps) {
   const [ingredientSections, setIngredientSections] = useState<
     RecipeIngredientSectionsEditable[]
@@ -94,25 +97,14 @@ export default function RecipeForm({
     return ingredientSections.flatMap((section) => section.ingredients);
   }, [ingredientSections]);
 
-  const defaultStorage: StorageInfo[] = [
-    {
-      location: 'Room Temperature',
-      days: null,
-    },
-    {
-      location: 'Fridge',
-      days: null,
-    },
-  ];
-
   return (
     <Form action={formAction} className={styles.form}>
       <section className={styles.sectionContainer}>
         <h2>Basic Information</h2>
         <Input
-          label="Name"
+          label="Recipe Name"
           name="name"
-          id="name"
+          id="recipeName"
           type="text"
           defaultValue={initialRecipe?.name ?? ''}
           required={isCreateMode}
@@ -126,13 +118,9 @@ export default function RecipeForm({
           defaultValue={initialRecipe?.sourceUrl ?? ''}
           fullWidth
         />
-        <Input
-          label="Image URL"
-          name="imageUrl"
-          id="imageUrl"
-          type="url"
-          defaultValue={initialRecipe?.imageUrl ?? ''}
-          fullWidth
+        <ImagePicker
+          imageOptions={imageOptions}
+          initialValue={initialRecipe?.imageUrl ?? ''}
         />
       </section>
       <section className={styles.sectionContainer}>
@@ -181,50 +169,51 @@ export default function RecipeForm({
         />
         <StorageInfoEditor storage={initialRecipe?.storage ?? defaultStorage} />
       </section>
-      {isCreateMode ? (
-        <>
-          <ProcessableSection
-            title="Ingredients"
-            onProcess={onProcessIngredients}
-            editorComponent={
-              <IngredientSectionsEditor
-                ingredientSections={ingredientSections}
-                setIngredientSections={setIngredientSections}
-                ingredients={ingredients}
-              />
-            }
-          />
-          <ProcessableSection
-            title="Instructions"
-            onProcess={onProcessInstructions}
-            editorComponent={
-              <InstructionsSectionsEditor
-                instructionSections={instructionSections}
-                setInstructionSections={setInstructionSections}
-                ingredients={allIngredients}
-              />
-            }
-          />
-        </>
-      ) : (
-        <>
-          <section className={styles.sectionContainer}>
-            <h2>Ingredients</h2>
+      {isCreateMode &&
+      (!initialIngredientSections || ingredientSections.length === 0) ? (
+        <ProcessableSection
+          title="Ingredients"
+          onProcess={onProcessIngredients}
+          editorComponent={
             <IngredientSectionsEditor
               ingredientSections={ingredientSections}
               setIngredientSections={setIngredientSections}
               ingredients={ingredients}
             />
-          </section>
-          <section className={styles.sectionContainer}>
-            <h2>Instructions</h2>
+          }
+        />
+      ) : (
+        <section className={styles.sectionContainer}>
+          <h2>Ingredients</h2>
+          <IngredientSectionsEditor
+            ingredientSections={ingredientSections}
+            setIngredientSections={setIngredientSections}
+            ingredients={ingredients}
+          />
+        </section>
+      )}
+      {isCreateMode &&
+      (!initialRecipe?.instructions || instructionSections.length === 0) ? (
+        <ProcessableSection
+          title="Instructions"
+          onProcess={onProcessInstructions}
+          editorComponent={
             <InstructionsSectionsEditor
               instructionSections={instructionSections}
               setInstructionSections={setInstructionSections}
               ingredients={allIngredients}
             />
-          </section>
-        </>
+          }
+        />
+      ) : (
+        <section className={styles.sectionContainer}>
+          <h2>Instructions</h2>
+          <InstructionsSectionsEditor
+            instructionSections={instructionSections}
+            setInstructionSections={setInstructionSections}
+            ingredients={allIngredients}
+          />
+        </section>
       )}
       <section className={styles.sectionContainer}>
         <h2>Notes</h2>

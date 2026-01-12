@@ -10,7 +10,6 @@ interface InputProps extends Omit<
   name: string;
   id: string;
   type: 'text' | 'url' | 'textarea' | 'email' | 'password' | 'number';
-  defaultValue?: string | number;
   fullWidth?: boolean;
   hideLabel?: boolean;
   containerClassName?: string;
@@ -24,7 +23,6 @@ export default function Input({
   name,
   id,
   type,
-  defaultValue,
   fullWidth,
   hideLabel,
   containerClassName = '',
@@ -50,7 +48,6 @@ export default function Input({
         <textarea
           id={id}
           name={name}
-          defaultValue={defaultValue}
           className={`${styles.textarea} ${sharedClasses}`}
           {...props}
         />
@@ -59,7 +56,6 @@ export default function Input({
           type={type}
           id={id}
           name={name}
-          defaultValue={defaultValue}
           className={`${styles.input} ${sharedClasses}`}
           {...props}
         />
