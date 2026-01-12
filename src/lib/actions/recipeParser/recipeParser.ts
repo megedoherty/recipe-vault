@@ -57,7 +57,6 @@ const findIngredientsOrInstructions = (
       .text()
       .replace(/[\s\t\n\r]+/g, ' ')
       .trim();
-    console.log('🚀 ~ findIngredientsOrInstructions ~ text:', text, el.tagName);
 
     if (excludeLineStartsWith.some((prefix) => text.startsWith(prefix))) {
       return;

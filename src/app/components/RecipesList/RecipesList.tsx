@@ -34,9 +34,7 @@ export default async function RecipesList({ query }: RecipesListProps) {
       ? parseInt(query.maxServings, 10)
       : undefined;
   const made =
-    typeof query.made === 'string'
-      ? query.made === 'true'
-      : undefined;
+    typeof query.made === 'string' ? query.made === 'true' : undefined;
   const minRating =
     typeof query.minRating === 'string'
       ? parseInt(query.minRating, 10)

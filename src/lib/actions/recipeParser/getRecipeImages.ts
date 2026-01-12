@@ -293,8 +293,6 @@ export const getRecipeImages = (
     })
     .map((item) => getImageUrl(item.src, item.alt, baseUrl));
 
-  console.debug('🚀 ~ getRecipeImages ~ allImages:', allImages);
-
   // Score and categorize images
   const imageScores = allImages.map(({ src, alt }) =>
     getImageScore(src, alt, recipeWords, normalizedName),
@@ -350,7 +348,6 @@ export const getRecipeImages = (
   });
 
   // Convert back to array, sort by score, and limit
-  console.debug('🚀 ~ getRecipeImages ~ imageMap:', imageMap);
   const deduplicatedImages = Object.values(imageMap)
     .filter((item) => item.score > 20)
     .sort((a, b) => b.score - a.score)
