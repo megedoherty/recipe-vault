@@ -10,6 +10,9 @@ import {
   EGG_AMOUNT,
   EGG_SIZE,
   eggLineRegex,
+  NON_NUMERIC_QUANTITY,
+  nonNumericQuantityRegex,
+  nonNumericQuantityTerms,
   rangeQuantityAndUnitLineRegex,
   SIMPLE_NUMBER,
   simpleNumberAndTextRegex,
@@ -44,7 +47,21 @@ function replaceFractions(text: string): string {
   });
 }
 
+// Convert brackets to parentheses
+function convertBracketsToParentheses(text: string): string {
+  return text.replace(/\[/g, '(').replace(/\]/g, ')');
+}
+
 export function standardizeQuantity(quantity: string): string {
+  // Handle non-numeric quantities (just return as-is, lowercase)
+  if (
+    nonNumericQuantityTerms.some(
+      (term) => term.toLowerCase() === quantity.toLowerCase(),
+    )
+  ) {
+    return quantity.toLowerCase();
+  }
+
   // Remove "and" from mixed fractions (e.g., "1 and 1/2" -> "1 1/2")
   // Only match "and" when it's between a number and a fraction
   const normalized = quantity
@@ -62,8 +79,12 @@ function parseNameWithQuantity(
   line: string,
   quantity: string,
 ): ParsedIngredient {
+  // Convert brackets to parentheses in the entire line first
+  const normalizedLine = convertBracketsToParentheses(line);
+  let normalizedQuantity = convertBracketsToParentheses(quantity);
+
   // Get name based on provided quantity
-  let name = line.substring(quantity.length).trim();
+  let name = normalizedLine.substring(normalizedQuantity.length).trim();
 
   // If the name starts with parentheses, extract the additional quantity info from the parentheses
   const parenthesesMatch = name.startsWith('(')
@@ -71,7 +92,7 @@ function parseNameWithQuantity(
     : null;
   if (parenthesesMatch) {
     name = name.replace(parenthesesMatch[0], '').trim();
-    quantity += ' ' + parenthesesMatch[0];
+    normalizedQuantity += ' ' + parenthesesMatch[0];
   }
 
   if (!name) {
@@ -79,13 +100,16 @@ function parseNameWithQuantity(
     return { name: line, quantity: null };
   }
 
-  return { name, quantity: standardizeQuantity(quantity) };
+  return { name, quantity: standardizeQuantity(normalizedQuantity) };
 }
 
 function parseIngredientLine(line: string): ParsedIngredient {
-  // Do some standardization first: trim
+  // Convert brackets to parentheses in the entire line first
+  let trimmedLine = convertBracketsToParentheses(line.trim());
+
+  // Do some standardization: trim
   // Remove extra spaces inside parentheses: "( 12g)" -> "(12g)", "(12g )" -> "(12g)"
-  let trimmedLine = line.trim().replace(/\(\s+/g, '(').replace(/\s+\)/g, ')');
+  trimmedLine = trimmedLine.replace(/\(\s+/g, '(').replace(/\s+\)/g, ')');
 
   // Remove "optional:" prefix, and add it as a suffix. This makes parsing easier.
   if (/^optional:\s+/i.test(trimmedLine)) {
@@ -117,6 +141,27 @@ function parseIngredientLine(line: string): ParsedIngredient {
       ),
       eggMatch[EGG_AMOUNT],
     );
+  }
+
+  // e.g. "dash salt", "pinch of pepper"
+  const nonNumericMatch = trimmedLine.match(nonNumericQuantityRegex);
+  if (nonNumericMatch) {
+    // Extract the quantity term (e.g., "dash", "pinch")
+    const quantityTerm = nonNumericMatch[NON_NUMERIC_QUANTITY].toLowerCase();
+    // Remove the quantity term and "of" if present to get the ingredient name
+    // Escape special regex characters in quantityTerm for safe regex construction
+    const escapedQuantityTerm = quantityTerm.replace(
+      /[.*+?^${}()|[\]\\]/g,
+      '\\$&',
+    );
+    const name = trimmedLine
+      .replace(new RegExp(`^${escapedQuantityTerm}(?:\\s+of)?\\s+`, 'i'), '')
+      .trim();
+    if (!name) {
+      console.error(`Unable to parse ${line} for name!`);
+      return { name: line, quantity: null };
+    }
+    return { name, quantity: quantityTerm };
   }
 
   // e.g. "1 cup flour"
@@ -188,6 +233,17 @@ const specialCaseMappings: Array<{
     match: (n) => n.includes('unsalted butter') || n.startsWith('butter'),
     ingredientName: 'unsalted butter',
   },
+  {
+    match: (n) => n.startsWith('cocoa powder'),
+    ingredientName: 'unsweetened cocoa powder',
+  },
+  {
+    match: (n) =>
+      n.startsWith('flour') ||
+      n.includes('all purpose') ||
+      n.startsWith('ap flour'),
+    ingredientName: 'all-purpose flour',
+  },
 ];
 
 function findClosestIngredient(
@@ -195,12 +251,7 @@ function findClosestIngredient(
   allIngredients: IngredientForRecipeEdit[],
 ): string | null {
   // Check some special cases first
-  let lowercaseName = name.toLowerCase();
-  // Handle some common cases
-  lowercaseName = lowercaseName.replace(
-    'all purpose flour',
-    'all-purpose flour',
-  );
+  const lowercaseName = name.toLowerCase();
 
   // Handle special cases
   // Check special cases

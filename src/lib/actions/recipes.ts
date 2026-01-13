@@ -97,11 +97,17 @@ export async function addRecipe(
   const recipeName = rawFormData.name as string;
   const source_url = rawFormData.sourceUrl as string;
   const imageUrlInput = rawFormData.imageUrl as string;
-  const category_id = Number(rawFormData.categoryId);
+  const category_id = rawFormData.categoryId
+    ? Number(rawFormData.categoryId)
+    : null;
   const servings = Number(rawFormData.servings);
   const notes = rawFormData.notes as string;
-  const meal_type_id = Number(rawFormData.mealTypeId);
-  const occasion_id = Number(rawFormData.occasionId);
+  const meal_type_id = rawFormData.mealTypeId
+    ? Number(rawFormData.mealTypeId)
+    : null;
+  const occasion_id = rawFormData.occasionId
+    ? Number(rawFormData.occasionId)
+    : null;
 
   const supabase = await createClient();
   const { data: userData } = await supabase.auth.getUser();
@@ -160,6 +166,7 @@ export async function addRecipe(
   // Upload image if provided and not already a Supabase URL
   if (imageUrlInput && !imageUrlInput.trim().includes('supabase.co')) {
     const uploadedUrl = await uploadImageFromUrl(imageUrlInput, data.id);
+    console.log('🚀 ~ addRecipe ~ uploadedUrl:', uploadedUrl);
     if (uploadedUrl) {
       // Update recipe with uploaded image URL
       await supabase
@@ -225,12 +232,19 @@ export async function updateRecipe(
   const rawFormData = Object.fromEntries(formData);
   const name = rawFormData.name as string;
   const imageUrlInput = rawFormData.imageUrl as string;
+  console.log('🚀 ~ updateRecipe ~ imageUrlInput:', imageUrlInput);
   const source_url = rawFormData.sourceUrl as string;
-  const category_id = Number(rawFormData.categoryId);
+  const category_id = rawFormData.categoryId
+    ? Number(rawFormData.categoryId)
+    : null;
   const servings = Number(rawFormData.servings);
   const notes = rawFormData.notes as string;
-  const meal_type_id = Number(rawFormData.mealTypeId);
-  const occasion_id = Number(rawFormData.occasionId);
+  const meal_type_id = rawFormData.mealTypeId
+    ? Number(rawFormData.mealTypeId)
+    : null;
+  const occasion_id = rawFormData.occasionId
+    ? Number(rawFormData.occasionId)
+    : null;
 
   const storage = [
     {

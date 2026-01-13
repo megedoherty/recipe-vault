@@ -5,7 +5,7 @@
   gap: 1rem;
 
   @media (width >= 768px) {
-    grid-template-columns: 1fr 3fr;
+    grid-template-columns: 1fr 2fr;
   }
 }
 
@@ -13,6 +13,13 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+}
+
+.personalInfo {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  align-items: center;
 }
 
 .infoItem {

@@ -11,64 +11,11 @@ import {
 
 import { parseIngredients, parseInstructions } from '../../utils/parse';
 import { getCategoryId } from './getCategory';
+import { findIngredientsOrInstructions } from './getIngredientsOrInstructions';
 import { getMealType } from './getMealType';
+import { findNotes } from './getNotes';
 import { getRecipeFromJsonLd } from './getRecipeFromJsonLd';
 import { getRecipeImages } from './getRecipeImages';
-
-const excludeLineStartsWith = [
-  'Ingredients',
-  'Instructions',
-  'Directions',
-  'Method',
-  'Preparation',
-];
-
-const ingredientSelectors = [
-  // Common selectors
-  '.tasty-recipes-ingredients',
-  '.wprm-recipe-ingredients-container',
-  '.ingredients',
-  '.recipe__ingredients',
-  // Unique
-  '[class*="ingredients"]', // for NYT Cooking
-  '[data-testid="IngredientList"]', // for Bon Appetit
-];
-
-const instructionCssSelectors = [
-  // Common selectors
-  '.tasty-recipes-instructions',
-  '.wprm-recipe-instructions-container',
-  '.instructions',
-  '.recipe__instructions',
-  // Unique
-  '[class*="recipebody_prep-block"]', // For NYT Cooking
-  '[data-testid="InstructionsWrapper"]', // for Bon Appetit
-];
-
-const findIngredientsOrInstructions = (
-  $: cheerio.CheerioAPI,
-  selector: string,
-) => {
-  const section = $(selector);
-  const content: string[] = [];
-
-  section.find('h1, h2, h3, h4, h5, h6, li').each((_, el) => {
-    const text = $(el)
-      .text()
-      .replace(/[\s\t\n\r]+/g, ' ')
-      .trim();
-
-    if (excludeLineStartsWith.some((prefix) => text.startsWith(prefix))) {
-      return;
-    } else if (el.tagName === 'li') {
-      content.push(text);
-    } else {
-      content.push(`${text}${text.endsWith(':') ? '' : ':'}`);
-    }
-  });
-
-  return content.join('\n');
-};
 
 export async function parseRecipeFromUrl(
   url: string,
@@ -94,7 +41,7 @@ export async function parseRecipeFromUrl(
 
   // Always find the ingredients since Recipe schema doesn't allow for sections
   const ingredientsParsed = parseIngredients(
-    findIngredientsOrInstructions($, ingredientSelectors.join(', ')),
+    findIngredientsOrInstructions($, 'ingredients'),
     ingredients,
   );
   if (ingredientsParsed.length > 0) {
@@ -104,7 +51,7 @@ export async function parseRecipeFromUrl(
   // Only do instructions if we don't have them from JSON-LD
   if (!toReturn?.recipe.instructions) {
     toReturn.recipe.instructions = parseInstructions(
-      findIngredientsOrInstructions($, instructionCssSelectors.join(', ')),
+      findIngredientsOrInstructions($, 'instructions'),
     );
   }
 
@@ -141,6 +88,12 @@ export async function parseRecipeFromUrl(
   if (mealTypeName) {
     toReturn.recipe.mealTypeId =
       mealTypes.find((m) => m.name === mealTypeName)?.id ?? null;
+  }
+
+  const notes = findNotes($);
+  console.log('🚀 ~ parseRecipeFromUrl ~ notes:', notes);
+  if (notes) {
+    toReturn.recipe.notes = notes;
   }
 
   return toReturn;

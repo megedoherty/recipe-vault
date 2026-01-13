@@ -39,8 +39,6 @@ export default async function RecipePage({
         recipeId={id}
         name={name}
         sourceUrl={sourceUrl}
-        made={made}
-        rating={rating}
         isLoggedIn={isLoggedIn}
       />
       <RecipeImageAndInfo
@@ -52,6 +50,9 @@ export default async function RecipePage({
         imageUrl={imageUrl}
         name={name}
         mealType={recipe.mealType}
+        recipeId={id}
+        made={made}
+        rating={rating}
       />
       <IngredientsAndInstructionsSection
         ingredientSections={ingredientSections}

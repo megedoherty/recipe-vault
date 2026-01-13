@@ -10,7 +10,7 @@ export const MEASUREMENT_OPTION = [
   'lb',
   'pound',
   'gram',
-  'g',
+  'g(?!\\w)', // prevent matching "g" in "green", "garlic", etc.
   'ml',
   'milliliter',
   // Used for eggs, fruit
@@ -120,3 +120,29 @@ export const SIMPLE_TEXT = 3;
 // Match anything in parentheses: "(120g)", "(114 g; 1 stick)", etc.
 // result: ["(120g)", "120g"]
 export const anythingInParenthesesRegex = /\([^)]+\)/;
+
+// Common non-numeric quantity terms
+export const nonNumericQuantityTerms = [
+  'dash',
+  'pinch',
+  'sprinkle',
+  'smidgen',
+  'drop',
+  'drops',
+  'splash',
+  'drizzle',
+  'handful',
+  'handfuls',
+  'generous',
+  'to taste',
+] as const;
+
+// Match non-numeric quantity at the start of a line
+// e.g. "dash salt", "pinch of pepper", "to taste"
+// result: ["dash salt", "dash"]
+// result: ["pinch of pepper", "pinch"]
+export const nonNumericQuantityRegex = new RegExp(
+  `^(${nonNumericQuantityTerms.join('|')})(?:\\s+of)?\\s+`,
+  'i',
+);
+export const NON_NUMERIC_QUANTITY = 1;

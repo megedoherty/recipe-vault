@@ -2,16 +2,12 @@ import Button from '@/components/atoms/Button/Button';
 import EditIcon from '@/components/atoms/icons/EditIcon';
 
 import DeleteButton from '../DeleteButton/DeleteButton';
-import MadeCheckbox from '../MadeCheckbox/MadeCheckbox';
-import RatingInput from '../RatingInputForm/RatingInputForm';
 import styles from './RecipeHeader.module.css';
 
 interface RecipeHeaderProps {
   recipeId: string;
   name: string;
   sourceUrl: string | null;
-  made: boolean;
-  rating: number | null;
   isLoggedIn: boolean;
 }
 
@@ -19,8 +15,6 @@ export default function RecipeHeader({
   recipeId,
   name,
   sourceUrl,
-  made,
-  rating,
   isLoggedIn,
 }: RecipeHeaderProps) {
   return (
@@ -50,10 +44,6 @@ export default function RecipeHeader({
           {sourceUrl}
         </a>
       )}
-      <div className={styles.personalInfo}>
-        <MadeCheckbox recipeId={recipeId} initialChecked={made} />
-        <RatingInput recipeId={recipeId} initialRating={rating} />
-      </div>
     </div>
   );
 }
