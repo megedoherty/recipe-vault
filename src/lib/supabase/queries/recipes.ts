@@ -108,6 +108,16 @@ interface GetAllRecipesParams {
   includeAllUsers?: boolean;
 }
 
+interface GetAllRecipesResult {
+  recipes: RecipeSummary[];
+  count: number;
+}
+
+const getAllRecipesEmptyResult: GetAllRecipesResult = {
+  recipes: [],
+  count: 0,
+};
+
 export async function getAllRecipes({
   name,
   categoryId,
@@ -121,11 +131,11 @@ export async function getAllRecipes({
   mealTypeId,
   occasionId,
   includeAllUsers = false,
-}: GetAllRecipesParams = {}): Promise<RecipeSummary[]> {
+}: GetAllRecipesParams = {}): Promise<GetAllRecipesResult> {
   const supabase = await createClient();
   let query = supabase
     .from('recipe')
-    .select('id, name, image_url, rating, made');
+    .select('id, name, image_url, rating, made', { count: 'exact' });
 
   // Filter by user_id by default unless includeAllUsers is true
   if (!includeAllUsers) {
@@ -211,11 +221,11 @@ export async function getAllRecipes({
         includedRecipeIds = recipeIds;
       } else {
         // No recipes have all the ingredients, return empty
-        return [];
+        return getAllRecipesEmptyResult;
       }
     } else {
       // No ingredients found, return empty
-      return [];
+      return getAllRecipesEmptyResult;
     }
   }
 
@@ -272,10 +282,10 @@ export async function getAllRecipes({
       if (recipeIds.length > 0) {
         equipmentRecipeIds = recipeIds;
       } else {
-        return [];
+        return getAllRecipesEmptyResult;
       }
     } else {
-      return [];
+      return getAllRecipesEmptyResult;
     }
   }
 
@@ -312,21 +322,25 @@ export async function getAllRecipes({
       query = query.in('id', finalRecipeIds);
     } else {
       // No recipes match after filtering, return empty
-      return [];
+      return getAllRecipesEmptyResult;
     }
   }
 
-  const { data } = await query;
+  const { data, count } = await query;
+  console.log('🚀 ~ getAllRecipes ~ count:', count);
 
   return data
-    ? data.map((recipe) => ({
-        id: recipe.id,
-        name: recipe.name,
-        imageUrl: recipe.image_url,
-        rating: recipe.rating,
-        made: recipe.made,
-      }))
-    : [];
+    ? {
+        recipes: data.map((recipe) => ({
+          id: recipe.id,
+          name: recipe.name,
+          imageUrl: recipe.image_url,
+          rating: recipe.rating,
+          made: recipe.made,
+        })),
+        count: count ?? 0,
+      }
+    : getAllRecipesEmptyResult;
 }
 
 export async function getServingsRange(): Promise<ServingsRange> {

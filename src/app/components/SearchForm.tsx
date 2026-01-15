@@ -127,12 +127,14 @@ export default function SearchForm({
             label: mealType.name,
           }))}
           emptyOption={{ value: '', label: 'Select a meal type' }}
+          selectClassName={styles.select}
         />
         <CategorySelect
           categories={categories}
           showEmptyOption
           hideLabel
           defaultValue={categoryId}
+          selectClassName={styles.select}
         />
         <SearchFiltersModal
           ingredients={ingredients}

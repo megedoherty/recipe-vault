@@ -7,6 +7,7 @@ interface CategorySelectProps {
   categories: Category[];
   showEmptyOption?: boolean;
   hideLabel?: boolean;
+  selectClassName?: string;
 }
 
 export default function CategorySelect({
@@ -15,6 +16,7 @@ export default function CategorySelect({
   categories,
   showEmptyOption = false,
   hideLabel = false,
+  selectClassName = '',
 }: CategorySelectProps) {
   return (
     <Select
@@ -30,6 +32,7 @@ export default function CategorySelect({
       emptyOption={
         showEmptyOption ? { value: '', label: 'Select a category' } : undefined
       }
+      selectClassName={selectClassName}
     />
   );
 }

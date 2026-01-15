@@ -11,6 +11,7 @@ interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   hideLabel?: boolean;
   direction?: 'horizontal' | 'vertical';
   labelClassName?: string;
+  selectClassName?: string;
 }
 
 export default function Select({
@@ -23,6 +24,7 @@ export default function Select({
   hideLabel = false,
   direction = 'horizontal',
   labelClassName = '',
+  selectClassName = '',
   ...rest
 }: SelectProps) {
   return (
@@ -37,7 +39,7 @@ export default function Select({
         name={name}
         id={id}
         onChange={onChange}
-        className={styles.select}
+        className={`${styles.select} ${selectClassName}`}
         {...rest}
       >
         {emptyOption && (

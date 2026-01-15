@@ -1,9 +1,14 @@
 .form {
-  display: flex;
-  flex-direction: column;
+  display: grid;
   gap: 0.5rem;
+  grid-template-columns: 1fr 1fr;
 
   @media (width >= 768px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  @media (width >= 953px) {
+    display: flex;
     flex-flow: row wrap;
   }
 }
@@ -17,21 +22,40 @@
 }
 
 .buttonsContainer {
-  display: flex;
+  display: grid;
   gap: 0.5rem;
-  margin-inline-start: auto;
+  grid-template-columns: 1fr 1fr;
+  margin-block-start: 0.5rem;
+  width: 100%;
+  grid-column: 1 / -1;
+
+  @media (width >= 768px) {
+    grid-template-columns: auto auto;
+    margin-inline-start: auto;
+    margin-block-start: 0;
+    width: auto;
+  }
 }
 
 .searchButton {
   min-width: 6.5rem;
+}
+
+.clearButton {
+  min-width: 5.75rem;
+}
+
+.searchButton,
+.clearButton {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-.clearButton {
-  min-width: 5.75rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+.select {
+  width: 100%;
+
+  @media (width >= 953px) {
+    width: auto;
+  }
 }

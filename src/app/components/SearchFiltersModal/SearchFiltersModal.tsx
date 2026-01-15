@@ -89,7 +89,7 @@ export default function SearchFiltersModal({
         onClick={() => dialogRef.current?.showModal()}
         className={styles.button}
       >
-        {`Additional Filters ${activeFilters.length > 0 ? `(${activeFilters.length})` : ''}`}
+        {`More Filters ${activeFilters.length > 0 ? `(${activeFilters.length})` : ''}`}
       </Button>
       <dialog
         ref={dialogRef}
