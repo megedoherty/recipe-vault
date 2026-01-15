@@ -84,7 +84,36 @@ function parseNameWithQuantity(
   let normalizedQuantity = convertBracketsToParentheses(quantity);
 
   // Get name based on provided quantity
-  let name = normalizedLine.substring(normalizedQuantity.length).trim();
+  let name = normalizedLine
+    .substring(normalizedQuantity.length)
+    .trim()
+    .toLowerCase();
+
+  // Remove the word packed if it exists - usually brown sugar
+  name = name
+    .replace(/\s*tightly\s*/gi, ' ')
+    .replace(/^packed\s+/i, '')
+    .replace(/,\s*packed\s*$/i, '')
+    .replace(/\s*\(packed\)\s*/gi, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  // Standardize room temperature, make it ", room temperature"
+  if (/\broom\s*temperature\b/i.test(name)) {
+    name = name
+      .replace(
+        /\s*,\s*(?:softened\s+to\s+)?(?:at\s+)?room\s*temperature\s*/gi,
+        '',
+      )
+      .replace(/\s*(?:softened\s+to\s+)?(?:at\s+)?room\s*temperature\s*/gi, '')
+      .replace(/\s*softened\s*/gi, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+    // Add ", room temperature" at the end if not already present
+    if (!name.endsWith(', room temperature')) {
+      name = name + ', room temperature';
+    }
+  }
 
   // If the name starts with parentheses, extract the additional quantity info from the parentheses
   const parenthesesMatch = name.startsWith('(')
@@ -243,6 +272,10 @@ const specialCaseMappings: Array<{
       n.includes('all purpose') ||
       n.startsWith('ap flour'),
     ingredientName: 'all-purpose flour',
+  },
+  {
+    match: (n) => n.startsWith('peanut butter'),
+    ingredientName: 'creamy peanut butter',
   },
 ];
 

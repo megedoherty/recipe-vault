@@ -232,7 +232,6 @@ export async function updateRecipe(
   const rawFormData = Object.fromEntries(formData);
   const name = rawFormData.name as string;
   const imageUrlInput = rawFormData.imageUrl as string;
-  console.log('🚀 ~ updateRecipe ~ imageUrlInput:', imageUrlInput);
   const source_url = rawFormData.sourceUrl as string;
   const category_id = rawFormData.categoryId
     ? Number(rawFormData.categoryId)

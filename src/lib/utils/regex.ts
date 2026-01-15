@@ -135,6 +135,7 @@ export const nonNumericQuantityTerms = [
   'handfuls',
   'generous',
   'to taste',
+  'heavy pinch',
 ] as const;
 
 // Match non-numeric quantity at the start of a line

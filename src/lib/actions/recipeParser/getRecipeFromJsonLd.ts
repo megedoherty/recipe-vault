@@ -1,4 +1,5 @@
 import * as cheerio from 'cheerio';
+import { decode } from 'he';
 
 import { defaultStorage } from '@/constants';
 import { parseIngredients, parseInstructions } from '@/lib/utils/parse';
@@ -224,12 +225,12 @@ function getInstructionText(
   instruction: string | HowToStep | HowToSection,
 ): string {
   if (typeof instruction === 'string') {
-    return instruction;
+    return decode(instruction) || '';
   }
 
   // Handle HowToStep
   if (instruction['@type'] === 'HowToStep') {
-    return instruction.text || '';
+    return decode(instruction.text) || '';
   }
 
   // Handle HowToSection

@@ -54,7 +54,8 @@
     --input-color: var(--error);
   }
 
-  &:disabled {
+  &:disabled,
+  &[readonly] {
     --input-color: var(--text-muted);
   }
 }

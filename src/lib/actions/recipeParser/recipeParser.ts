@@ -91,7 +91,6 @@ export async function parseRecipeFromUrl(
   }
 
   const notes = findNotes($);
-  console.log('🚀 ~ parseRecipeFromUrl ~ notes:', notes);
   if (notes) {
     toReturn.recipe.notes = notes;
   }

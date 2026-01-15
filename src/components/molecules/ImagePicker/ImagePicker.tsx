@@ -28,7 +28,7 @@ export default function ImagePicker({
         value={selectedImage ?? ''}
         fullWidth
         onChange={(e) => setSelectedImage(e.target.value)}
-        disabled={!!imageOptions?.length}
+        readOnly={!!imageOptions?.length}
       />
       {imageOptions && imageOptions.length > 0 && (
         <div className={styles.imageOptions}>
