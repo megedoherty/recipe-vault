@@ -49,7 +49,10 @@ export async function parseRecipeFromUrl(
   }
 
   // Only do instructions if we don't have them from JSON-LD
-  if (!toReturn?.recipe.instructions) {
+  if (
+    !toReturn?.recipe.instructions ||
+    toReturn.recipe.instructions.length === 0
+  ) {
     toReturn.recipe.instructions = parseInstructions(
       findIngredientsOrInstructions($, 'instructions'),
     );

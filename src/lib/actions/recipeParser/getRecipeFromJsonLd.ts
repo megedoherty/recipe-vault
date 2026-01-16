@@ -68,7 +68,10 @@ export interface Recipe extends JsonLdObject {
 }
 
 const isRecipeJsonLdObject = (obj: JsonLdObject): obj is Recipe => {
-  return obj['@type'] === 'Recipe';
+  return (
+    (typeof obj['@type'] === 'string' && obj['@type'] === 'Recipe') ||
+    (Array.isArray(obj['@type']) && obj['@type'].includes('Recipe'))
+  );
 };
 
 export const getRecipeFromJsonLd = (

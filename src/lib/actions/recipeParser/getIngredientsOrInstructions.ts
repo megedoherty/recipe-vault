@@ -15,8 +15,9 @@ const ingredientSelectors = [
   '.ingredients',
   '.recipe__ingredients',
   // Unique
-  '[class*="ingredients"]', // for NYT Cooking
+  '[class*="ingredients_ingredients"]', // for NYT Cooking
   '[data-testid="IngredientList"]', // for Bon Appetit
+  '.section--ingredients', // Serious Eats
 ];
 
 const instructionCssSelectors = [
@@ -28,6 +29,7 @@ const instructionCssSelectors = [
   // Unique
   '[class*="recipebody_prep-block"]', // For NYT Cooking
   '[data-testid="InstructionsWrapper"]', // for Bon Appetit
+  '.section--instructions', // Serious Eats
 ];
 
 export const findIngredientsOrInstructions = (

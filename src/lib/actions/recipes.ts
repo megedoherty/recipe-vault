@@ -166,7 +166,6 @@ export async function addRecipe(
   // Upload image if provided and not already a Supabase URL
   if (imageUrlInput && !imageUrlInput.trim().includes('supabase.co')) {
     const uploadedUrl = await uploadImageFromUrl(imageUrlInput, data.id);
-    console.log('🚀 ~ addRecipe ~ uploadedUrl:', uploadedUrl);
     if (uploadedUrl) {
       // Update recipe with uploaded image URL
       await supabase

@@ -1,3 +1,4 @@
+import { SortOption } from '@/constants';
 import {
   EditableRecipe,
   RecipeDisplay,
@@ -106,6 +107,7 @@ interface GetAllRecipesParams {
   mealTypeId?: number;
   occasionId?: number;
   includeAllUsers?: boolean;
+  sort?: SortOption;
 }
 
 interface GetAllRecipesResult {
@@ -131,11 +133,27 @@ export async function getAllRecipes({
   mealTypeId,
   occasionId,
   includeAllUsers = false,
+  sort = 'last_updated',
 }: GetAllRecipesParams = {}): Promise<GetAllRecipesResult> {
   const supabase = await createClient();
   let query = supabase
     .from('recipe')
     .select('id, name, image_url, rating, made', { count: 'exact' });
+
+  switch (sort) {
+    case 'last_updated':
+      query = query.order('updated_at', { ascending: false });
+      break;
+    case 'name_asc':
+      query = query.order('name', { ascending: true });
+      break;
+    case 'newest':
+      query = query.order('created_at', { ascending: false });
+      break;
+    case 'oldest':
+      query = query.order('created_at', { ascending: true });
+      break;
+  }
 
   // Filter by user_id by default unless includeAllUsers is true
   if (!includeAllUsers) {
@@ -327,7 +345,6 @@ export async function getAllRecipes({
   }
 
   const { data, count } = await query;
-  console.log('🚀 ~ getAllRecipes ~ count:', count);
 
   return data
     ? {

@@ -6,7 +6,7 @@ interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   label: string;
   name: string;
   id: string;
-  options: { value: string; label: string }[];
+  options: readonly { value: string; label: string }[];
   emptyOption?: { value: string; label: string };
   hideLabel?: boolean;
   direction?: 'horizontal' | 'vertical';

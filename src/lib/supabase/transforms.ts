@@ -101,7 +101,7 @@ export function transformRecipe(recipe: RecipeDisplayDb): RecipeDisplay {
     instructions,
     category: recipe.category?.name ?? null,
     rating: recipe.rating,
-    equipment: recipe.recipe_equipment.map((e) => e.equipment.name),
+    equipment: recipe.recipe_equipment.map((e) => e.equipment.name).sort(),
     servings: recipe.servings,
     storage,
     notes: recipe.notes,

@@ -1,3 +1,5 @@
+import { isSortOption } from '@/constants';
+
 export const parseQueryParams = (
   query: Record<string, string | string[] | undefined>,
 ) => {
@@ -39,6 +41,7 @@ export const parseQueryParams = (
     typeof query.occasionId === 'string'
       ? parseInt(query.occasionId, 10)
       : undefined;
+  const sort = isSortOption(query.sort) ? query.sort : 'last_updated';
 
   return {
     includeAllUsers,
@@ -53,5 +56,6 @@ export const parseQueryParams = (
     minRating,
     mealTypeId,
     occasionId,
+    sort,
   };
 };

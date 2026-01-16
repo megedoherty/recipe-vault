@@ -105,6 +105,11 @@ export default function AddRecipeChoice({
     recipe?.ingredients.length === 0 ||
     recipe?.recipe.instructions.length === 0
   ) {
+    console.group('Error parsing recipe');
+    console.error('Missing recipe name, ingredients, or instructions');
+    console.info('Recipe:', recipe);
+    console.groupEnd();
+
     return (
       <div className={styles.errorContainer}>
         <h2>Error</h2>

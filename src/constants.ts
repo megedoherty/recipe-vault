@@ -12,3 +12,19 @@ export const defaultStorage: StorageInfo[] = [
     days: null,
   },
 ];
+
+export const sortOptions = [
+  { value: 'last_updated', label: 'Last Updated' },
+  { value: 'name_asc', label: 'Name (A-Z)' },
+  { value: 'newest', label: 'Newest' },
+  { value: 'oldest', label: 'Oldest' },
+] as const;
+
+export type SortOption = (typeof sortOptions)[number]['value'];
+
+export const isSortOption = (value: unknown): value is SortOption => {
+  return (
+    typeof value === 'string' &&
+    sortOptions.some((option) => option.value === value)
+  );
+};

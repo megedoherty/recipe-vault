@@ -98,6 +98,9 @@ function parseNameWithQuantity(
     .replace(/\s+/g, ' ')
     .trim();
 
+  // Replace "room temp" with "room temperature" so we can standardize it below
+  name = name.replace(/\broom\s*temp\b/gi, 'room temperature');
+
   // Standardize room temperature, make it ", room temperature"
   if (/\broom\s*temperature\b/i.test(name)) {
     name = name
@@ -219,7 +222,7 @@ const specialCaseMappings: Array<{
     ingredientName: 'whole egg',
   },
   {
-    match: (n) => n.startsWith('salt') || n.includes('sea salt'),
+    match: (n) => n === 'salt' || n.includes('sea salt'),
     ingredientName: 'table salt',
   },
   {
@@ -259,7 +262,9 @@ const specialCaseMappings: Array<{
     ingredientName: 'dutch processed cocoa powder',
   },
   {
-    match: (n) => n.includes('unsalted butter') || n.startsWith('butter'),
+    match: (n) =>
+      n.includes('unsalted butter') ||
+      (n.startsWith('butter') && !n.includes('buttermilk')),
     ingredientName: 'unsalted butter',
   },
   {
