@@ -29,7 +29,9 @@ export default function InstructionsSection({
       <h2>Instructions</h2>
       {instructions.map((instructionSection) => (
         <section key={instructionSection.id}>
-          {instructionSection.title && <h3>{instructionSection.title}</h3>}
+          {instructionSection.title && (
+            <h3 className={styles.title}>{instructionSection.title}</h3>
+          )}
           <ol className={styles.instructionsList}>
             {instructionSection.steps.map((step) => (
               <Step

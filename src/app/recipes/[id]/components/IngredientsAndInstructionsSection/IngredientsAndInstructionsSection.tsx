@@ -11,6 +11,7 @@ import {
 
 import IngredientsList from '../IngredientsList/IngredientsList';
 import InstructionsSection from '../InstructionsSection/InstructionsSection';
+import styles from './IngredientsAndInstructionsSection.module.css';
 
 interface IngredientsAndInstructionsSectionProps {
   // Section class name
@@ -56,7 +57,9 @@ export default function IngredientsAndInstructionsSection({
         <h2>Ingredients</h2>
         {ingredientSections?.map((ingredientSection) => (
           <section key={ingredientSection.title}>
-            {ingredientSection.title && <h3>{ingredientSection.title}</h3>}
+            {ingredientSection.title && (
+              <h3 className={styles.title}>{ingredientSection.title}</h3>
+            )}
             <IngredientsList
               ingredients={ingredientSection.ingredients}
               selectedIngredients={activeStep?.ingredientIds ?? []}

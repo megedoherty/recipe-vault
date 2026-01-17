@@ -3,15 +3,16 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import Select from '@/components/atoms/Select/Select';
-import { sortOptions } from '@/constants';
+import { PAGE_SIZE, sortOptions } from '@/constants';
 
 import styles from './SortBar.module.css';
 
 interface SortBarProps {
   count: number;
+  page: number;
 }
 
-export default function SortBar({ count }: SortBarProps) {
+export default function SortBar({ count, page }: SortBarProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -31,11 +32,17 @@ export default function SortBar({ count }: SortBarProps) {
     router.replace(params.toString() ? `/?${params.toString()}` : '/');
   };
 
+  const rangeStart = (page - 1) * PAGE_SIZE + 1;
+  const rangeEnd = Math.min(page * PAGE_SIZE, count);
+
+  const rangeText =
+    rangeStart === rangeEnd
+      ? `${rangeStart} of ${count} recipes`
+      : `${rangeStart} - ${rangeEnd} of ${count} recipes`;
+
   return (
     <div className={styles.container}>
-      <p>
-        {count} {count === 1 ? 'recipe' : 'recipes'} found
-      </p>
+      <p>{rangeText}</p>
       <Select
         options={sortOptions}
         label="Sort by"

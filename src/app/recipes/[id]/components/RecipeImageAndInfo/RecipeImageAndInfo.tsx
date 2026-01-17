@@ -37,7 +37,13 @@ export default function RecipeImageAndInfo({
     <div className={styles.container}>
       {imageUrl && (
         <div className={styles.imageContainer}>
-          <Image src={imageUrl} alt={name} className={styles.image} fill />
+          <Image
+            src={imageUrl}
+            alt={name}
+            className={styles.image}
+            fill
+            sizes="(max-width: 768px) 100vw, 33vw"
+          />
         </div>
       )}
       <aside>

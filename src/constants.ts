@@ -28,3 +28,5 @@ export const isSortOption = (value: unknown): value is SortOption => {
     sortOptions.some((option) => option.value === value)
   );
 };
+
+export const PAGE_SIZE = 24 as const;

@@ -1,6 +1,8 @@
 import RecipeCard from '@/components/molecules/RecipeCard/RecipeCard';
+import { PAGE_SIZE } from '@/constants';
 import { getAllRecipes } from '@/lib/supabase/queries/recipes';
 
+import Pagination from '../Pagination/Pagination';
 import SortBar from '../SortBar/SortBar';
 import { parseQueryParams } from './RecipeList.utils';
 import styles from './RecipesList.module.css';
@@ -24,6 +26,7 @@ export default async function RecipesList({ query }: RecipesListProps) {
     mealTypeId,
     occasionId,
     sort,
+    page,
   } = parseQueryParams(query);
 
   const { recipes, count } = await getAllRecipes({
@@ -40,15 +43,18 @@ export default async function RecipesList({ query }: RecipesListProps) {
     occasionId,
     includeAllUsers,
     sort,
+    page,
   });
 
   if (recipes.length === 0) {
     return <p>No recipes found</p>;
   }
 
+  const pages = Math.ceil(count / PAGE_SIZE);
+
   return (
     <>
-      <SortBar count={count} />
+      <SortBar page={page ?? 1} count={count} />
       <ul className={styles.recipeGrid}>
         {recipes.map((recipe) => (
           <li key={recipe.id} className={styles.listItem}>
@@ -56,6 +62,7 @@ export default async function RecipesList({ query }: RecipesListProps) {
           </li>
         ))}
       </ul>
+      <Pagination currentPage={page ?? 1} totalPages={pages} />
     </>
   );
 }

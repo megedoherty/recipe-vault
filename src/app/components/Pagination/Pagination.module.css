@@ -1,0 +1,21 @@
+.container {
+  display: grid;
+  grid-template-areas: "prev next" "prev next";
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.prevButton,
+.nextButton {
+  width: 7rem;
+}
+
+.prevButton {
+  grid-area: prev;
+  justify-self: end;
+}
+
+.nextButton {
+  grid-area: next;
+  justify-self: start;
+}

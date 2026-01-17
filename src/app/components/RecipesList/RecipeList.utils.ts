@@ -42,6 +42,7 @@ export const parseQueryParams = (
       ? parseInt(query.occasionId, 10)
       : undefined;
   const sort = isSortOption(query.sort) ? query.sort : 'last_updated';
+  const page = typeof query.page === 'string' ? parseInt(query.page, 10) : 1;
 
   return {
     includeAllUsers,
@@ -57,5 +58,6 @@ export const parseQueryParams = (
     mealTypeId,
     occasionId,
     sort,
+    page,
   };
 };

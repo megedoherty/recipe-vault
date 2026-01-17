@@ -1,4 +1,4 @@
-import { SortOption } from '@/constants';
+import { PAGE_SIZE, SortOption } from '@/constants';
 import {
   EditableRecipe,
   RecipeDisplay,
@@ -108,6 +108,7 @@ interface GetAllRecipesParams {
   occasionId?: number;
   includeAllUsers?: boolean;
   sort?: SortOption;
+  page?: number;
 }
 
 interface GetAllRecipesResult {
@@ -134,6 +135,7 @@ export async function getAllRecipes({
   occasionId,
   includeAllUsers = false,
   sort = 'last_updated',
+  page = 1,
 }: GetAllRecipesParams = {}): Promise<GetAllRecipesResult> {
   const supabase = await createClient();
   let query = supabase
@@ -344,7 +346,10 @@ export async function getAllRecipes({
     }
   }
 
-  const { data, count } = await query;
+  const from = (page - 1) * PAGE_SIZE;
+  const to = from + PAGE_SIZE - 1;
+
+  const { data, count } = await query.range(from, to);
 
   return data
     ? {

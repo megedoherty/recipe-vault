@@ -1,3 +1,5 @@
+import { numericQuantity } from 'numeric-quantity';
+
 import {
   IngredientForRecipeEdit,
   InstructionSection,
@@ -13,6 +15,7 @@ import {
   NON_NUMERIC_QUANTITY,
   nonNumericQuantityRegex,
   nonNumericQuantityTerms,
+  numberRegex,
   rangeQuantityAndUnitLineRegex,
   SIMPLE_NUMBER,
   simpleNumberAndTextRegex,
@@ -64,13 +67,29 @@ export function standardizeQuantity(quantity: string): string {
 
   // Remove "and" from mixed fractions (e.g., "1 and 1/2" -> "1 1/2")
   // Only match "and" when it's between a number and a fraction
-  const normalized = quantity
+  let toReturn = quantity
     .replace(/(\d+)\s+and\s+(\d+\s*\/\s*\d+)/gi, '$1 $2')
     .toLowerCase();
 
-  const withSpacedGrams = normalized.replace(/(\d+)(g\b)/g, '$1 $2');
+  toReturn = toReturn.replace(/(\d+)(g\b)/g, '$1 $2');
 
-  return replaceFractions(withSpacedGrams);
+  // Convert tsp to teaspoon, tbsp to tablespoon
+  if (toReturn.includes('tsp') || toReturn.includes('tbsp')) {
+    const numericPartMatch = toReturn.trim().match(numberRegex);
+    let isSingular = false;
+    if (numericPartMatch) {
+      const numericPart = numericPartMatch[0].trim();
+      const numericValue = numericQuantity(numericPart);
+      isSingular = numericValue !== null && numericValue <= 1;
+    }
+
+    // Replace tsp/tbsp abbreviations with full words
+    toReturn = toReturn
+      .replace(/\btsp\.?\b/gi, isSingular ? 'teaspoon' : 'teaspoons')
+      .replace(/\btbsp\.?\b/gi, isSingular ? 'tablespoon' : 'tablespoons');
+  }
+
+  return replaceFractions(toReturn);
 }
 
 type ParsedIngredient = Pick<RecipeEditableIngredient, 'name' | 'quantity'>;
@@ -282,6 +301,10 @@ const specialCaseMappings: Array<{
     match: (n) => n.startsWith('peanut butter'),
     ingredientName: 'creamy peanut butter',
   },
+  {
+    match: (n) => n.includes('oreo'),
+    ingredientName: 'oreos',
+  },
 ];
 
 function findClosestIngredient(
@@ -394,8 +417,11 @@ export function parseInstructions(text: string): InstructionSection[] {
         acc.push({ id: crypto.randomUUID(), title: null, steps: [] });
       }
 
+      // Make sure temperatures include degree symbol
+      const normalizedLine = line.replace(/(\d+)\s*([FC])/gi, '$1°$2');
+
       acc[acc.length - 1].steps.push({
-        text: line,
+        text: normalizedLine.trim(),
         id: crypto.randomUUID(),
       });
     }
