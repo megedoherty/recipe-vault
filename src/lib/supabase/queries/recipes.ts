@@ -362,21 +362,30 @@ export async function getAllRecipes({
 
 export async function getServingsRange(): Promise<ServingsRange> {
   const supabase = await createClient();
-  const { data } = await supabase
+
+  const { data: minData } = await supabase
     .from('recipe')
     .select('servings')
-    .not('servings', 'is', null);
+    .not('servings', 'is', null)
+    .order('servings', { ascending: true })
+    .limit(1)
+    .single();
 
-  if (!data || data.length === 0) {
+  // Get max servings - order descending and limit to 1
+  const { data: maxData } = await supabase
+    .from('recipe')
+    .select('servings')
+    .not('servings', 'is', null)
+    .order('servings', { ascending: false })
+    .limit(1)
+    .single();
+
+  if (!minData || !maxData) {
     return { min: 0, max: 0 };
   }
 
-  const servings = data
-    .map((r) => r.servings)
-    .filter((s): s is number => s !== null);
-
   return {
-    min: Math.min(...servings),
-    max: Math.max(...servings),
+    min: minData.servings ?? 0,
+    max: maxData.servings ?? 0,
   };
 }

@@ -22,7 +22,13 @@ export default function RecipeCard({ recipe }: RecipeCardProps) {
       />
       <div className={styles.imageContainer}>
         {imageUrl ? (
-          <Image src={imageUrl} alt={name} fill className={styles.image} />
+          <Image
+            src={imageUrl}
+            alt={name}
+            fill
+            className={styles.image}
+            sizes="(max-width: 577px) 100vw, (max-width: 860px) 50vw, (max-width: 1126px) 33vw, 25vw"
+          />
         ) : (
           <RecipeIcon className={styles.defaultImage} />
         )}

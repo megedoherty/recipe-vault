@@ -15,12 +15,22 @@ import styles from './page.module.css';
 
 export default async function Home({ searchParams }: PageProps<'/'>) {
   const query = await searchParams;
-  const categories = await getCategories();
-  const ingredients = await getIngredientsForSearch();
-  const equipment = await getEquipment();
-  const mealTypes = await getMealTypes();
-  const servingsRange = await getServingsRange();
-  const occasions = await getOccasions();
+
+  const [
+    categories,
+    ingredients,
+    equipment,
+    mealTypes,
+    servingsRange,
+    occasions,
+  ] = await Promise.all([
+    getCategories(),
+    getIngredientsForSearch(),
+    getEquipment(),
+    getMealTypes(),
+    getServingsRange(),
+    getOccasions(),
+  ]);
 
   return (
     <div className={styles.page}>
