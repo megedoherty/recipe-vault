@@ -11,11 +11,14 @@ import AddRecipeChoice from './components/AddRecipeChoice/AddRecipeChoice';
 import styles from './page.module.css';
 
 export default async function AddRecipePage() {
-  const categories = await getCategories();
-  const ingredients = await getIngredientsForRecipeEdit();
-  const equipment = await getEquipment();
-  const mealTypes = await getMealTypes();
-  const occasions = await getOccasions();
+  const [categories, ingredients, equipment, mealTypes, occasions] =
+    await Promise.all([
+      getCategories(),
+      getIngredientsForRecipeEdit(),
+      getEquipment(),
+      getMealTypes(),
+      getOccasions(),
+    ]);
 
   const isLoggedIn = await isUserLoggedIn();
 

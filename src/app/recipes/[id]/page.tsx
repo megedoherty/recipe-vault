@@ -15,9 +15,11 @@ export default async function RecipePage({
   params,
 }: PageProps<'/recipes/[id]'>) {
   const { id } = await params;
-  const recipe = await getRecipeForDisplay(id);
-  const ingredientSections = await getRecipeIngredientsForDisplay(id);
-  const isLoggedIn = await isUserLoggedIn();
+  const [recipe, ingredientSections, isLoggedIn] = await Promise.all([
+    getRecipeForDisplay(id),
+    getRecipeIngredientsForDisplay(id),
+    isUserLoggedIn(),
+  ]);
 
   const ingredients = ingredientSections.flatMap(
     (section) => section.ingredients,

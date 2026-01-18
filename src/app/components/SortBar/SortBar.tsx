@@ -29,6 +29,9 @@ export default function SortBar({ count, page }: SortBarProps) {
       params.set('sort', newSort);
     }
 
+    // Reset page to 1
+    params.delete('page');
+
     router.replace(params.toString() ? `/?${params.toString()}` : '/');
   };
 
