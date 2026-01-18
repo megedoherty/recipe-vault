@@ -418,7 +418,7 @@ export function parseInstructions(text: string): InstructionSection[] {
       }
 
       // Make sure temperatures include degree symbol
-      const normalizedLine = line.replace(/(\d+)\s*([FC])/gi, '$1°$2');
+      const normalizedLine = line.replace(/(\d+)\s*([FC])(?!\w)/gi, '$1°$2');
 
       acc[acc.length - 1].steps.push({
         text: normalizedLine.trim(),

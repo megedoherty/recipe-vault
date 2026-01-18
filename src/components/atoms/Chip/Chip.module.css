@@ -1,6 +1,6 @@
 .chip {
   background-color: var(--chip-background, var(--accent));
-  color: var(--chip-text, var(--button-primary-text));
+  color: var(--chip-text, var(--text-inverse));
   padding: 0.25rem 0.5rem;
   border-radius: var(--border-radius-default);
   font-size: var(--font-size-chip);
