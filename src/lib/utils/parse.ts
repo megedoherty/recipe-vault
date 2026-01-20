@@ -85,8 +85,8 @@ export function standardizeQuantity(quantity: string): string {
 
     // Replace tsp/tbsp abbreviations with full words
     toReturn = toReturn
-      .replace(/\btsp\.?\b/gi, isSingular ? 'teaspoon' : 'teaspoons')
-      .replace(/\btbsp\.?\b/gi, isSingular ? 'tablespoon' : 'tablespoons');
+      .replace(/\btsp\.?/gi, isSingular ? 'teaspoon' : 'teaspoons')
+      .replace(/\btbsp\.?/gi, isSingular ? 'tablespoon' : 'tablespoons');
   }
 
   return replaceFractions(toReturn);
@@ -237,7 +237,10 @@ const specialCaseMappings: Array<{
 }> = [
   {
     match: (n) =>
-      n.includes('egg') && !n.includes('yolk') && !n.includes('white'),
+      n.includes('egg') &&
+      !n.includes('yolk') &&
+      !n.includes('white') &&
+      !n.includes('eggnog'),
     ingredientName: 'whole egg',
   },
   {

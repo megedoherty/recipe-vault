@@ -8,9 +8,13 @@ import styles from './RecipeCard.module.css';
 
 interface RecipeCardProps {
   recipe: RecipeSummary;
+  priority?: boolean;
 }
 
-export default function RecipeCard({ recipe }: RecipeCardProps) {
+export default function RecipeCard({
+  recipe,
+  priority = false,
+}: RecipeCardProps) {
   const { name, id, imageUrl, rating, made } = recipe;
 
   return (
@@ -24,10 +28,11 @@ export default function RecipeCard({ recipe }: RecipeCardProps) {
         {imageUrl ? (
           <Image
             src={imageUrl}
-            alt={name}
+            alt={`${name} recipe image`}
             fill
             className={styles.image}
             sizes="(max-width: 577px) 100vw, (max-width: 860px) 50vw, (max-width: 1126px) 33vw, 25vw"
+            priority={priority}
           />
         ) : (
           <RecipeIcon className={styles.defaultImage} />

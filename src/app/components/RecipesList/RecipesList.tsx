@@ -56,9 +56,9 @@ export default async function RecipesList({ query }: RecipesListProps) {
     <>
       <SortBar page={page ?? 1} count={count} />
       <ul className={styles.recipeGrid}>
-        {recipes.map((recipe) => (
+        {recipes.map((recipe, index) => (
           <li key={recipe.id} className={styles.listItem}>
-            <RecipeCard recipe={recipe} />
+            <RecipeCard recipe={recipe} priority={index < 5} />
           </li>
         ))}
       </ul>
