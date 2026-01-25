@@ -49,6 +49,11 @@ export default function AddRecipeChoice({
     setMode('manual');
   };
 
+  const switchToManual = () => {
+    setRecipe(null);
+    setMode('manual');
+  };
+
   if (mode === null) {
     return (
       <div className={styles.choiceContainer}>
@@ -114,8 +119,11 @@ export default function AddRecipeChoice({
       <div className={styles.errorContainer}>
         <h2>Error</h2>
         <p>
-          Error parsing recipe. Please enter manually and tell Meghan to
-          investigate.
+          Error parsing recipe. Please{' '}
+          <button className={styles.manualButton} onClick={switchToManual}>
+            enter manually
+          </button>{' '}
+          and/or tell Meghan to investigate.
         </p>
       </div>
     );
@@ -123,7 +131,7 @@ export default function AddRecipeChoice({
 
   return (
     <div className={styles.manualContainer}>
-      <h2>Add Recipe</h2>
+      <h2>Manual Form</h2>
       <RecipeForm
         mode="create"
         categories={categories}

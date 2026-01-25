@@ -33,3 +33,13 @@
 .fetchButton {
   align-self: flex-start;
 }
+
+.manualButton {
+  display: inline;
+  padding: 0;
+  color: var(--accent);
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
