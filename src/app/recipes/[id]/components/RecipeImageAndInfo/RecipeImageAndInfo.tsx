@@ -71,7 +71,7 @@ export default function RecipeImageAndInfo({
                 <dd>{occasion}</dd>
               </div>
             )}
-            {servings && (
+            {servings != null && servings > 0 && (
               <div className={styles.infoItem}>
                 <dt className={styles.infoItemLabel}>Servings:</dt>
                 <dd>{servings}</dd>
