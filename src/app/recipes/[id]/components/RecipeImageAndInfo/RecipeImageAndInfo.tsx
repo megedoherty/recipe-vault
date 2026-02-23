@@ -42,6 +42,7 @@ export default function RecipeImageAndInfo({
             alt={name}
             className={styles.image}
             fill
+            loading="eager"
             sizes="(max-width: 768px) 100vw, 33vw"
           />
         </div>

@@ -177,6 +177,9 @@ export function transformIngredientsForDisplay(
         id: ingredient.id,
         name: ingredient.name,
         quantity: ingredient.quantity,
+        normalizedIngredientId: ingredient.ingredient_id ?? null,
+        normalizedIngredientName: ingredient.ingredient?.name ?? null,
+        category: ingredient.ingredient?.category ?? null,
       };
       if (section) {
         section.ingredients.push(ingredientToAdd);

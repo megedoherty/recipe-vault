@@ -1,0 +1,34 @@
+.categoriesList,
+.ingredientList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.categoriesList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ingredientList {
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem;
+  gap: 0.25rem;
+}
+
+.ingredient {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.lines {
+  font-size: var(--font-size-small);
+  color: var(--text-secondary);
+}
+
+.line {
+  padding-inline: 0.5rem;
+}

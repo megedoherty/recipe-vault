@@ -42,6 +42,7 @@ export default async function RecipePage({
         name={name}
         sourceUrl={sourceUrl}
         isLoggedIn={isLoggedIn}
+        ingredients={ingredients}
       />
       <RecipeImageAndInfo
         category={recipe.category}

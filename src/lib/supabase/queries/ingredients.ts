@@ -1,3 +1,4 @@
+import { sortByIngredientCategory } from '@/lib/utils/sort';
 import {
   IngredientDb,
   IngredientForRecipeEdit,
@@ -5,48 +6,6 @@ import {
 } from '@/types';
 
 import { createClient } from '../server';
-
-// Put these at the top of the list
-const priorityCategories = [
-  'Flours & Starches',
-  'Sugars & Sweeteners',
-  'Eggs',
-  'Baking Essentials',
-  'Chocolate & Baking Chips',
-  'Extracts & Flavorings',
-  'Dairy',
-  'Fats & Oils',
-];
-
-function sortIngredients<
-  T extends IngredientForRecipeEdit | IngredientForSearch,
->(data: T[]): T[] {
-  data.sort((a, b) => {
-    const aPriority = priorityCategories.indexOf(a.category || '');
-    const bPriority = priorityCategories.indexOf(b.category || '');
-
-    // If both are in priority list, sort by priority order
-    if (aPriority !== -1 && bPriority !== -1) {
-      if (aPriority !== bPriority) {
-        return aPriority - bPriority;
-      }
-      // Same priority category, sort by name
-      return a.name.localeCompare(b.name);
-    }
-    // If only a is in priority, it comes first
-    if (aPriority !== -1) return -1;
-    // If only b is in priority, it comes first
-    if (bPriority !== -1) return 1;
-    // If neither is in priority, sort by category then name
-    const categoryCompare = (a.category || '').localeCompare(b.category || '');
-    if (categoryCompare !== 0) {
-      return categoryCompare;
-    }
-    return a.name.localeCompare(b.name);
-  });
-
-  return data;
-}
 
 /**
  * When editing or creating a recipe, only return the ingredients that are not children of other ingredients.
@@ -77,14 +36,13 @@ export async function getIngredientsForRecipeEdit(): Promise<
     (ing) => !parentIds.has(ing.id),
   );
 
-  const transformed = sortIngredients(
+  return sortByIngredientCategory(
     ingredientsWithNoChildren.map((ing) => ({
       id: ing.id.toString(),
       name: ing.name,
       category: ing.category,
     })),
   );
-  return transformed;
 }
 
 function getAllDescendants(
@@ -129,7 +87,7 @@ function buildWithDepth(
   }));
 
   // Sort items at this depth
-  const sorted = sortIngredients(itemsAtDepth);
+  const sorted = sortByIngredientCategory(itemsAtDepth);
   const result: IngredientForSearch[] = [];
 
   for (const item of sorted) {

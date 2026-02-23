@@ -161,6 +161,8 @@ export interface RecipeIngredientDisplayDb {
   quantity: string | null;
   position: number;
   section: string | null;
+  ingredient_id: number | null;
+  ingredient: { name: string; category: string | null } | null;
 }
 
 // The type used on the FE when displaying a single recipe's ingredients
@@ -168,6 +170,9 @@ export interface RecipeIngredientDisplay {
   id: string;
   name: string;
   quantity: string | null;
+  normalizedIngredientId: number | null;
+  normalizedIngredientName: string | null;
+  category: string;
 }
 export type RecipeIngredientSections =
   RecipeIngredientSectionBase<RecipeIngredientDisplay>;

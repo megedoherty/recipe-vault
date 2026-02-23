@@ -50,10 +50,12 @@ export async function getRecipeIngredientsForDisplay(
 ): Promise<RecipeIngredientSections[]> {
   const supabase = await createClient();
 
-  // Get ingredients
+  // Get ingredients (with normalized ingredient for shopping list)
   const { data: ingredients } = await supabase
     .from('recipe_ingredient')
-    .select('id, name, quantity, position, section')
+    .select(
+      'id, name, quantity, position, section, ingredient_id, ingredient(name, category)',
+    )
     .eq('recipe_id', id);
 
   // Get section order from recipe

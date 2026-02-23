@@ -4,16 +4,15 @@ import { useRef } from 'react';
 
 import Button from '@/components/atoms/Button/Button';
 import TrashIcon from '@/components/atoms/icons/TrashIcon';
+import Dialog, { DialogRef } from '@/components/molecules/Dialog/Dialog';
 import { deleteRecipe } from '@/lib/actions/recipes';
-
-import styles from './DeleteButton.module.css';
 
 interface DeleteButtonProps {
   recipeId: string;
 }
 
 export default function DeleteButton({ recipeId }: DeleteButtonProps) {
-  const dialogRef = useRef<HTMLDialogElement>(null);
+  const dialogRef = useRef<DialogRef>(null);
 
   return (
     <>
@@ -24,11 +23,12 @@ export default function DeleteButton({ recipeId }: DeleteButtonProps) {
       >
         <TrashIcon />
       </Button>
-      <dialog ref={dialogRef} className={styles.dialog}>
-        <div className={styles.content}>
-          <h2>Delete Recipe</h2>
-          <p>Are you sure you want to delete this recipe?</p>
-          <div className={styles.buttons}>
+      <Dialog
+        ref={dialogRef}
+        title="Delete Recipe"
+        onClose={() => dialogRef.current?.close()}
+        footer={
+          <>
             <Button onClick={() => deleteRecipe(recipeId)}>Delete</Button>
             <Button
               variant="secondary"
@@ -36,9 +36,11 @@ export default function DeleteButton({ recipeId }: DeleteButtonProps) {
             >
               Cancel
             </Button>
-          </div>
-        </div>
-      </dialog>
+          </>
+        }
+      >
+        <p>Are you sure you want to delete this recipe?</p>
+      </Dialog>
     </>
   );
 }

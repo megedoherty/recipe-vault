@@ -1,14 +1,22 @@
 import Button from '@/components/atoms/Button/Button';
 import EditIcon from '@/components/atoms/icons/EditIcon';
+import { RecipeIngredientDisplay } from '@/types';
 
+import AddToShoppingListButton from '../AddToShoppingListButton/AddToShoppingListButton';
 import DeleteButton from '../DeleteButton/DeleteButton';
 import styles from './RecipeHeader.module.css';
 
 interface RecipeHeaderProps {
+  // The recipe ID
   recipeId: string;
+  // The recipe name
   name: string;
+  // The recipe URL
   sourceUrl: string | null;
+  // Whether the user is logged in
   isLoggedIn: boolean;
+  // The recipe ingredients
+  ingredients: RecipeIngredientDisplay[];
 }
 
 export default function RecipeHeader({
@@ -16,6 +24,7 @@ export default function RecipeHeader({
   name,
   sourceUrl,
   isLoggedIn,
+  ingredients,
 }: RecipeHeaderProps) {
   return (
     <div className={styles.container}>
@@ -30,6 +39,7 @@ export default function RecipeHeader({
             >
               <EditIcon />
             </Button>
+            <AddToShoppingListButton ingredients={ingredients} />
             <DeleteButton recipeId={recipeId} />
           </div>
         )}

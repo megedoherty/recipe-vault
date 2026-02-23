@@ -21,10 +21,6 @@ export const MEASUREMENT_OPTION = [
   'stick',
 ] as const;
 
-// TODO: Handle ors
-// 113g or 1/2 cup unsalted butter at room temperature
-// 80g or 1/2 cup plus 2 tablespoons all purpose flour
-
 // TODO: two ingredients together
 // 1 large egg + 1 egg yolk, at room temperature
 
@@ -90,6 +86,12 @@ export const METRIC_QUANTITY_1 = 1;
 export const METRIC_QUANTITY_2 = 2;
 export const METRIC_UNIT = 3;
 
+// example: 340 - 453 g, 120 g (grams not in parentheses/brackets)
+// result: [ "340 - 453 g", "340", "453" ]
+// result: [ "120 g", "120", undefined ]
+export const gramsWithOptionalRangeRegex =
+  /^\s*(\d+)(?: ?- ?(\d+))? ?(?:gram|g)(?!\w)s?(?:\s|,|$)/i;
+
 // example: 1 egg, 1 large egg, 2 egg yolks
 // result: [ "1 egg", "1", undefined, "egg" ]
 // result: [ "2 large egg yolks", "2", "large", "egg yolk" ]
@@ -120,6 +122,18 @@ export const SIMPLE_TEXT = 3;
 // Match anything in parentheses: "(120g)", "(114 g; 1 stick)", etc.
 // result: ["(120g)", "120g"]
 export const anythingInParenthesesRegex = /\([^)]+\)/;
+
+// Number immediately before "tablespoon(s)" or "tbsp" — e.g. (8 tablespoons, 115 g), 4 tablespoons (50 g)
+export const tablespoonsInTextRegex =
+  /(\d+\.?\d*) ?(?:tablespoon|tbsp)s?(?:\s*[,)]|$)/i;
+export const TABLESPOON_AMOUNT = 1;
+
+// Cups at start: "½ cup", "1 cup", "1/2 cup"
+export const cupsAtStartRegex = new RegExp(
+  `^(${numberRegex.source}) ?cups?(?=\\s|$|\\))`,
+  'i',
+);
+export const CUPS_AMOUNT = 1;
 
 // Common non-numeric quantity terms
 export const nonNumericQuantityTerms = [
