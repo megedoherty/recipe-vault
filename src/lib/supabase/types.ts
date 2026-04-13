@@ -71,19 +71,19 @@ export type Database = {
       };
       ingredient: {
         Row: {
-          category: string | null;
+          category: string;
           id: number;
           name: string;
           parent_id: number | null;
         };
         Insert: {
-          category?: string | null;
+          category: string;
           id?: number;
           name: string;
           parent_id?: number | null;
         };
         Update: {
-          category?: string | null;
+          category?: string;
           id?: number;
           name?: string;
           parent_id?: number | null;

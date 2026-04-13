@@ -34,10 +34,6 @@ export default function AddToShoppingListButton({
     ingredients,
     (ingredient) => ingredient.normalizedIngredientId?.toString() ?? '',
   );
-  console.log(
-    '🚀 ~ AddToShoppingListButton ~ combinedIngredients:',
-    combinedIngredients,
-  );
 
   const combinedIngredientsList: CombinedIngredients[] = Object.entries(
     combinedIngredients,

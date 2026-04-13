@@ -212,7 +212,7 @@ export type Category = Tables<'category'>;
 export interface IngredientDb {
   id: string;
   name: string;
-  category: string | null;
+  category: string;
   parentId: string;
 }
 
@@ -220,14 +220,14 @@ export interface IngredientDb {
 export interface IngredientForRecipeEdit {
   id: string;
   name: string;
-  category: string | null;
+  category: string;
 }
 
 // The type used on the FE when searching for ingredients
 export interface IngredientForSearch {
   id: string;
   name: string;
-  category: string | null;
+  category: string;
   childrenIds: string[];
   parentIds: string[];
   depth: number;

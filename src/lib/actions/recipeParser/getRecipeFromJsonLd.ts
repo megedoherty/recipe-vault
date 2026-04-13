@@ -315,6 +315,10 @@ function getRecipeServings(entity: Recipe): string | null {
     return servings.match(/\d+/)?.[0] ?? null;
   }
 
+  if (typeof servings === 'number') {
+    return servings;
+  }
+
   for (const serving of servings) {
     if (typeof serving === 'string') {
       return serving.match(/\d+/)?.[0] ?? null;

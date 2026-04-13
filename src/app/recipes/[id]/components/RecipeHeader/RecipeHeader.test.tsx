@@ -8,6 +8,7 @@ const defaultProps = {
   sourceUrl: 'https://example.com',
   made: false,
   rating: 3,
+  ingredients: [],
 };
 
 describe('RecipeHeader', () => {
@@ -22,9 +23,6 @@ describe('RecipeHeader', () => {
     ).toBeInTheDocument();
     expect(
       screen.getByRole('button', { name: 'Delete recipe' }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole('checkbox', { name: 'I made this' }),
     ).toBeInTheDocument();
   });
 

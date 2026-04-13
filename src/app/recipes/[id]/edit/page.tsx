@@ -51,7 +51,7 @@ export default async function EditRecipePage({
     <div className={styles.page}>
       <h1>Edit Recipe</h1>
       <RecipeForm
-        mode='update'
+        mode="update"
         recipeId={id}
         initialRecipe={recipe}
         initialIngredientSections={ingredientSections}
