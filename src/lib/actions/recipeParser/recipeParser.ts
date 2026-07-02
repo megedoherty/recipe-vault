@@ -23,11 +23,45 @@ export async function parseRecipeFromUrl(
   categories: Category[],
   mealTypes: MealType[],
 ): Promise<ParsedRecipe> {
-  const baseUrl = new URL(url).origin;
+  let baseUrl: string;
+  try {
+    baseUrl = new URL(url).origin;
+  } catch {
+    throw new Error(`Invalid recipe URL: ${url}`);
+  }
 
-  // 1. Fetch HTML
-  const response = await fetch(url);
-  const html = await response.text();
+  // 1. Fetch HTML (with a timeout so a hanging host can't block the action)
+  const FETCH_TIMEOUT_MS = 10000;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+
+  let html: string;
+  try {
+    const response = await fetch(url, {
+      signal: controller.signal,
+      headers: {
+        // Some recipe sites reject requests without a browser-like User-Agent.
+        'User-Agent':
+          'Mozilla/5.0 (compatible; RecipeVault/1.0; +https://github.com)',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        `Failed to fetch recipe (${response.status} ${response.statusText})`,
+      );
+    }
+
+    html = await response.text();
+  } catch (error) {
+    if (error instanceof Error && error.name === 'AbortError') {
+      throw new Error(`Timed out fetching recipe from ${url}`);
+    }
+    throw error;
+  } finally {
+    clearTimeout(timeout);
+  }
+
   const $ = cheerio.load(html);
 
   // Check for JSON-LD structured data

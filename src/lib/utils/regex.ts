@@ -26,7 +26,7 @@ export const MEASUREMENT_OPTION = [
 
 // example: 1, 10, 1 1/2, 1 / 2, ⅕
 export const numberRegex =
-  /((?:\d+)? ?(?:and )?(?:\d+ ?\/ ?\d+)|(?:\d+ ?[½¼¾⅓⅔⅕⅖⅗⅘⅙⅔¾⅛⅜⅝⅞])|(?:\d+\.\d+)|(?:\d+|[½¼¾⅓⅔⅕⅖⅗⅘⅙⅔¾⅛⅜⅝⅞]))/;
+  /((?:\d+)? ?(?:and )?(?:\d+ ?\/ ?\d+)|(?:\d+ ?[½¼¾⅓⅔⅕⅖⅗⅘⅙⅛⅜⅝⅞])|(?:\d+\.\d+)|(?:\d+|[½¼¾⅓⅔⅕⅖⅗⅘⅙⅛⅜⅝⅞]))/;
 
 // example: 1-2, 1 – 2, 1 to 2
 export const numberRangeRegex = new RegExp(
@@ -100,13 +100,6 @@ export const eggLineRegex =
 export const EGG_AMOUNT = 1;
 export const EGG_SIZE = 2;
 export const EGG_TYPE = 3;
-
-// example 1 cup flour
-// result: ["1 cup flour", "1", undefined, "cup flour"]
-// result: ["1 - 2 cups flour", "1", "2", "cup flour"]
-export const numbersAtBeginningOfLineRegex = new RegExp(
-  `^${numberRegex.source} (?:(?:-|–|to) ${numberRegex.source} )?(.*)`,
-);
 
 // example: 1 banana, 30 oreos, 2 eggs
 // result: ["1 banana", "1", "banana"]

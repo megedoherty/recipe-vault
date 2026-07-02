@@ -94,6 +94,27 @@ export const getImageQuality = (
   return 1000000;
 };
 
+/**
+ * Deduplicate images that point at the same underlying photo (same base
+ * filename, differing only by resize suffix) keeping the highest-quality
+ * version of each. Preserves first-seen order of the surviving base filenames.
+ */
+export const dedupeImagesByBaseFilename = (
+  images: { url: string; quality: number }[],
+): string[] => {
+  const imageMap: Record<string, { url: string; quality: number }> = {};
+
+  images.forEach(({ url, quality }) => {
+    const baseFilename = getImageBaseFilename(url);
+    const existing = imageMap[baseFilename];
+    if (!existing || quality > existing.quality) {
+      imageMap[baseFilename] = { url, quality };
+    }
+  });
+
+  return Object.values(imageMap).map((item) => item.url);
+};
+
 const getImageUrl = (src: string, alt: string, baseUrl: string) => {
   // Convert relative paths to absolute URLs
   try {

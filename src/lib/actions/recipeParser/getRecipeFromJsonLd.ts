@@ -6,7 +6,7 @@ import { parseIngredients, parseInstructions } from '@/lib/utils/parse';
 import { Category, IngredientForRecipeEdit, ParsedRecipe } from '@/types';
 
 import { getCategoryId } from './getCategory';
-import { getImageBaseFilename, getImageQuality } from './getRecipeImages';
+import { dedupeImagesByBaseFilename, getImageQuality } from './getRecipeImages';
 
 type JsonLdPrimitive = string | number | boolean | null;
 
@@ -108,9 +108,15 @@ export const getRecipeFromJsonLd = (
         );
       }
 
+      const recipeIngredientText = entity.recipeIngredient
+        ?.map((ingredient) =>
+          typeof ingredient === 'string' ? decode(ingredient) : ingredient,
+        )
+        .join('\n');
+
       return {
         recipe: {
-          name: entity.name,
+          name: typeof entity.name === 'string' ? decode(entity.name) : '',
           instructions: parseInstructions(getInstructions(entity)),
           sourceUrl,
           imageUrl: images[0] ?? null,
@@ -123,10 +129,7 @@ export const getRecipeFromJsonLd = (
           mealTypeId: null, // TODO
           occasionId: null, // TODO
         },
-        ingredients: parseIngredients(
-          entity.recipeIngredient?.join('\n') ?? undefined,
-          ingredients,
-        ),
+        ingredients: parseIngredients(recipeIngredientText, ingredients),
         imageUrls: images,
       } as ParsedRecipe;
     }
@@ -293,26 +296,21 @@ function getImages(entity: Recipe): string[] {
   }
 
   // Deduplicate by base filename, keeping highest quality
-  const imageMap: Record<string, { url: string; quality: number }> = {};
-
-  imageUrls.forEach(({ url, quality }) => {
-    const baseFilename = getImageBaseFilename(url);
-    const existing = imageMap[baseFilename];
-    if (!existing || quality > existing.quality) {
-      imageMap[baseFilename] = { url, quality };
-    }
-  });
-
-  return Object.values(imageMap).map((item) => item.url);
+  return dedupeImagesByBaseFilename(imageUrls);
 }
 
-function getRecipeServings(entity: Recipe): string | null {
+function getRecipeServings(entity: Recipe): number | null {
   const servings = entity.recipeYield;
 
   if (!servings) return null;
 
+  const firstNumber = (value: string): number | null => {
+    const match = value.match(/\d+/)?.[0];
+    return match ? parseInt(match, 10) : null;
+  };
+
   if (typeof servings === 'string') {
-    return servings.match(/\d+/)?.[0] ?? null;
+    return firstNumber(servings);
   }
 
   if (typeof servings === 'number') {
@@ -321,7 +319,7 @@ function getRecipeServings(entity: Recipe): string | null {
 
   for (const serving of servings) {
     if (typeof serving === 'string') {
-      return serving.match(/\d+/)?.[0] ?? null;
+      return firstNumber(serving);
     }
   }
 
