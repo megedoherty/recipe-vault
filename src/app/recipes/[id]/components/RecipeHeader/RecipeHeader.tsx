@@ -39,7 +39,11 @@ export default function RecipeHeader({
             >
               <EditIcon />
             </Button>
-            <AddToShoppingListButton ingredients={ingredients} />
+            <AddToShoppingListButton
+              ingredients={ingredients}
+              recipeId={recipeId}
+              recipeName={name}
+            />
             <DeleteButton recipeId={recipeId} />
           </div>
         )}

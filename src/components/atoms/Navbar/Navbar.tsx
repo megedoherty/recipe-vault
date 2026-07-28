@@ -20,6 +20,11 @@ const leftLinks: LinkProps[] = [
     href: '/recipes/add',
     loggedIn: true,
   },
+  {
+    label: 'Shopping List',
+    href: '/shopping-list',
+    loggedIn: true,
+  },
 ];
 
 const rightLinks: LinkProps[] = [

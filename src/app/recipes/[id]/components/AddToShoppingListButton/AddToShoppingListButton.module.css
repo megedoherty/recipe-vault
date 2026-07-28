@@ -32,3 +32,7 @@
 .line {
   padding-inline: 0.5rem;
 }
+
+.error {
+  color: var(--error);
+}

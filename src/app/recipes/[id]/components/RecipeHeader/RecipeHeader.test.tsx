@@ -2,6 +2,10 @@ import { render, screen } from '@testing-library/react';
 
 import RecipeHeader from './RecipeHeader';
 
+jest.mock('@/lib/actions/shoppingList', () => ({
+  addToShoppingList: jest.fn(),
+}));
+
 const defaultProps = {
   recipeId: '1',
   name: 'Recipe Name',

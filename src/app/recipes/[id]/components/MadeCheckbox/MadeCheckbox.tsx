@@ -37,7 +37,7 @@ export default function MadeCheckbox({
       checked={checked}
       onChange={handleChange}
       disabled={isPending}
-      alignItems="start"
+      alignItems="center"
     />
   );
 }

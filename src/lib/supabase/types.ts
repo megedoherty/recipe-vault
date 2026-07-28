@@ -291,6 +291,57 @@ export type Database = {
           },
         ];
       };
+      shopping_list_item: {
+        Row: {
+          created_at: string;
+          id: string;
+          name: string;
+          normalized_ingredient_id: number | null;
+          purchased: boolean;
+          quantity: string | null;
+          recipe_id: string | null;
+          recipe_name: string | null;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          name: string;
+          normalized_ingredient_id?: number | null;
+          purchased?: boolean;
+          quantity?: string | null;
+          recipe_id?: string | null;
+          recipe_name?: string | null;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          name?: string;
+          normalized_ingredient_id?: number | null;
+          purchased?: boolean;
+          quantity?: string | null;
+          recipe_id?: string | null;
+          recipe_name?: string | null;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'shopping_list_item_normalized_ingredient_id_fkey';
+            columns: ['normalized_ingredient_id'];
+            isOneToOne: false;
+            referencedRelation: 'ingredient';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'shopping_list_item_recipe_id_fkey';
+            columns: ['recipe_id'];
+            isOneToOne: false;
+            referencedRelation: 'recipe';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
     };
     Views: {
       [_ in never]: never;

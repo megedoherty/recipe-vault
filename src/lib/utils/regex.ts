@@ -92,6 +92,13 @@ export const METRIC_UNIT = 3;
 export const gramsWithOptionalRangeRegex =
   /^\s*(\d+)(?: ?- ?(\d+))? ?(?:gram|g)(?!\w)s?(?:\s|,|$)/i;
 
+// Number immediately before "g"/"gram(s)" anywhere in the string, not just
+// right after an opening paren — e.g. "(16 Tbsp; 226 g)", "1 stick, 113 g".
+// Looser than ouncesOrGramsInParenthesesRegex, which requires the number to
+// be the first thing after "(", "[", or "/".
+export const gramsAnywhereRegex = /(\d+(?:\.\d+)?) ?(?:gram|g)(?!\w)s?\b/i;
+export const GRAMS_ANYWHERE_AMOUNT = 1;
+
 // example: 1 egg, 1 large egg, 2 egg yolks
 // result: [ "1 egg", "1", undefined, "egg" ]
 // result: [ "2 large egg yolks", "2", "large", "egg yolk" ]

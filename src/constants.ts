@@ -30,3 +30,5 @@ export const isSortOption = (value: unknown): value is SortOption => {
 };
 
 export const PAGE_SIZE = 24 as const;
+
+export const PREFER_GRAMS_COOKIE = 'prefer-grams';

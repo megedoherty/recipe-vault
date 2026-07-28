@@ -199,6 +199,56 @@ export type RecipeIngredientSectionsEditable =
   RecipeIngredientSectionBase<RecipeEditableIngredient>;
 
 ////////////////////////////////////////////////////////////
+// Shopping list types
+////////////////////////////////////////////////////////////
+
+// The type used when querying for the current user's shopping list items
+export interface ShoppingListItemDb {
+  id: string;
+  recipe_id: string | null;
+  recipe_name: string | null;
+  name: string;
+  quantity: string | null;
+  normalized_ingredient_id: number | null;
+  purchased: boolean;
+  ingredient: { name: string; category: string } | null;
+}
+
+// The type used on the FE for a single shopping list item
+export interface ShoppingListItem {
+  id: string;
+  recipeId: string | null;
+  recipeName: string | null;
+  name: string;
+  quantity: string | null;
+  normalizedIngredientId: number | null;
+  normalizedIngredientName: string | null;
+  category: string;
+  purchased: boolean;
+}
+
+// Per-recipe grouped view of the shopping list (one group per recipe, or
+// "Manually Added" for items with no recipeId)
+export interface ShoppingListByRecipe {
+  recipeId: string | null;
+  recipeName: string;
+  items: ShoppingListItem[];
+}
+
+// Combined view of the shopping list: one group per normalized ingredient
+// (or per raw name when there's no normalizedIngredientId match)
+export interface CombinedShoppingListItem {
+  groupKey: string;
+  name: string;
+  category: string;
+  quantity: number | null;
+  unit: string | null;
+  purchased: boolean;
+  sourceItemIds: string[];
+  lines: string[];
+}
+
+////////////////////////////////////////////////////////////
 // Category types
 ////////////////////////////////////////////////////////////
 

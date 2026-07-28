@@ -47,7 +47,7 @@ export default function AllUsersFilter({
       checked={includeAllUsers}
       onChange={handleChange}
       value="true"
-      alignItems="start"
+      alignItems="center"
     />
   );
 }

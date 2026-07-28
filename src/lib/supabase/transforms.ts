@@ -10,6 +10,8 @@ import {
   RecipeIngredientDisplayDb,
   RecipeIngredientSections,
   RecipeIngredientSectionsEditable,
+  ShoppingListItem,
+  ShoppingListItemDb,
   Step,
   StorageInfo,
 } from '@/types';
@@ -254,4 +256,20 @@ export function transformIngredientsForEdit(
   }
 
   return sections;
+}
+
+export function transformShoppingListItems(
+  items: ShoppingListItemDb[],
+): ShoppingListItem[] {
+  return items.map((item) => ({
+    id: item.id,
+    recipeId: item.recipe_id,
+    recipeName: item.recipe_name,
+    name: item.name,
+    quantity: item.quantity,
+    normalizedIngredientId: item.normalized_ingredient_id,
+    normalizedIngredientName: item.ingredient?.name ?? null,
+    category: item.ingredient?.category ?? 'Other',
+    purchased: item.purchased,
+  }));
 }
