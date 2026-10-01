@@ -6,6 +6,7 @@ import styles from './Navbar.module.css';
 
 interface LinkProps {
   label: string;
+  shortLabel?: string;
   href: string;
   loggedIn?: boolean;
 }
@@ -17,11 +18,13 @@ const leftLinks: LinkProps[] = [
   },
   {
     label: 'Add Recipe',
+    shortLabel: 'Add',
     href: '/recipes/add',
     loggedIn: true,
   },
   {
     label: 'Shopping List',
+    shortLabel: 'List',
     href: '/shopping-list',
     loggedIn: true,
   },
@@ -61,8 +64,19 @@ const NavbarLink = ({
 
   return (
     <li key={link.href} className={styles.item}>
-      <Link href={link.href} className={styles.link}>
-        {link.label}
+      <Link
+        href={link.href}
+        className={styles.link}
+        aria-label={link.shortLabel ? link.label : undefined}
+      >
+        {link.shortLabel ? (
+          <>
+            <span className={styles.shortLabel}>{link.shortLabel}</span>
+            <span className={styles.fullLabel}>{link.label}</span>
+          </>
+        ) : (
+          link.label
+        )}
       </Link>
     </li>
   );

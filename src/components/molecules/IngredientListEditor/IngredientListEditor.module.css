@@ -10,12 +10,12 @@
   align-items: center;
   grid-template-areas:
     "drag-handle quantity ingredient delete"
-    ". . picker  .";
-  grid-template-columns: min-content min-content auto min-content;
+    ". picker picker .";
+  grid-template-columns: min-content minmax(0, 8rem) minmax(0, 1fr) min-content;
 
   @media (width >= 768px) {
     grid-template-areas: "drag-handle quantity ingredient picker delete";
-    grid-template-columns: min-content min-content 1fr 10rem min-content;
+    grid-template-columns: min-content 10rem minmax(0, 1fr) 10rem min-content;
   }
 }
 
@@ -30,6 +30,17 @@
 
 .ingredientInput {
   grid-area: ingredient;
+}
+
+/* Inputs default to an intrinsic width (~20ch) that won't shrink on mobile */
+.quantityInput,
+.ingredientInput {
+  min-width: 0;
+
+  input {
+    width: 100%;
+    min-width: 0;
+  }
 }
 
 .ingredientPickerContainer {

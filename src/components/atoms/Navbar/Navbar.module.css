@@ -30,6 +30,7 @@
   border-radius: var(--border-radius-default);
   transition: all 0.2s ease;
   text-decoration: none;
+  white-space: nowrap;
   color: var(--text-primary);
 
   &:hover {
@@ -40,5 +41,19 @@
 
   &:active {
     color: var(--accent);
+  }
+}
+
+.fullLabel {
+  display: none;
+}
+
+@media (width >= 768px) {
+  .shortLabel {
+    display: none;
+  }
+
+  .fullLabel {
+    display: inline;
   }
 }
