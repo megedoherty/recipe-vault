@@ -1,4 +1,4 @@
-import { Pencil } from 'lucide-react';
+import { Pencil, RefreshCw } from 'lucide-react';
 
 import Button from '@/components/atoms/Button/Button';
 import { RecipeIngredientDisplay } from '@/types';
@@ -40,6 +40,15 @@ export default function RecipeHeader({
             >
               <Pencil />
             </Button>
+            {sourceUrl && (
+              <Button
+                href={`/recipes/${recipeId}/edit?refresh=1`}
+                aria-label="Refresh recipe from source"
+                iconOnly
+              >
+                <RefreshCw />
+              </Button>
+            )}
             <AddToShoppingListButton
               ingredients={ingredients}
               recipeId={recipeId}
