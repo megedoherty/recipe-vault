@@ -20,7 +20,6 @@ export default function IngredientsList({
             label={`${ingredient.quantity ?? ''} ${ingredient.name}`.trim()}
             checkboxSize="small"
             alignItems="start"
-            id={ingredient.id}
             checkboxClassName={`${styles.checkbox} ${selectedIngredients.includes(ingredient.id) ? styles.selected : ''}`}
             containerClassName={`${styles.checkboxContainer} ${selectedIngredients.includes(ingredient.id) ? styles.selected : ''}`}
           />

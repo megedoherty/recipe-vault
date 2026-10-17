@@ -154,7 +154,6 @@ export default function AddToShoppingListButton({
                           {ingredient.sourceIngredients.map((source) => (
                             <Checkbox
                               key={source.id}
-                              id={source.id}
                               label={`${source.quantity ?? ''} ${source.name}`.trim()}
                               labelSize="small"
                               checkboxSize="small"

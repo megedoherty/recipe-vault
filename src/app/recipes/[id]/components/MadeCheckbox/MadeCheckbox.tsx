@@ -32,7 +32,6 @@ export default function MadeCheckbox({
   return (
     <Checkbox
       label="I made this"
-      id="made"
       name="made"
       checked={checked}
       onChange={handleChange}

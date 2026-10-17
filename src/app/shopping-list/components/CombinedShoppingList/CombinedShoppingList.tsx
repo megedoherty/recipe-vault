@@ -84,7 +84,6 @@ export default function CombinedShoppingList({
                   className={`${styles.item} ${showDetails ? '' : styles.compact}`}
                 >
                   <Checkbox
-                    id={item.groupKey}
                     label={
                       item.quantity
                         ? `${item.quantity} ${item.unit} ${item.name}`

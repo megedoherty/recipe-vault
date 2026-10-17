@@ -219,7 +219,6 @@ export default function SelectableSearchPopover<T extends SearchItem>({
                           onChange={(e) =>
                             onToggleItemSelection(item.id, e.target.checked)
                           }
-                          id={item.id}
                           checked={getItemChecked(item.id)}
                           checkboxClassName={`${styles.checkbox} ${getIndentationLevel?.(item) ? styles[`indent-${getIndentationLevel(item)}`] : ''}`}
                           alignItems="start"

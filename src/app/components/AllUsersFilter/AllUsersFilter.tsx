@@ -41,7 +41,6 @@ export default function AllUsersFilter({
 
   return (
     <Checkbox
-      id="includeAllUsers"
       name="includeAllUsers"
       label="Show all users' recipes"
       checked={includeAllUsers}
