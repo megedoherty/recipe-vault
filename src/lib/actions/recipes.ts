@@ -341,6 +341,23 @@ export async function updateRecipe(
     return { success: false, error: error.message };
   }
 
+  // Remove the previous image from storage now that the recipe points to the new one
+  if (
+    image_url !== currentImageUrl &&
+    currentImageUrl.includes('supabase.co')
+  ) {
+    const urlParts = currentImageUrl.split('/recipe-images/');
+    if (urlParts.length === 2) {
+      const { error: storageError } = await supabase.storage
+        .from('recipe-images')
+        .remove([urlParts[1].split('?')[0]]);
+
+      if (storageError) {
+        console.error('Error deleting old image from storage:', storageError);
+      }
+    }
+  }
+
   // Delete ingredients from database
   if (ingredientsToDelete.length > 0) {
     const { error: deleteError } = await supabase

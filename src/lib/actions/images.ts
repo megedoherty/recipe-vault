@@ -21,14 +21,14 @@ export async function uploadImageFromUrl(
     // Determine file extension from content type or URL
     const contentType = response.headers.get('content-type') || 'image/jpeg';
     const extension = contentType.split('/')[1] || 'jpg';
-    const fileName = `${recipeId}.${extension}`;
+    // Timestamp keeps the public URL unique so browser/CDN caches don't serve a stale image
+    const fileName = `${recipeId}-${Date.now()}.${extension}`;
 
     // Upload to Supabase Storage
     const { data, error } = await supabase.storage
       .from('recipe-images')
       .upload(fileName, blob, {
         contentType: contentType,
-        upsert: true,
       });
 
     if (error) {
