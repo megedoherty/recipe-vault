@@ -40,6 +40,7 @@
 
 .defaultImage {
   height: 90%;
+  width: auto;
 }
 
 .link {

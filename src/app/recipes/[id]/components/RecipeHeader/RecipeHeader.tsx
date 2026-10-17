@@ -1,5 +1,6 @@
+import { Pencil } from 'lucide-react';
+
 import Button from '@/components/atoms/Button/Button';
-import EditIcon from '@/components/atoms/icons/EditIcon';
 import { RecipeIngredientDisplay } from '@/types';
 
 import AddToShoppingListButton from '../AddToShoppingListButton/AddToShoppingListButton';
@@ -37,7 +38,7 @@ export default function RecipeHeader({
               aria-label="Edit recipe"
               iconOnly
             >
-              <EditIcon />
+              <Pencil />
             </Button>
             <AddToShoppingListButton
               ingredients={ingredients}

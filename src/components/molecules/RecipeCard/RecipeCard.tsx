@@ -1,7 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-import RecipeIcon from '@/components/atoms/icons/RecipeIcon';
 import { RecipeSummary } from '@/types';
 
 import styles from './RecipeCard.module.css';
@@ -35,7 +34,14 @@ export default function RecipeCard({
             priority={priority}
           />
         ) : (
-          <RecipeIcon className={styles.defaultImage} />
+          <Image
+            src="/recipe-placeholder.svg"
+            alt=""
+            width={500}
+            height={500}
+            className={styles.defaultImage}
+            unoptimized
+          />
         )}
       </div>
       <div className={styles.content}>

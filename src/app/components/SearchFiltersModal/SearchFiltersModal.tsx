@@ -1,7 +1,7 @@
+import { X } from 'lucide-react';
 import { RefObject, useCallback, useRef, useState } from 'react';
 
 import Button from '@/components/atoms/Button/Button';
-import XIcon from '@/components/atoms/icons/XIcon';
 import {
   Equipment,
   IngredientForSearch,
@@ -101,7 +101,7 @@ export default function SearchFiltersModal({
           <header className={styles.header}>
             <h2>Additional Filters</h2>
             <Button iconOnly onClick={() => dialogRef.current?.close()}>
-              <XIcon />
+              <X />
             </Button>
           </header>
           <AllUsersFilter

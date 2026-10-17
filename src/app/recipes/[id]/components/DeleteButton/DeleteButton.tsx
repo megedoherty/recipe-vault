@@ -1,9 +1,9 @@
 'use client';
 
+import { Trash2 } from 'lucide-react';
 import { useRef } from 'react';
 
 import Button from '@/components/atoms/Button/Button';
-import TrashIcon from '@/components/atoms/icons/TrashIcon';
 import Dialog, { DialogRef } from '@/components/molecules/Dialog/Dialog';
 import { deleteRecipe } from '@/lib/actions/recipes';
 
@@ -21,7 +21,7 @@ export default function DeleteButton({ recipeId }: DeleteButtonProps) {
         iconOnly
         onClick={() => dialogRef.current?.showModal()}
       >
-        <TrashIcon />
+        <Trash2 />
       </Button>
       <Dialog
         ref={dialogRef}

@@ -16,6 +16,7 @@ const eslintConfig = defineConfig([
     rules: {
       'simple-import-sort/imports': 'error',
       'simple-import-sort/exports': 'error',
+      'import/no-duplicates': 'error',
       'prettier/prettier': [
         'error',
         {

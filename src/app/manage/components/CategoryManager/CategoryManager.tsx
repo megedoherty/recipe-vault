@@ -1,9 +1,9 @@
 'use client';
 
+import { Plus } from 'lucide-react';
 import { useState } from 'react';
 
 import Button from '@/components/atoms/Button/Button';
-import PlusIcon from '@/components/atoms/icons/PlusIcon';
 import { Category } from '@/types';
 
 import CategoryEntry, {
@@ -39,7 +39,7 @@ export default function CategoryManager({ categories }: CategoryManagerProps) {
           onClick={addCategoryEntry}
           disabled={currentCategories.some((c) => c.isNew)}
         >
-          <PlusIcon />
+          <Plus />
         </Button>
       </header>
       <ul className={styles.list}>

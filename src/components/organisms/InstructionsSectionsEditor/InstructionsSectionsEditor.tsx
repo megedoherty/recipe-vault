@@ -1,8 +1,7 @@
+import { Plus, Trash2 } from 'lucide-react';
 import { Dispatch, SetStateAction } from 'react';
 
 import Button from '@/components/atoms/Button/Button';
-import PlusIcon from '@/components/atoms/icons/PlusIcon';
-import TrashIcon from '@/components/atoms/icons/TrashIcon';
 import Input from '@/components/atoms/Input/Input';
 import InstructionListEditor from '@/components/organisms/InstructionListEditor/InstructionListEditor';
 import { InstructionSection, RecipeEditableIngredient } from '@/types';
@@ -80,7 +79,7 @@ export default function IngredientSectionsEditor({
                 onClick={() => handleDeleteSection(sectionIndex)}
                 aria-label="Delete section"
               >
-                <TrashIcon />
+                <Trash2 />
               </Button>
             </div>
             <Input
@@ -123,7 +122,7 @@ export default function IngredientSectionsEditor({
         size="small"
         className={styles.addSectionButton}
       >
-        <PlusIcon /> Add Section
+        <Plus /> Add Section
       </Button>
     </div>
   );

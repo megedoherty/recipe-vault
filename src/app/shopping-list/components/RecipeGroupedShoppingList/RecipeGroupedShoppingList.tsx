@@ -1,9 +1,9 @@
 'use client';
 
+import { Trash2 } from 'lucide-react';
 import { startTransition } from 'react';
 
 import Button from '@/components/atoms/Button/Button';
-import TrashIcon from '@/components/atoms/icons/TrashIcon';
 import { removeFromShoppingList } from '@/lib/actions/shoppingList';
 import { CombinedShoppingListItem, ShoppingListByRecipe } from '@/types';
 
@@ -51,7 +51,7 @@ export default function RecipeGroupedShoppingList({
               iconOnly
               onClick={() => handleRemoveRecipe(group)}
             >
-              <TrashIcon />
+              <Trash2 />
             </Button>
           </div>
           <ul className={styles.itemList}>

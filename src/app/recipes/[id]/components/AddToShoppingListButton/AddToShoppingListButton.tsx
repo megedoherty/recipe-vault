@@ -1,10 +1,10 @@
 'use client';
 
+import { List } from 'lucide-react';
 import { ChangeEvent, useRef, useState, useTransition } from 'react';
 
 import Button from '@/components/atoms/Button/Button';
 import Checkbox from '@/components/atoms/Checkbox/Checkbox';
-import ListIcon from '@/components/atoms/icons/ListIcon';
 import Dialog, { DialogRef } from '@/components/molecules/Dialog/Dialog';
 import { addToShoppingList } from '@/lib/actions/shoppingList';
 import { resolveCombinedQuantity } from '@/lib/utils/shoppingList';
@@ -112,7 +112,7 @@ export default function AddToShoppingListButton({
         iconOnly
         onClick={() => dialogRef.current?.showModal()}
       >
-        <ListIcon />
+        <List />
       </Button>
       <Dialog
         ref={dialogRef}

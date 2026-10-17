@@ -1,5 +1,6 @@
 'use client';
 
+import { Pencil, X } from 'lucide-react';
 import {
   Dispatch,
   SetStateAction,
@@ -9,8 +10,6 @@ import {
 } from 'react';
 
 import Button from '@/components/atoms/Button/Button';
-import EditIcon from '@/components/atoms/icons/EditIcon';
-import XIcon from '@/components/atoms/icons/XIcon';
 import Input from '@/components/atoms/Input/Input';
 import LoadingSpinner from '@/components/atoms/LoadingSpinner/LoadingSpinner';
 import { addCategory, updateCategory } from '@/lib/actions/categories';
@@ -103,7 +102,7 @@ export default function CategoryEntry({
               onClick={cancelEdit}
               aria-label="Cancel"
             >
-              <XIcon />
+              <X />
             </Button>
           </div>
         </>
@@ -114,7 +113,7 @@ export default function CategoryEntry({
             {isPending ? <LoadingSpinner size="small" /> : ''}
           </p>
           <Button iconOnly size="small" onClick={() => setIsEditing(true)}>
-            <EditIcon />
+            <Pencil />
           </Button>
         </>
       )}

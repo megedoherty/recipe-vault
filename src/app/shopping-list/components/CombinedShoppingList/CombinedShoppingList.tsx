@@ -1,10 +1,10 @@
 'use client';
 
+import { Trash2 } from 'lucide-react';
 import { ChangeEvent, startTransition, useState } from 'react';
 
 import Button from '@/components/atoms/Button/Button';
 import Checkbox from '@/components/atoms/Checkbox/Checkbox';
-import TrashIcon from '@/components/atoms/icons/TrashIcon';
 import {
   removeFromShoppingList,
   setPurchased,
@@ -109,7 +109,7 @@ export default function CombinedShoppingList({
                     iconOnly
                     onClick={() => handleRemove(item)}
                   >
-                    <TrashIcon />
+                    <Trash2 />
                   </Button>
                 </li>
               ))}

@@ -4,11 +4,10 @@ import {
   Droppable,
   DropResult,
 } from '@hello-pangea/dnd';
+import { MoveVertical, X } from 'lucide-react';
 
 import Button from '@/components/atoms/Button/Button';
 import Chip from '@/components/atoms/Chip/Chip';
-import UpDownArrowIcon from '@/components/atoms/icons/UpDownArrowIcon';
-import XIcon from '@/components/atoms/icons/XIcon';
 import Input from '@/components/atoms/Input/Input';
 import SelectableSearchPopover from '@/components/molecules/SelectableSearchPopover/SelectableSearchPopover';
 import { InstructionSection, RecipeEditableIngredient } from '@/types';
@@ -119,7 +118,7 @@ export default function InstructionListEditor({
                       aria-label="Reorder step"
                       {...provided.dragHandleProps}
                     >
-                      <UpDownArrowIcon />
+                      <MoveVertical />
                     </Button>
                     <Input
                       label="Step"
@@ -139,7 +138,7 @@ export default function InstructionListEditor({
                       onClick={() => handleDeleteStep(stepIndex)}
                       aria-label="Delete step"
                     >
-                      <XIcon />
+                      <X />
                     </Button>
                     <div className={styles.linkedIngredientsContainer}>
                       <div className={styles.linkedIngredientsHeader}>

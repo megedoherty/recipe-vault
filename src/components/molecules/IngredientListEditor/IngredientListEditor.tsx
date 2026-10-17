@@ -4,11 +4,10 @@ import {
   Droppable,
   DropResult,
 } from '@hello-pangea/dnd';
+import { MoveVertical, X } from 'lucide-react';
 import { Dispatch, SetStateAction } from 'react';
 
 import Button from '@/components/atoms/Button/Button';
-import UpDownArrowIcon from '@/components/atoms/icons/UpDownArrowIcon';
-import XIcon from '@/components/atoms/icons/XIcon';
 import Input from '@/components/atoms/Input/Input';
 import SelectableSearchPopover from '@/components/molecules/SelectableSearchPopover/SelectableSearchPopover';
 import {
@@ -130,7 +129,7 @@ export default function IngredientListEditor({
                       className={styles.dragHandleButton}
                       {...provided.dragHandleProps}
                     >
-                      <UpDownArrowIcon />
+                      <MoveVertical />
                     </Button>
                     <Input
                       containerClassName={styles.quantityInput}
@@ -221,7 +220,7 @@ export default function IngredientListEditor({
                       }
                       aria-label="Delete ingredient"
                     >
-                      <XIcon />
+                      <X />
                     </Button>
                   </div>
                 )}
