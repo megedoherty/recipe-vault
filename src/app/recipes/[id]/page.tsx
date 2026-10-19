@@ -6,6 +6,7 @@ import {
 } from '@/lib/supabase/queries/recipes';
 import { isUserLoggedIn } from '@/lib/supabase/queries/user';
 
+import CookingModeToggle from './components/CookingModeToggle/CookingModeToggle';
 import IngredientsAndInstructionsSection from './components/IngredientsAndInstructionsSection/IngredientsAndInstructionsSection';
 import RecipeHeader from './components/RecipeHeader/RecipeHeader';
 import RecipeImageAndInfo from './components/RecipeImageAndInfo/RecipeImageAndInfo';
@@ -57,6 +58,9 @@ export default async function RecipePage({
         made={made}
         rating={rating}
       />
+      <div className={styles.cookingMode}>
+        <CookingModeToggle />
+      </div>
       <IngredientsAndInstructionsSection
         ingredientSections={ingredientSections}
         instructions={instructions}
