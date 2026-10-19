@@ -3,11 +3,13 @@ import styles from './LoadingSpinner.module.css';
 interface LoadingSpinnerProps {
   size?: 'small' | 'medium' | 'large';
   isCentered?: boolean;
+  label?: string;
 }
 
 export default function LoadingSpinner({
   size = 'medium',
   isCentered = false,
+  label = 'Loading',
 }: LoadingSpinnerProps) {
   const classes = [
     styles.spinner,
@@ -19,8 +21,12 @@ export default function LoadingSpinner({
     .join(' ');
 
   return (
-    <div className={`${styles.container} ${isCentered ? styles.centered : ''}`}>
-      <span className={classes} />
+    <div
+      className={`${styles.container} ${isCentered ? styles.centered : ''}`}
+      role="status"
+    >
+      <span className={classes} aria-hidden="true" />
+      <span className="sr-only">{label}</span>
     </div>
   );
 }

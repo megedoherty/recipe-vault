@@ -31,6 +31,12 @@
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation-duration: 3s;
+  }
+}
+
 @keyframes rotation {
   0% {
     transform: rotate(0deg);
