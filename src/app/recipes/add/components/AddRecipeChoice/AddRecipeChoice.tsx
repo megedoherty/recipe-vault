@@ -116,8 +116,7 @@ export default function AddRecipeChoice({
     console.groupEnd();
 
     return (
-      <div className={styles.errorContainer}>
-        <h2>Error</h2>
+      <div className={styles.errorContainer} role="alert">
         <p>
           Error parsing recipe. Please{' '}
           <button className={styles.manualButton} onClick={switchToManual}>

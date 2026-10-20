@@ -23,7 +23,7 @@ import {
   twoQuantitiesAndUnitsWithMathLineRegex,
 } from './regex';
 
-const FRACTION_MAP: Record<string, string> = {
+export const FRACTION_MAP: Record<string, string> = {
   '1/2': '½',
   '1/4': '¼',
   '3/4': '¾',

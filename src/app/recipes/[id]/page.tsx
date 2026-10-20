@@ -65,6 +65,7 @@ export default async function RecipePage({
         ingredientSections={ingredientSections}
         instructions={instructions}
         ingredientMap={ingredientMap}
+        servings={recipe.servings}
         containerClassName={styles.sectionContainer}
       />
       {notes && (
@@ -91,6 +92,6 @@ export async function generateMetadata({
   const recipe = await getRecipeForDisplay(id);
 
   return {
-    title: `${recipe?.name} | Recipe Vault`,
+    title: `${recipe?.name ?? 'Recipe not found'} | Recipe Vault`,
   };
 }

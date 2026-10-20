@@ -30,7 +30,7 @@ export default function RecipeHeader({
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <h1>{name} Recipe</h1>
+        <h1>{name}</h1>
         {isLoggedIn && (
           <div className={styles.headerButtons}>
             <Button

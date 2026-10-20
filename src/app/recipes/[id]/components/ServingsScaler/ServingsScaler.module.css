@@ -1,0 +1,59 @@
+.container {
+  --touch-target: 2.75rem;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-block-end: 0.75rem;
+
+  @media (width >= 768px) {
+    --touch-target: 2rem;
+
+    width: fit-content;
+    gap: 0.5rem;
+  }
+}
+
+/* One bordered pill: [ - value + ] */
+.stepper {
+  --icon-size: var(--touch-target);
+
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--button-secondary-border);
+  border-radius: var(--border-radius-default);
+  overflow: hidden;
+}
+
+.stepper .stepButton {
+  border: none;
+  border-radius: 0;
+}
+
+.value {
+  flex: 1;
+  min-width: 6rem;
+  text-align: center;
+  font-size: var(--font-size-base);
+}
+
+/* Equal-width segmented row */
+.presets {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.preset {
+  flex: 1;
+  min-height: var(--touch-target);
+}
+
+/* The primary variant has no border, so keep the secondary's 1px border
+   (transparent when active) to stop the row changing width. */
+.presets .preset {
+  border: 1px solid var(--button-secondary-border);
+
+  &.active {
+    border-color: transparent;
+  }
+}

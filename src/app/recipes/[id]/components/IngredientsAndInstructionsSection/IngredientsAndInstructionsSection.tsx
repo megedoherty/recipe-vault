@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 
+import { scaleQuantity } from '@/lib/utils/scale';
 import {
   InstructionSection,
   RecipeIngredientDisplay,
@@ -11,6 +12,7 @@ import {
 
 import IngredientsList from '../IngredientsList/IngredientsList';
 import InstructionsSection from '../InstructionsSection/InstructionsSection';
+import ServingsScaler from '../ServingsScaler/ServingsScaler';
 import styles from './IngredientsAndInstructionsSection.module.css';
 
 interface IngredientsAndInstructionsSectionProps {
@@ -22,6 +24,8 @@ interface IngredientsAndInstructionsSectionProps {
   instructions: InstructionSection[] | null;
   // Map of the ingredient ID to the ingredient info, used to display per step ingredients
   ingredientMap: Record<string, RecipeIngredientDisplay>;
+  // Servings the recipe was written for, used as the base for scaling
+  servings: number | null;
 }
 
 export default function IngredientsAndInstructionsSection({
@@ -29,8 +33,33 @@ export default function IngredientsAndInstructionsSection({
   ingredientSections,
   instructions,
   ingredientMap,
+  servings,
 }: IngredientsAndInstructionsSectionProps) {
   const [activeStep, setActiveStep] = useState<Step | null>(null);
+  const [selectedServings, setSelectedServings] = useState(servings ?? 0);
+  const canScale = servings != null && servings > 0;
+  const factor = canScale ? selectedServings / servings : 1;
+
+  const scaledIngredientSections = useMemo(
+    () =>
+      ingredientSections.map((section) => ({
+        ...section,
+        ingredients: section.ingredients.map((ingredient) => ({
+          ...ingredient,
+          quantity: scaleQuantity(ingredient.quantity, factor),
+        })),
+      })),
+    [ingredientSections, factor],
+  );
+  const scaledIngredientMap = useMemo(
+    () =>
+      Object.fromEntries(
+        scaledIngredientSections.flatMap((section) =>
+          section.ingredients.map((ingredient) => [ingredient.id, ingredient]),
+        ),
+      ),
+    [scaledIngredientSections],
+  );
   const allStepIds = useMemo(() => {
     return (
       instructions?.flatMap((instruction) =>
@@ -55,7 +84,14 @@ export default function IngredientsAndInstructionsSection({
     <>
       <section className={containerClassName}>
         <h2>Ingredients</h2>
-        {ingredientSections?.map((ingredientSection) => (
+        {canScale && (
+          <ServingsScaler
+            baseServings={servings}
+            servings={selectedServings}
+            onChange={setSelectedServings}
+          />
+        )}
+        {scaledIngredientSections.map((ingredientSection) => (
           <section key={ingredientSection.title}>
             {ingredientSection.title && (
               <h3 className={styles.title}>{ingredientSection.title}</h3>
@@ -69,7 +105,7 @@ export default function IngredientsAndInstructionsSection({
       </section>
       <InstructionsSection
         instructions={instructions}
-        ingredientMap={ingredientMap}
+        ingredientMap={canScale ? scaledIngredientMap : ingredientMap}
         updateActiveStep={(step) => setActiveStep(step)}
         getStepStatus={getStepStatus}
       />
