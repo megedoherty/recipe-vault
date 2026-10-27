@@ -1,6 +1,16 @@
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
+import { safeFetch } from '@/lib/utils/safeFetch';
+
+const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
+const IMAGE_EXTENSIONS: Record<string, string> = {
+  'image/jpeg': 'jpg',
+  'image/png': 'png',
+  'image/webp': 'webp',
+  'image/gif': 'gif',
+  'image/avif': 'avif',
+};
 
 export async function uploadImageFromUrl(
   imageUrl: string,
@@ -9,18 +19,29 @@ export async function uploadImageFromUrl(
   const supabase = await createClient();
 
   try {
-    // Fetch the image from the URL
-    const response = await fetch(imageUrl);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch image: ${response.statusText}`);
+    // Fetch the image (blocks internal addresses, caps size)
+    const response = await safeFetch(imageUrl, {
+      maxBytes: MAX_IMAGE_BYTES,
+      timeoutMs: 10000,
+    });
+    if (response.status < 200 || response.status >= 300) {
+      throw new Error(`Failed to fetch image: ${response.status}`);
     }
 
-    // Get the image as a blob
-    const blob = await response.blob();
+    // Only accept known image types; derive the extension from our own
+    // allowlist rather than trusting the remote content type
+    const contentType = String(response.headers['content-type'] ?? '')
+      .split(';')[0]
+      .trim()
+      .toLowerCase();
+    const extension = IMAGE_EXTENSIONS[contentType];
+    if (!extension) {
+      throw new Error(`Unsupported image type: ${contentType || 'unknown'}`);
+    }
+    const blob = new Blob([new Uint8Array(response.body)], {
+      type: contentType,
+    });
 
-    // Determine file extension from content type or URL
-    const contentType = response.headers.get('content-type') || 'image/jpeg';
-    const extension = contentType.split('/')[1] || 'jpg';
     // Timestamp keeps the public URL unique so browser/CDN caches don't serve a stale image
     const fileName = `${recipeId}-${Date.now()}.${extension}`;
 

@@ -10,6 +10,7 @@ import {
 } from '@/types';
 
 import { parseIngredients, parseInstructions } from '../../utils/parse';
+import { safeFetch } from '../../utils/safeFetch';
 import { getCategoryId } from './getCategory';
 import { findIngredientsOrInstructions } from './getIngredientsOrInstructions';
 import { getMealType } from './getMealType';
@@ -30,15 +31,12 @@ export async function parseRecipeFromUrl(
     throw new Error(`Invalid recipe URL: ${url}`);
   }
 
-  // 1. Fetch HTML (with a timeout so a hanging host can't block the action)
-  const FETCH_TIMEOUT_MS = 10000;
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
-
+  // 1. Fetch HTML. safeFetch blocks private/internal addresses and enforces a
+  // timeout and size limit so a hostile or hanging host can't abuse the action.
   let html: string;
   try {
-    const response = await fetch(url, {
-      signal: controller.signal,
+    const response = await safeFetch(url, {
+      timeoutMs: 10000,
       headers: {
         // Some recipe sites reject requests without a browser-like User-Agent.
         'User-Agent':
@@ -46,20 +44,16 @@ export async function parseRecipeFromUrl(
       },
     });
 
-    if (!response.ok) {
-      throw new Error(
-        `Failed to fetch recipe (${response.status} ${response.statusText})`,
-      );
+    if (response.status < 200 || response.status >= 300) {
+      throw new Error(`Failed to fetch recipe (${response.status})`);
     }
 
-    html = await response.text();
+    html = response.body.toString('utf-8');
   } catch (error) {
     if (error instanceof Error && error.name === 'AbortError') {
       throw new Error(`Timed out fetching recipe from ${url}`);
     }
     throw error;
-  } finally {
-    clearTimeout(timeout);
   }
 
   const $ = cheerio.load(html);
