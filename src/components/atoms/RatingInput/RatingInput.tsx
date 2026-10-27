@@ -6,12 +6,15 @@ interface RatingInputProps {
   rating: number;
   onRatingChange: (newRating: number) => void;
   isDisabled?: boolean;
+  // Display only: no interaction and no hover effect
+  readOnly?: boolean;
 }
 
 export default function RatingInput({
   rating,
   onRatingChange,
   isDisabled = false,
+  readOnly = false,
 }: RatingInputProps) {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -44,7 +47,9 @@ export default function RatingInput({
   };
 
   return (
-    <div className={styles.ratingSelect}>
+    <div
+      className={`${styles.ratingSelect} ${readOnly ? styles.readOnly : ''}`}
+    >
       {Array.from({ length: 5 }, (_, index) => {
         const starValue = index + 1;
         const isFilled = rating >= starValue;
@@ -61,7 +66,7 @@ export default function RatingInput({
               onChange={() => onRatingChange(starValue)}
               onKeyDown={(e) => handleKeyDown(e, index)}
               checked={rating === starValue}
-              disabled={isDisabled}
+              disabled={isDisabled || readOnly}
               className="sr-only"
             />
             <label htmlFor={`rating-${starValue}`} className={styles.label}>

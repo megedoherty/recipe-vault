@@ -46,6 +46,7 @@ type RecipeIngredientSectionBase<T> = {
 
 // The type used when querying for a single recipe
 export interface RecipeDisplayDb {
+  user_id: string | null;
   name: string;
   image_url: string | null;
   source_url: string | null;
@@ -72,6 +73,7 @@ export interface RecipeDisplayDb {
 
 // The type used on the FE when displaying a single recipe
 export interface RecipeDisplay {
+  userId: string | null;
   name: string;
   made: boolean;
   imageUrl: string | null;
@@ -98,6 +100,7 @@ export interface RecipeSummary {
 
 // The type used when querying for a recipe to edit it
 export interface EditableRecipeDb {
+  user_id: string | null;
   name: string;
   image_url: string | null;
   source_url: string | null;
@@ -128,6 +131,11 @@ export interface EditableRecipe {
   notes: string | null;
   mealTypeId: number | null;
   occasionId: number | null;
+}
+
+// A saved recipe being edited, which has an owner (parsed recipes don't)
+export interface SavedEditableRecipe extends EditableRecipe {
+  userId: string | null;
 }
 
 /**

@@ -4,7 +4,7 @@ import {
   getRecipeForDisplay,
   getRecipeIngredientsForDisplay,
 } from '@/lib/supabase/queries/recipes';
-import { isUserLoggedIn } from '@/lib/supabase/queries/user';
+import { canModifyRecipe, getUser } from '@/lib/supabase/queries/user';
 
 import CookingModeToggle from './components/CookingModeToggle/CookingModeToggle';
 import IngredientsAndInstructionsSection from './components/IngredientsAndInstructionsSection/IngredientsAndInstructionsSection';
@@ -16,10 +16,10 @@ export default async function RecipePage({
   params,
 }: PageProps<'/recipes/[id]'>) {
   const { id } = await params;
-  const [recipe, ingredientSections, isLoggedIn] = await Promise.all([
+  const [recipe, ingredientSections, user] = await Promise.all([
     getRecipeForDisplay(id),
     getRecipeIngredientsForDisplay(id),
-    isUserLoggedIn(),
+    getUser(),
   ]);
 
   const ingredients = ingredientSections.flatMap(
@@ -35,6 +35,8 @@ export default async function RecipePage({
 
   const { name, instructions, made, imageUrl, sourceUrl, rating, notes } =
     recipe;
+  // Only the owner (or an admin) can edit; everyone else gets a read-only view
+  const canEdit = canModifyRecipe(user, recipe.userId);
 
   return (
     <div className={styles.page}>
@@ -42,7 +44,8 @@ export default async function RecipePage({
         recipeId={id}
         name={name}
         sourceUrl={sourceUrl}
-        isLoggedIn={isLoggedIn}
+        isLoggedIn={!!user}
+        canEdit={canEdit}
         ingredients={ingredients}
       />
       <RecipeImageAndInfo
@@ -57,6 +60,7 @@ export default async function RecipePage({
         recipeId={id}
         made={made}
         rating={rating}
+        canEdit={canEdit}
       />
       <div className={styles.cookingMode}>
         <CookingModeToggle />

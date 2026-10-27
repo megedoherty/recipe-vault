@@ -8,11 +8,14 @@ import { toggleRecipeMade } from '@/lib/actions/recipes';
 interface MadeCheckboxProps {
   recipeId: string;
   initialChecked: boolean;
+  // Show the state but don't allow changing it
+  readOnly?: boolean;
 }
 
 export default function MadeCheckbox({
   recipeId,
   initialChecked,
+  readOnly = false,
 }: MadeCheckboxProps) {
   const [isPending, startTransition] = useTransition();
   const [checked, setChecked] = useState(initialChecked);
@@ -35,7 +38,7 @@ export default function MadeCheckbox({
       name="made"
       checked={checked}
       onChange={handleChange}
-      disabled={isPending}
+      disabled={isPending || readOnly}
       alignItems="center"
     />
   );

@@ -13,6 +13,7 @@ const defaultProps = {
   made: false,
   rating: 3,
   ingredients: [],
+  canEdit: true,
 };
 
 describe('RecipeHeader', () => {
@@ -28,6 +29,21 @@ describe('RecipeHeader', () => {
     expect(
       screen.getByRole('button', { name: 'Delete recipe' }),
     ).toBeInTheDocument();
+  });
+
+  it('should hide the edit, refresh and delete buttons if the user cannot edit', () => {
+    render(
+      <RecipeHeader {...defaultProps} isLoggedIn={true} canEdit={false} />,
+    );
+    expect(
+      screen.queryByRole('link', { name: 'Edit recipe' }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('link', { name: 'Refresh recipe from source' }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Delete recipe' }),
+    ).not.toBeInTheDocument();
   });
 
   it('should hide the edit and delete buttons if not logged in', () => {

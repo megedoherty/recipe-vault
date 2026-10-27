@@ -8,11 +8,14 @@ import { updateRecipeRating } from '@/lib/actions/recipes';
 interface RatingInputFormProps {
   recipeId: string;
   initialRating: number | null;
+  // Show the rating but don't allow changing it
+  readOnly?: boolean;
 }
 
 export default function RatingInputForm({
   recipeId,
   initialRating,
+  readOnly = false,
 }: RatingInputFormProps) {
   const [rating, setRating] = useState(initialRating || 0);
   const [isPending, startTransition] = useTransition();
@@ -34,6 +37,7 @@ export default function RatingInputForm({
         rating={rating}
         onRatingChange={handleChange}
         isDisabled={isPending}
+        readOnly={readOnly}
       />
     </form>
   );

@@ -16,6 +16,8 @@ interface RecipeHeaderProps {
   sourceUrl: string | null;
   // Whether the user is logged in
   isLoggedIn: boolean;
+  // Whether the user can edit or delete the recipe (owner or admin)
+  canEdit: boolean;
   // The recipe ingredients
   ingredients: RecipeIngredientDisplay[];
 }
@@ -25,6 +27,7 @@ export default function RecipeHeader({
   name,
   sourceUrl,
   isLoggedIn,
+  canEdit,
   ingredients,
 }: RecipeHeaderProps) {
   return (
@@ -33,14 +36,16 @@ export default function RecipeHeader({
         <h1>{name}</h1>
         {isLoggedIn && (
           <div className={styles.headerButtons}>
-            <Button
-              href={`/recipes/${recipeId}/edit`}
-              aria-label="Edit recipe"
-              iconOnly
-            >
-              <Pencil />
-            </Button>
-            {sourceUrl && (
+            {canEdit && (
+              <Button
+                href={`/recipes/${recipeId}/edit`}
+                aria-label="Edit recipe"
+                iconOnly
+              >
+                <Pencil />
+              </Button>
+            )}
+            {canEdit && sourceUrl && (
               <Button
                 href={`/recipes/${recipeId}/edit?refresh=1`}
                 aria-label="Refresh recipe from source"
@@ -54,7 +59,7 @@ export default function RecipeHeader({
               recipeId={recipeId}
               recipeName={name}
             />
-            <DeleteButton recipeId={recipeId} />
+            {canEdit && <DeleteButton recipeId={recipeId} />}
           </div>
         )}
       </header>

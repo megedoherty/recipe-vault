@@ -18,6 +18,8 @@ interface RecipeImageAndInfoProps {
   recipeId: string;
   made: boolean;
   rating: number | null;
+  // Whether the user can change the made checkbox and rating
+  canEdit: boolean;
 }
 
 export default function RecipeImageAndInfo({
@@ -32,6 +34,7 @@ export default function RecipeImageAndInfo({
   recipeId,
   made,
   rating,
+  canEdit,
 }: RecipeImageAndInfoProps) {
   return (
     <div className={styles.container}>
@@ -50,8 +53,16 @@ export default function RecipeImageAndInfo({
       <aside>
         <div className={styles.infoContainer}>
           <div className={styles.personalInfo}>
-            <MadeCheckbox recipeId={recipeId} initialChecked={made} />
-            <RatingInput recipeId={recipeId} initialRating={rating} />
+            <MadeCheckbox
+              recipeId={recipeId}
+              initialChecked={made}
+              readOnly={!canEdit}
+            />
+            <RatingInput
+              recipeId={recipeId}
+              initialRating={rating}
+              readOnly={!canEdit}
+            />
           </div>
           <dl className={styles.infoContainer}>
             {mealType && (

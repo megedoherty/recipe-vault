@@ -1,10 +1,10 @@
 import { PAGE_SIZE, SortOption } from '@/constants';
 import {
-  EditableRecipe,
   RecipeDisplay,
   RecipeIngredientSections,
   RecipeIngredientSectionsEditable,
   RecipeSummary,
+  SavedEditableRecipe,
   ServingsRange,
 } from '@/types';
 
@@ -23,7 +23,7 @@ export async function getRecipeForDisplay(
   const { data } = await supabase
     .from('recipe')
     .select(
-      'image_url, instructions, name, made, rating, source_url, category(name), instruction_section_order, recipe_equipment(equipment(name)), servings, storage, notes, meal_type(name), occasion(name)',
+      'user_id, image_url, instructions, name, made, rating, source_url, category(name), instruction_section_order, recipe_equipment(equipment(name)), servings, storage, notes, meal_type(name), occasion(name)',
     )
     .eq('id', id)
     .single();
@@ -33,12 +33,12 @@ export async function getRecipeForDisplay(
 
 export async function getRecipeForEdit(
   id: string,
-): Promise<EditableRecipe | null> {
+): Promise<SavedEditableRecipe | null> {
   const supabase = await createClient();
   const { data } = await supabase
     .from('recipe')
     .select(
-      'name, image_url, source_url, instructions, category_id, ingredient_section_order, instruction_section_order, recipe_equipment(equipment_id), servings, storage, notes, meal_type_id, occasion_id',
+      'user_id, name, image_url, source_url, instructions, category_id, ingredient_section_order, instruction_section_order, recipe_equipment(equipment_id), servings, storage, notes, meal_type_id, occasion_id',
     )
     .eq('id', id)
     .single();

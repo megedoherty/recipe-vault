@@ -13,7 +13,7 @@ import {
   getRecipeForEdit,
   getRecipeIngredientsForEdit,
 } from '@/lib/supabase/queries/recipes';
-import { isUserLoggedIn } from '@/lib/supabase/queries/user';
+import { canModifyRecipe, getUser } from '@/lib/supabase/queries/user';
 import { mergeRefreshedRecipe } from '@/lib/utils/refresh';
 import { EditableRecipe, RecipeIngredientSectionsEditable } from '@/types';
 
@@ -43,14 +43,19 @@ export default async function EditRecipePage({
     getOccasions(),
   ]);
 
-  const isLoggedIn = await isUserLoggedIn();
+  const user = await getUser();
 
-  if (!isLoggedIn) {
+  if (!user) {
     redirect('/auth/login');
   }
 
   if (recipe === null) {
     return <div>Recipe not found</div>;
+  }
+
+  // Only the owner (or an admin) can edit; send everyone else to the read-only view
+  if (!canModifyRecipe(user, recipe.userId)) {
+    redirect(`/recipes/${id}`);
   }
 
   let initialRecipe: EditableRecipe = recipe;

@@ -1,8 +1,10 @@
 'use server';
 
+import { User } from '@supabase/supabase-js';
 import { redirect } from 'next/navigation';
 
 import { uploadImageFromUrl } from '@/lib/actions/images';
+import { canModifyRecipe, getUser } from '@/lib/supabase/queries/user';
 import { createClient } from '@/lib/supabase/server';
 import {
   InstructionSection,
@@ -16,6 +18,27 @@ interface ActionsResponse {
   success: boolean;
   error?: string;
 }
+
+/**
+ * Returns the recipe's image URL if the signed-in user may modify it (they own
+ * it, or they are an admin), otherwise null.
+ */
+const getModifiableRecipe = async (
+  user: User,
+  recipeId: string,
+): Promise<{ image_url: string | null } | null> => {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from('recipe')
+    .select('image_url, user_id')
+    .eq('id', recipeId)
+    .maybeSingle();
+
+  if (!data || !canModifyRecipe(user, data.user_id)) {
+    return null;
+  }
+  return data;
+};
 
 /**
  * Removes empty steps from instruction sections and removes sections
@@ -263,14 +286,20 @@ export async function updateRecipe(
     .map((s) => s.title)
     .filter((title) => title !== null);
 
+  const user = await getUser();
+  if (!user) {
+    return { success: false, error: 'User not found' };
+  }
+
   const supabase = await createClient();
 
-  // Get current recipe to compare image URL
-  const { data: currentRecipe } = await supabase
-    .from('recipe')
-    .select('image_url')
-    .eq('id', recipeId)
-    .single();
+  // Confirm the user may modify this recipe before touching it or its
+  // children (ingredients, equipment, images), and get its image URL to compare
+  const currentRecipe = await getModifiableRecipe(user, recipeId);
+
+  if (!currentRecipe) {
+    return { success: false, error: 'Recipe not found' };
+  }
 
   const currentImageUrl = currentRecipe?.image_url || '';
 
@@ -338,7 +367,10 @@ export async function updateRecipe(
 
   if (error || !recipeData) {
     console.error(error);
-    return { success: false, error: error.message };
+    return {
+      success: false,
+      error: error?.message ?? 'Failed to update recipe',
+    };
   }
 
   // Remove the previous image from storage now that the recipe points to the new one
@@ -431,6 +463,14 @@ export async function toggleRecipeMade(
   recipeId: string,
   made: boolean,
 ): Promise<void> {
+  const user = await getUser();
+  if (!user) {
+    throw new Error('User not found');
+  }
+  if (!(await getModifiableRecipe(user, recipeId))) {
+    throw new Error('Recipe not found');
+  }
+
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('recipe')
@@ -451,6 +491,18 @@ export async function updateRecipeRating(
   recipeId: string,
   rating: number,
 ): Promise<void> {
+  if (!Number.isInteger(rating) || rating < 0 || rating > 5) {
+    throw new Error('Invalid rating');
+  }
+
+  const user = await getUser();
+  if (!user) {
+    throw new Error('User not found');
+  }
+  if (!(await getModifiableRecipe(user, recipeId))) {
+    throw new Error('Recipe not found');
+  }
+
   const supabase = await createClient();
   const { error } = await supabase
     .from('recipe')
@@ -466,6 +518,14 @@ export async function updateRecipeRating(
  * Delete a recipe from the database.
  */
 export async function deleteRecipe(recipeId: string): Promise<void> {
+  const user = await getUser();
+  if (!user) {
+    throw new Error('User not found');
+  }
+  if (!(await getModifiableRecipe(user, recipeId))) {
+    throw new Error('Recipe not found');
+  }
+
   const supabase = await createClient();
   const { data: recipe, error: recipeError } = await supabase
     .from('recipe')

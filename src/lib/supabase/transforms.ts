@@ -1,6 +1,5 @@
 import { storageLocations } from '@/constants';
 import {
-  EditableRecipe,
   EditableRecipeDb,
   InstructionSection,
   isStorageLocation,
@@ -10,6 +9,7 @@ import {
   RecipeIngredientDisplayDb,
   RecipeIngredientSections,
   RecipeIngredientSectionsEditable,
+  SavedEditableRecipe,
   ShoppingListItem,
   ShoppingListItemDb,
   Step,
@@ -96,6 +96,7 @@ export function transformRecipe(recipe: RecipeDisplayDb): RecipeDisplay {
     : [];
 
   return {
+    userId: recipe.user_id,
     name: recipe.name,
     made: recipe.made,
     imageUrl: recipe.image_url,
@@ -114,7 +115,7 @@ export function transformRecipe(recipe: RecipeDisplayDb): RecipeDisplay {
 
 export function transformRecipeForEdit(
   recipe: EditableRecipeDb,
-): EditableRecipe {
+): SavedEditableRecipe {
   const rawInstructions = isValidInstructionSection(recipe.instructions)
     ? (recipe.instructions as InstructionSection[])
     : [];
@@ -143,6 +144,7 @@ export function transformRecipeForEdit(
   }
 
   return {
+    userId: recipe.user_id,
     name: recipe.name,
     imageUrl: recipe.image_url,
     sourceUrl: recipe.source_url,

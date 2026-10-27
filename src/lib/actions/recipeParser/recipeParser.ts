@@ -2,6 +2,7 @@
 
 import * as cheerio from 'cheerio';
 
+import { getUser } from '@/lib/supabase/queries/user';
 import {
   Category,
   IngredientForRecipeEdit,
@@ -24,6 +25,10 @@ export async function parseRecipeFromUrl(
   categories: Category[],
   mealTypes: MealType[],
 ): Promise<ParsedRecipe> {
+  if (!(await getUser())) {
+    throw new Error('User not found');
+  }
+
   let baseUrl: string;
   try {
     baseUrl = new URL(url).origin;

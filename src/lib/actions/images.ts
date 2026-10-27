@@ -1,5 +1,6 @@
 'use server';
 
+import { getUser } from '@/lib/supabase/queries/user';
 import { createClient } from '@/lib/supabase/server';
 import { safeFetch } from '@/lib/utils/safeFetch';
 
@@ -16,6 +17,10 @@ export async function uploadImageFromUrl(
   imageUrl: string,
   recipeId: string,
 ): Promise<string | null> {
+  if (!(await getUser())) {
+    return null;
+  }
+
   const supabase = await createClient();
 
   try {
