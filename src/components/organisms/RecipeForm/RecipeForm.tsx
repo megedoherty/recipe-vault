@@ -94,7 +94,15 @@ export default function RecipeForm({
   };
 
   const allIngredients = useMemo(() => {
-    return ingredientSections.flatMap((section) => section.ingredients);
+    // Derive each ingredient's section from its parent section's current title,
+    // since ingredient.section is only a snapshot and goes stale when the
+    // section title is edited (or the ingredient was created before it was named).
+    return ingredientSections.flatMap((section) =>
+      section.ingredients.map((ingredient) => ({
+        ...ingredient,
+        section: section.title,
+      })),
+    );
   }, [ingredientSections]);
 
   return (
