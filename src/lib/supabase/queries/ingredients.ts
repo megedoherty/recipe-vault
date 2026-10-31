@@ -165,3 +165,94 @@ export async function getIngredientsForSearch(): Promise<
 
   return buildWithDepth(rootItems, transformed, parentToDescendants, 0);
 }
+
+function toIngredientDb(ing: {
+  id: number;
+  name: string;
+  category: string;
+  parent_id: number | null;
+}): IngredientDb {
+  return {
+    id: ing.id.toString(),
+    name: ing.name,
+    category: ing.category,
+    parentId: ing.parent_id?.toString() ?? '',
+  };
+}
+
+/** All ingredients, flat, for the admin Manage page. */
+export async function getIngredientsForManage(): Promise<IngredientDb[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from('ingredient')
+    .select('id, name, category, parent_id')
+    .order('name', { ascending: true });
+
+  return data?.map(toIngredientDb) ?? [];
+}
+
+export async function addIngredient(
+  input: Omit<IngredientDb, 'id'>,
+): Promise<IngredientDb> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('ingredient')
+    .insert({
+      name: input.name,
+      category: input.category,
+      parent_id: input.parentId ? Number(input.parentId) : null,
+    })
+    .select('id, name, category, parent_id')
+    .single();
+
+  if (error || !data) {
+    console.error(error);
+    throw error;
+  }
+
+  return toIngredientDb(data);
+}
+
+export async function updateIngredient(
+  id: string,
+  input: Omit<IngredientDb, 'id'>,
+) {
+  const supabase = await createClient();
+
+  if (input.parentId) {
+    // Walk up from the proposed parent; reaching `id` would create a cycle.
+    const { data: all } = await supabase
+      .from('ingredient')
+      .select('id, parent_id');
+    const parentOf = new Map(all?.map((i) => [i.id.toString(), i.parent_id]));
+    let current: string | undefined = input.parentId;
+    while (current) {
+      if (current === id) {
+        throw new Error('An ingredient cannot be its own ancestor');
+      }
+      const next: number | null | undefined = parentOf.get(current);
+      current = next?.toString();
+    }
+  }
+
+  const { error } = await supabase
+    .from('ingredient')
+    .update({
+      name: input.name,
+      category: input.category,
+      parent_id: input.parentId ? Number(input.parentId) : null,
+    })
+    .eq('id', Number(id));
+
+  if (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function getIngredientCategories(): Promise<string[]> {
+  const supabase = await createClient();
+  const { data } = await supabase.from('ingredient').select('category');
+
+  return Array.from(new Set(data?.map((i) => i.category))).sort();
+}

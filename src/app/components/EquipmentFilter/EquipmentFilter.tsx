@@ -3,6 +3,8 @@ import { RefObject, useEffect, useState } from 'react';
 import SelectableSearchPopover from '@/components/molecules/SelectableSearchPopover/SelectableSearchPopover';
 import { Equipment } from '@/types';
 
+const EMPTY: string[] = [];
+
 interface EquipmentFilterProps {
   equipment: Equipment[];
   initialValue?: string[];
@@ -13,18 +15,13 @@ interface EquipmentFilterProps {
 
 export default function EquipmentFilter({
   equipment,
-  initialValue = [],
+  initialValue = EMPTY,
   buttonClassName,
   updateActiveFilters,
   formRef,
 }: EquipmentFilterProps) {
   const [selectedEquipment, setSelectedEquipment] =
     useState<string[]>(initialValue);
-
-  // Sync state when initialValue changes (e.g., when form is cleared)
-  useEffect(() => {
-    setSelectedEquipment(initialValue);
-  }, [initialValue]);
 
   // Update parent component when selected equipment changes
   useEffect(() => {

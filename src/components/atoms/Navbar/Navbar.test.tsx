@@ -1,15 +1,20 @@
+import { User } from '@supabase/supabase-js';
 import { render, screen } from '@testing-library/react';
 
-import { isUserLoggedIn } from '@/lib/supabase/queries/user';
+import { getUser, isAdmin } from '@/lib/supabase/queries/user';
 
 import Navbar from './Navbar';
 
 jest.mock('@/lib/supabase/queries/user', () => ({
-  isUserLoggedIn: jest.fn(),
+  getUser: jest.fn(),
+  isAdmin: jest.fn(),
 }));
 
-const renderNavbar = async (loggedIn: boolean) => {
-  jest.mocked(isUserLoggedIn).mockResolvedValue(loggedIn);
+const renderNavbar = async (loggedIn: boolean, admin = false) => {
+  jest
+    .mocked(getUser)
+    .mockResolvedValue(loggedIn ? ({ id: 'user-1' } as User) : null);
+  jest.mocked(isAdmin).mockReturnValue(admin);
   render(await Navbar());
 };
 
@@ -17,8 +22,14 @@ const getLinkHrefs = () =>
   screen.getAllByRole('link').map((link) => link.getAttribute('href'));
 
 describe('Navbar', () => {
-  it('shows app links and hides auth links when logged in', async () => {
+  it('shows app links (but not Manage) and hides auth links for a non-admin', async () => {
     await renderNavbar(true);
+
+    expect(getLinkHrefs()).toEqual(['/', '/recipes/add', '/shopping-list']);
+  });
+
+  it('shows the Manage link to admins', async () => {
+    await renderNavbar(true, true);
 
     expect(getLinkHrefs()).toEqual([
       '/',

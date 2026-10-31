@@ -6,24 +6,19 @@ import {
   addCategory as addCategoryQuery,
   updateCategory as updateCategoryQuery,
 } from '@/lib/supabase/queries/categories';
-import { getUser } from '@/lib/supabase/queries/user';
 import { Category } from '@/types';
 
-async function requireUser() {
-  if (!(await getUser())) {
-    throw new Error('User not found');
-  }
-}
+import { requireAdmin } from './requireAdmin';
 
 export async function addCategory(name: string): Promise<Category | null> {
-  await requireUser();
-  const category = await addCategoryQuery(name);
+  await requireAdmin();
+  const category = await addCategoryQuery(name.trim());
   revalidatePath('/manage');
   return category;
 }
 
 export async function updateCategory(id: number, name: string) {
-  await requireUser();
-  await updateCategoryQuery({ id, name });
+  await requireAdmin();
+  await updateCategoryQuery({ id, name: name.trim() });
   revalidatePath('/manage');
 }

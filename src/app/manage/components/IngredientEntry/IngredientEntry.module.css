@@ -1,0 +1,44 @@
+.item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  background-color: var(--background-card);
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius-default);
+}
+
+.item:has(.fields) {
+  align-items: flex-start;
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 0.5rem;
+  min-width: 12rem;
+}
+
+.editButtons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.name {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.meta {
+  font-size: var(--font-size-small);
+  opacity: 0.7;
+}
+
+.error {
+  flex-basis: 100%;
+  color: var(--error);
+  font-size: var(--font-size-small);
+}

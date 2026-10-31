@@ -5,6 +5,8 @@ import { RefObject, useEffect, useState } from 'react';
 import SelectableSearchPopover from '@/components/molecules/SelectableSearchPopover/SelectableSearchPopover';
 import { IngredientForSearch } from '@/types';
 
+const EMPTY: string[] = [];
+
 interface IngredientFilterProps {
   // The type of filter (Include or Exclude ingredients)
   type: 'Include' | 'Exclude';
@@ -23,7 +25,7 @@ interface IngredientFilterProps {
 export default function IngredientFilter({
   type,
   ingredients,
-  initialValue = [],
+  initialValue = EMPTY,
   buttonClassName,
   updateActiveFilters,
   formRef,
@@ -35,10 +37,6 @@ export default function IngredientFilter({
   const buttonTextPrefix = `${type} Ingredients`;
   const popoverId = `${type}-ingredients-popover`;
   const searchId = `${type}-ingredients-search`;
-
-  useEffect(() => {
-    setSelectedIngredients(initialValue);
-  }, [initialValue]);
 
   useEffect(() => {
     if (!formRef?.current) {

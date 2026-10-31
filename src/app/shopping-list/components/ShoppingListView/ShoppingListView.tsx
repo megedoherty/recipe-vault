@@ -2,6 +2,7 @@
 
 import { useOptimistic, useState } from 'react';
 
+import Tabs from '@/components/atoms/Tabs/Tabs';
 import { setPreferGramsCookie } from '@/lib/utils/preferences';
 import { groupByRecipe, groupCombined } from '@/lib/utils/shoppingList';
 import { ShoppingListItem } from '@/types';
@@ -15,8 +16,6 @@ interface ShoppingListViewProps {
   items: ShoppingListItem[];
   initialPreferGrams: boolean;
 }
-
-type Tab = 'combined' | 'byRecipe';
 
 export type OptimisticShoppingListAction =
   | { type: 'setPurchased'; itemIds: string[]; purchased: boolean }
@@ -45,7 +44,6 @@ export default function ShoppingListView({
   items,
   initialPreferGrams,
 }: ShoppingListViewProps) {
-  const [tab, setTab] = useState<Tab>('combined');
   const [preferGrams, setPreferGrams] = useState(initialPreferGrams);
   const [optimisticItems, dispatchOptimistic] = useOptimistic(
     items,
@@ -71,40 +69,34 @@ export default function ShoppingListView({
           onClear={() => dispatchOptimistic({ type: 'clear' })}
         />
       </div>
-      <div role="tablist" className={styles.tabList}>
-        <button
-          role="tab"
-          type="button"
-          aria-selected={tab === 'combined'}
-          className={styles.tab}
-          onClick={() => setTab('combined')}
-        >
-          Combined
-        </button>
-        <button
-          role="tab"
-          type="button"
-          aria-selected={tab === 'byRecipe'}
-          className={styles.tab}
-          onClick={() => setTab('byRecipe')}
-        >
-          By Recipe
-        </button>
-      </div>
-      {tab === 'combined' ? (
-        <CombinedShoppingList
-          items={combined}
-          onOptimisticUpdate={dispatchOptimistic}
-          preferGrams={preferGrams}
-          onToggleUnits={handleToggleUnits}
-        />
-      ) : (
-        <RecipeGroupedShoppingList
-          groups={byRecipe}
-          combinedItems={combined}
-          onOptimisticUpdate={dispatchOptimistic}
-        />
-      )}
+      <Tabs
+        label="Shopping list view"
+        tabs={[
+          {
+            id: 'combined',
+            label: 'Combined',
+            content: (
+              <CombinedShoppingList
+                items={combined}
+                onOptimisticUpdate={dispatchOptimistic}
+                preferGrams={preferGrams}
+                onToggleUnits={handleToggleUnits}
+              />
+            ),
+          },
+          {
+            id: 'byRecipe',
+            label: 'By Recipe',
+            content: (
+              <RecipeGroupedShoppingList
+                groups={byRecipe}
+                combinedItems={combined}
+                onOptimisticUpdate={dispatchOptimistic}
+              />
+            ),
+          },
+        ]}
+      />
     </div>
   );
 }
