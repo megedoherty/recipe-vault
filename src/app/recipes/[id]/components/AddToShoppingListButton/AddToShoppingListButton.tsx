@@ -1,37 +1,37 @@
 'use client';
 
 import { List } from 'lucide-react';
-import { ChangeEvent, useRef, useState, useTransition } from 'react';
+import { useRef, useState, useTransition } from 'react';
 
 import Button from '@/components/atoms/Button/Button';
-import Checkbox from '@/components/atoms/Checkbox/Checkbox';
 import Dialog, { DialogRef } from '@/components/molecules/Dialog/Dialog';
 import { addToShoppingList } from '@/lib/actions/shoppingList';
-import { resolveCombinedQuantity } from '@/lib/utils/shoppingList';
-import { sortByIngredientCategory } from '@/lib/utils/sort';
-import { RecipeIngredientDisplay } from '@/types';
+import {
+  applySwaps,
+  CombinedIngredients,
+  combineIngredients,
+  IngredientSwaps,
+  updateSwaps,
+} from '@/lib/utils/shoppingListSwaps';
+import { IngredientForRecipeEdit, RecipeIngredientDisplay } from '@/types';
 
 import styles from './AddToShoppingListButton.module.css';
-
-interface CombinedIngredients {
-  ingredientId: string;
-  name: string;
-  category: string;
-  quantity: number | null;
-  unit: string | null;
-  sourceIngredients: RecipeIngredientDisplay[];
-}
+import IngredientSwapPicker from './components/IngredientSwapPicker/IngredientSwapPicker';
+import ShoppingListIngredients from './components/ShoppingListIngredients/ShoppingListIngredients';
 
 interface AddToShoppingListButtonProps {
   ingredients: RecipeIngredientDisplay[];
   recipeId: string;
   recipeName: string;
+  // Ingredients a line can be swapped for (e.g. all-purpose flour -> GF flour)
+  ingredientOptions?: IngredientForRecipeEdit[];
 }
 
 export default function AddToShoppingListButton({
   ingredients,
   recipeId,
   recipeName,
+  ingredientOptions = [],
 }: AddToShoppingListButtonProps) {
   const dialogRef = useRef<DialogRef>(null);
   const [isPending, startTransition] = useTransition();
@@ -39,42 +39,24 @@ export default function AddToShoppingListButton({
     () => new Set(ingredients.map((ingredient) => ingredient.id)),
   );
   const [error, setError] = useState<string | null>(null);
-
-  const selectedIngredients = ingredients.filter((ingredient) =>
-    selectedIds.has(ingredient.id),
+  // Swapped ingredient per recipe ingredient line id
+  const [swaps, setSwaps] = useState<IngredientSwaps>({});
+  // The combined row being swapped; when set, the dialog shows the swap picker
+  const [swapTarget, setSwapTarget] = useState<CombinedIngredients | null>(
+    null,
   );
 
-  // Combine selected ingredients with the same normalized ingredient id
-  const combinedIngredients = Object.groupBy(
-    selectedIngredients,
-    (ingredient) => ingredient.normalizedIngredientId?.toString() ?? '',
+  const originalsById = new Map(
+    ingredients.map((ingredient) => [ingredient.id, ingredient]),
   );
 
-  const combinedIngredientsList: CombinedIngredients[] = Object.entries(
-    combinedIngredients,
-  )
-    .map(([ingredientId, ingredients]) => {
-      if (!ingredients || ingredients.length === 0) {
-        return null;
-      }
-
-      const [quantity, unit] = resolveCombinedQuantity(ingredients, true);
-
-      return {
-        ingredientId,
-        category: ingredients[0].category,
-        name: ingredients[0].normalizedIngredientName ?? ingredients[0].name,
-        quantity,
-        unit,
-        sourceIngredients: ingredients,
-      };
-    })
-    .filter((ingredient) => ingredient !== null);
-
-  const ingredientsByCategory = Object.groupBy(
-    sortByIngredientCategory(combinedIngredientsList),
-    (ingredient) => ingredient.category,
+  // Apply swaps before combining so a swapped line merges with any line that
+  // already uses the replacement ingredient.
+  const selectedIngredients = applySwaps(
+    ingredients.filter((ingredient) => selectedIds.has(ingredient.id)),
+    swaps,
   );
+  const combinedIngredients = combineIngredients(selectedIngredients);
 
   const toggleIngredient = (id: string, checked: boolean) => {
     setSelectedIds((prev) => {
@@ -86,6 +68,23 @@ export default function AddToShoppingListButton({
       }
       return next;
     });
+  };
+
+  const closeSwapView = () => setSwapTarget(null);
+
+  const chooseSwap = (optionId: string) => {
+    if (swapTarget) {
+      const option = ingredientOptions.find((o) => o.id === optionId);
+      setSwaps((prev) =>
+        updateSwaps(
+          prev,
+          swapTarget.sourceIngredients.map((source) => source.id),
+          option,
+          originalsById,
+        ),
+      );
+    }
+    closeSwapView();
   };
 
   const handleConfirm = () => {
@@ -116,63 +115,55 @@ export default function AddToShoppingListButton({
       </Button>
       <Dialog
         ref={dialogRef}
-        title="Shopping List"
-        onClose={() => dialogRef.current?.close()}
+        className={styles.dialog}
+        title={swapTarget ? `Replace ${swapTarget.name}` : 'Shopping List'}
+        onClose={() => {
+          closeSwapView();
+          dialogRef.current?.close();
+        }}
         footer={
-          <>
-            <Button
-              onClick={handleConfirm}
-              disabled={isPending || selectedIds.size === 0}
-            >
-              Add to List
+          swapTarget ? (
+            <Button variant="secondary" onClick={closeSwapView}>
+              Back
             </Button>
-            <Button
-              variant="secondary"
-              onClick={() => dialogRef.current?.close()}
-            >
-              Cancel
-            </Button>
-          </>
+          ) : (
+            <>
+              <Button
+                onClick={handleConfirm}
+                disabled={isPending || selectedIds.size === 0}
+              >
+                Add to List
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={() => dialogRef.current?.close()}
+              >
+                Cancel
+              </Button>
+            </>
+          )
         }
       >
-        <p>Choose which ingredients to add to your shopping list:</p>
-        {error && <p className={styles.error}>{error}</p>}
-        <ul className={styles.categoriesList}>
-          {Object.entries(ingredientsByCategory).map(
-            ([category, ingredients]) => (
-              <li key={category}>
-                <h3>{category}</h3>
-                <ul className={styles.ingredientList}>
-                  {ingredients?.map((ingredient) => (
-                    <li key={ingredient.ingredientId}>
-                      <div className={styles.ingredient}>
-                        {ingredient.quantity
-                          ? `${ingredient.quantity} ${ingredient.unit}`
-                          : null}{' '}
-                        {ingredient.name}
-                        <small className={styles.lines}>
-                          {ingredient.sourceIngredients.map((source) => (
-                            <Checkbox
-                              key={source.id}
-                              label={`${source.quantity ?? ''} ${source.name}`.trim()}
-                              labelSize="small"
-                              checkboxSize="small"
-                              containerClassName={styles.line}
-                              checked={selectedIds.has(source.id)}
-                              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                                toggleIngredient(source.id, e.target.checked)
-                              }
-                            />
-                          ))}
-                        </small>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </li>
-            ),
-          )}
-        </ul>
+        {swapTarget ? (
+          <IngredientSwapPicker
+            target={swapTarget}
+            options={ingredientOptions}
+            isSwapped={swapTarget.sourceIngredients.some(
+              (source) => swaps[source.id],
+            )}
+            onChoose={chooseSwap}
+          />
+        ) : (
+          <ShoppingListIngredients
+            combinedIngredients={combinedIngredients}
+            originalsById={originalsById}
+            swaps={swaps}
+            selectedIds={selectedIds}
+            error={error}
+            onToggle={toggleIngredient}
+            onSwap={setSwapTarget}
+          />
+        )}
       </Dialog>
     </>
   );

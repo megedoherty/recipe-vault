@@ -27,7 +27,7 @@ export default function Checkbox({
 
   return (
     <div
-      className={`${containerClassName} ${styles.container} ${styles[checkboxSize]} ${styles[`align-${alignItems}`]}`}
+      className={`${containerClassName} ${styles.container} ${styles[checkboxSize]} ${styles[`label-${labelSize}`]} ${styles[`align-${alignItems}`]}`}
     >
       <input
         type="checkbox"

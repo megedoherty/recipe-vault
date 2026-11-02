@@ -12,6 +12,14 @@
     --check-font-size: 0.75rem;
   }
 
+  &.label-medium {
+    --label-line-height: calc(var(--font-size-base) * var(--line-height-base));
+  }
+
+  &.label-small {
+    --label-line-height: calc(var(--font-size-small) * var(--line-height-base));
+  }
+
   &.align-start {
     align-items: flex-start;
   }
@@ -50,6 +58,13 @@
     transform: translate(-50%, -50%);
     font-size: var(--check-font-size);
   }
+}
+
+/* Center the box on the label's first line */
+.container.align-start .checkbox {
+  margin-block-start: calc(
+    (var(--label-line-height) - var(--checkbox-size)) / 2
+  );
 }
 
 .label {

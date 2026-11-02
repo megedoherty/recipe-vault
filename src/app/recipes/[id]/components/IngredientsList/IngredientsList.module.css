@@ -8,10 +8,6 @@
 }
 
 .checkbox {
-  margin-block-start: calc(5 / 16 * 1rem);
-  height: var(--font-size-base);
-  width: var(--font-size-base);
-
   &:checked + label {
     text-decoration: line-through;
   }

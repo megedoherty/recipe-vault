@@ -1,7 +1,7 @@
 import { Pencil, RefreshCw } from 'lucide-react';
 
 import Button from '@/components/atoms/Button/Button';
-import { RecipeIngredientDisplay } from '@/types';
+import { IngredientForRecipeEdit, RecipeIngredientDisplay } from '@/types';
 
 import AddToShoppingListButton from '../AddToShoppingListButton/AddToShoppingListButton';
 import DeleteButton from '../DeleteButton/DeleteButton';
@@ -20,6 +20,8 @@ interface RecipeHeaderProps {
   canEdit: boolean;
   // The recipe ingredients
   ingredients: RecipeIngredientDisplay[];
+  // Ingredients a shopping list line can be swapped for
+  ingredientOptions?: IngredientForRecipeEdit[];
 }
 
 export default function RecipeHeader({
@@ -29,6 +31,7 @@ export default function RecipeHeader({
   isLoggedIn,
   canEdit,
   ingredients,
+  ingredientOptions,
 }: RecipeHeaderProps) {
   return (
     <div className={styles.container}>
@@ -58,6 +61,7 @@ export default function RecipeHeader({
               ingredients={ingredients}
               recipeId={recipeId}
               recipeName={name}
+              ingredientOptions={ingredientOptions}
             />
             {canEdit && <DeleteButton recipeId={recipeId} />}
           </div>

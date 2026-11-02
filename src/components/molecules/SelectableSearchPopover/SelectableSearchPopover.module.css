@@ -54,8 +54,6 @@
 }
 
 .checkbox {
-  margin-block-start: 0.25rem;
-
   &.indent-0 {
     margin-inline-start: 0;
   }

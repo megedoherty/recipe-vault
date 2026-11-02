@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 
+import { getIngredientsForRecipeEdit } from '@/lib/supabase/queries/ingredients';
 import {
   getRecipeForDisplay,
   getRecipeIngredientsForDisplay,
@@ -17,11 +18,19 @@ export default async function RecipePage({
   params,
 }: PageProps<'/recipes/[id]'>) {
   const { id } = await params;
-  const [recipe, ingredientSections, user] = await Promise.all([
-    getRecipeForDisplay(id),
-    getRecipeIngredientsForDisplay(id),
-    getUser(),
-  ]);
+  const userPromise = getUser();
+
+  // Only logged-in users can use the shopping list, so skip the query otherwise
+  const ingredientOptionsPromise = userPromise.then((user) =>
+    user ? getIngredientsForRecipeEdit() : [],
+  );
+  const [recipe, ingredientSections, user, ingredientOptions] =
+    await Promise.all([
+      getRecipeForDisplay(id),
+      getRecipeIngredientsForDisplay(id),
+      userPromise,
+      ingredientOptionsPromise,
+    ]);
 
   const ingredients = ingredientSections.flatMap(
     (section) => section.ingredients,
@@ -49,6 +58,7 @@ export default async function RecipePage({
           isLoggedIn={!!user}
           canEdit={canEdit}
           ingredients={ingredients}
+          ingredientOptions={ingredientOptions}
         />
         <RecipeImageAndInfo
           category={recipe.category}

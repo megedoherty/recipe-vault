@@ -182,4 +182,133 @@ describe('AddToShoppingListButton', () => {
 
     expect(screen.getByText('180 g all-purpose flour')).toBeInTheDocument();
   });
+
+  describe('swapping an ingredient', () => {
+    const options = [
+      { id: '10', name: 'milk', category: 'Dairy' },
+      { id: '901', name: 'oat milk', category: 'Dairy' },
+      { id: '20', name: 'egg', category: 'Eggs' },
+    ];
+
+    const swapMilkForOatMilk = async () => {
+      render(
+        <AddToShoppingListButton
+          {...defaultProps}
+          ingredientOptions={options}
+        />,
+      );
+      await act(async () => {
+        fireEvent.click(screen.getByRole('button', { name: 'Shopping list' }));
+      });
+      await act(async () => {
+        fireEvent.click(screen.getByRole('button', { name: 'Swap milk' }));
+      });
+      await act(async () => {
+        fireEvent.click(screen.getByRole('button', { name: 'oat milk' }));
+      });
+    };
+
+    it('should show the replacement and keep the quantity unchanged', async () => {
+      await swapMilkForOatMilk();
+
+      expect(screen.getByText('1 cup oat milk')).toBeInTheDocument();
+      expect(screen.getByText('instead of milk')).toBeInTheDocument();
+    });
+
+    it('should filter options as you type', async () => {
+      render(
+        <AddToShoppingListButton
+          {...defaultProps}
+          ingredientOptions={options}
+        />,
+      );
+      await act(async () => {
+        fireEvent.click(screen.getByRole('button', { name: 'Shopping list' }));
+      });
+      await act(async () => {
+        fireEvent.click(screen.getByRole('button', { name: 'Swap milk' }));
+      });
+
+      expect(screen.getByText('Replace milk')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'egg' })).toBeInTheDocument();
+
+      await act(async () => {
+        fireEvent.change(screen.getByRole('textbox'), {
+          target: { value: 'OAT' },
+        });
+      });
+
+      expect(
+        screen.getByRole('button', { name: 'oat milk' }),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByRole('button', { name: 'egg' }),
+      ).not.toBeInTheDocument();
+    });
+
+    it('should return to the list with Back and without swapping', async () => {
+      render(
+        <AddToShoppingListButton
+          {...defaultProps}
+          ingredientOptions={options}
+        />,
+      );
+      await act(async () => {
+        fireEvent.click(screen.getByRole('button', { name: 'Shopping list' }));
+      });
+      await act(async () => {
+        fireEvent.click(screen.getByRole('button', { name: 'Swap milk' }));
+      });
+      await act(async () => {
+        fireEvent.click(screen.getByRole('button', { name: 'Back' }));
+      });
+
+      expect(screen.getByText('Shopping List')).toBeInTheDocument();
+      expect(screen.queryByText(/instead of/)).not.toBeInTheDocument();
+    });
+
+    it('should revert the swap with "Use original ingredient"', async () => {
+      await swapMilkForOatMilk();
+      await act(async () => {
+        fireEvent.click(screen.getByRole('button', { name: 'Swap oat milk' }));
+      });
+      await act(async () => {
+        fireEvent.click(
+          screen.getByRole('button', { name: 'Use original ingredient' }),
+        );
+      });
+
+      expect(screen.queryByText('instead of milk')).not.toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: 'Swap milk' }),
+      ).toBeInTheDocument();
+    });
+
+    it('should add the swapped ingredient to the shopping list', async () => {
+      const mockAddToShoppingList = addToShoppingList as jest.MockedFunction<
+        typeof addToShoppingList
+      >;
+      mockAddToShoppingList.mockResolvedValue({ success: true });
+
+      await swapMilkForOatMilk();
+      await act(async () => {
+        fireEvent.click(screen.getByRole('button', { name: 'Add to List' }));
+      });
+
+      expect(mockAddToShoppingList).toHaveBeenCalledWith(
+        [
+          {
+            ...ingredients[0],
+            name: 'oat milk (instead of milk)',
+            normalizedIngredientId: 901,
+            normalizedIngredientName: 'oat milk',
+            category: 'Dairy',
+          },
+          ingredients[1],
+        ],
+        defaultProps.recipeId,
+        defaultProps.recipeName,
+      );
+    });
+  });
 });

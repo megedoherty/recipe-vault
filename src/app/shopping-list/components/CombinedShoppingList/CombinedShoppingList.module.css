@@ -39,7 +39,7 @@
 
   @media (width >= 768px) {
     grid-template-columns: 14rem 1fr auto;
-    gap: 0.5rem;
+    gap: 1.25rem;
   }
 }
 
