@@ -4,6 +4,7 @@ import { StorageInfo } from '@/types';
 
 import MadeCheckbox from '../MadeCheckbox/MadeCheckbox';
 import RatingInput from '../RatingInputForm/RatingInputForm';
+import RecipeServings from '../RecipeServings/RecipeServings';
 import styles from './RecipeImageAndInfo.module.css';
 
 interface RecipeImageAndInfoProps {
@@ -85,8 +86,10 @@ export default function RecipeImageAndInfo({
             )}
             {servings != null && servings > 0 && (
               <div className={styles.infoItem}>
-                <dt className={styles.infoItemLabel}>Servings:</dt>
-                <dd>{servings}</dd>
+                <dt className="sr-only">Servings:</dt>
+                <dd>
+                  <RecipeServings />
+                </dd>
               </div>
             )}
             {equipment.length > 0 && (

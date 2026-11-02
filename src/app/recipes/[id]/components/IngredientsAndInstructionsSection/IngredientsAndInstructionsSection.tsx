@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { scaleQuantity } from '@/lib/utils/scale';
 import {
@@ -12,7 +12,7 @@ import {
 
 import IngredientsList from '../IngredientsList/IngredientsList';
 import InstructionsSection from '../InstructionsSection/InstructionsSection';
-import ServingsScaler from '../ServingsScaler/ServingsScaler';
+import { useServings } from '../ServingsContext/ServingsContext';
 import styles from './IngredientsAndInstructionsSection.module.css';
 
 interface IngredientsAndInstructionsSectionProps {
@@ -24,8 +24,6 @@ interface IngredientsAndInstructionsSectionProps {
   instructions: InstructionSection[] | null;
   // Map of the ingredient ID to the ingredient info, used to display per step ingredients
   ingredientMap: Record<string, RecipeIngredientDisplay>;
-  // Servings the recipe was written for, used as the base for scaling
-  servings: number | null;
 }
 
 export default function IngredientsAndInstructionsSection({
@@ -33,12 +31,22 @@ export default function IngredientsAndInstructionsSection({
   ingredientSections,
   instructions,
   ingredientMap,
-  servings,
 }: IngredientsAndInstructionsSectionProps) {
   const [activeStep, setActiveStep] = useState<Step | null>(null);
-  const [selectedServings, setSelectedServings] = useState(servings ?? 0);
-  const canScale = servings != null && servings > 0;
-  const factor = canScale ? selectedServings / servings : 1;
+  const { canScale, factor } = useServings();
+  const ingredientsRef = useRef<HTMLDivElement>(null);
+  // Ingredient ID -> its list item, so we can scroll to the active step's ingredients
+  const itemRefs = useRef(new Map<string, HTMLLIElement>());
+  const registerItem = useCallback(
+    (id: string, element: HTMLLIElement | null) => {
+      if (element) {
+        itemRefs.current.set(id, element);
+      } else {
+        itemRefs.current.delete(id);
+      }
+    },
+    [],
+  );
 
   const scaledIngredientSections = useMemo(
     () =>
@@ -68,6 +76,30 @@ export default function IngredientsAndInstructionsSection({
     );
   }, [instructions]);
 
+  // Keep the active step's ingredients visible inside the (scrollable) sticky panel.
+  // Scrolls the panel only, never the page.
+  useEffect(() => {
+    const panel = ingredientsRef.current;
+    if (!panel || panel.scrollHeight <= panel.clientHeight) return;
+    const rects = (activeStep?.ingredientIds ?? [])
+      .map((id) => itemRefs.current.get(id)?.getBoundingClientRect())
+      .filter((rect): rect is DOMRect => !!rect);
+    if (rects.length === 0) return;
+
+    // ingredientIds are in step order, not list order, so find the extremes
+    const top = Math.min(...rects.map((rect) => rect.top));
+    const bottom = Math.max(...rects.map((rect) => rect.bottom));
+    const panelRect = panel.getBoundingClientRect();
+    if (top < panelRect.top) {
+      panel.scrollTop += top - panelRect.top;
+    } else if (bottom > panelRect.bottom) {
+      panel.scrollTop += Math.min(
+        bottom - panelRect.bottom,
+        top - panelRect.top,
+      );
+    }
+  }, [activeStep]);
+
   const getStepStatus = (stepId: string) => {
     const activeStepIndex = activeStep ? allStepIds.indexOf(activeStep.id) : -1;
     const stepIndex = allStepIds.indexOf(stepId);
@@ -81,27 +113,26 @@ export default function IngredientsAndInstructionsSection({
   };
 
   return (
-    <>
-      <section className={containerClassName}>
-        <h2>Ingredients</h2>
-        {canScale && (
-          <ServingsScaler
-            baseServings={servings}
-            servings={selectedServings}
-            onChange={setSelectedServings}
-          />
-        )}
-        {scaledIngredientSections.map((ingredientSection) => (
-          <section key={ingredientSection.title}>
-            {ingredientSection.title && (
-              <h3 className={styles.title}>{ingredientSection.title}</h3>
-            )}
-            <IngredientsList
-              ingredients={ingredientSection.ingredients}
-              selectedIngredients={activeStep?.ingredientIds ?? []}
-            />
-          </section>
-        ))}
+    <div className={styles.layout}>
+      <section className={styles.ingredients}>
+        <div
+          ref={ingredientsRef}
+          className={`${containerClassName ?? ''} ${styles.scroller}`}
+        >
+          <h2>Ingredients</h2>
+          {scaledIngredientSections.map((ingredientSection) => (
+            <section key={ingredientSection.title}>
+              {ingredientSection.title && (
+                <h3 className={styles.title}>{ingredientSection.title}</h3>
+              )}
+              <IngredientsList
+                ingredients={ingredientSection.ingredients}
+                selectedIngredients={activeStep?.ingredientIds ?? []}
+                registerItem={registerItem}
+              />
+            </section>
+          ))}
+        </div>
       </section>
       <InstructionsSection
         instructions={instructions}
@@ -109,6 +140,6 @@ export default function IngredientsAndInstructionsSection({
         updateActiveStep={(step) => setActiveStep(step)}
         getStepStatus={getStepStatus}
       />
-    </>
+    </div>
   );
 }

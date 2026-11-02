@@ -10,6 +10,7 @@ import CookingModeToggle from './components/CookingModeToggle/CookingModeToggle'
 import IngredientsAndInstructionsSection from './components/IngredientsAndInstructionsSection/IngredientsAndInstructionsSection';
 import RecipeHeader from './components/RecipeHeader/RecipeHeader';
 import RecipeImageAndInfo from './components/RecipeImageAndInfo/RecipeImageAndInfo';
+import { ServingsProvider } from './components/ServingsContext/ServingsContext';
 import styles from './page.module.css';
 
 export default async function RecipePage({
@@ -39,51 +40,52 @@ export default async function RecipePage({
   const canEdit = canModifyRecipe(user, recipe.userId);
 
   return (
-    <div className={styles.page}>
-      <RecipeHeader
-        recipeId={id}
-        name={name}
-        sourceUrl={sourceUrl}
-        isLoggedIn={!!user}
-        canEdit={canEdit}
-        ingredients={ingredients}
-      />
-      <RecipeImageAndInfo
-        category={recipe.category}
-        equipment={recipe.equipment}
-        servings={recipe.servings}
-        storage={recipe.storage}
-        occasion={recipe.occasion}
-        imageUrl={imageUrl}
-        name={name}
-        mealType={recipe.mealType}
-        recipeId={id}
-        made={made}
-        rating={rating}
-        canEdit={canEdit}
-      />
-      <div className={styles.cookingMode}>
-        <CookingModeToggle />
+    <ServingsProvider baseServings={recipe.servings}>
+      <div className={styles.page}>
+        <RecipeHeader
+          recipeId={id}
+          name={name}
+          sourceUrl={sourceUrl}
+          isLoggedIn={!!user}
+          canEdit={canEdit}
+          ingredients={ingredients}
+        />
+        <RecipeImageAndInfo
+          category={recipe.category}
+          equipment={recipe.equipment}
+          servings={recipe.servings}
+          storage={recipe.storage}
+          occasion={recipe.occasion}
+          imageUrl={imageUrl}
+          name={name}
+          mealType={recipe.mealType}
+          recipeId={id}
+          made={made}
+          rating={rating}
+          canEdit={canEdit}
+        />
+        <div className={styles.cookingMode}>
+          <CookingModeToggle />
+        </div>
+        <IngredientsAndInstructionsSection
+          ingredientSections={ingredientSections}
+          instructions={instructions}
+          ingredientMap={ingredientMap}
+          containerClassName={styles.sectionContainer}
+        />
+        {notes && (
+          <section className={`${styles.sectionContainer} ${styles.notes}`}>
+            <h2>Notes</h2>
+            {notes.split('\n').map((line, index) => {
+              if (line.trim() === '') {
+                return null;
+              }
+              return <p key={index}>{line}</p>;
+            })}
+          </section>
+        )}
       </div>
-      <IngredientsAndInstructionsSection
-        ingredientSections={ingredientSections}
-        instructions={instructions}
-        ingredientMap={ingredientMap}
-        servings={recipe.servings}
-        containerClassName={styles.sectionContainer}
-      />
-      {notes && (
-        <section className={`${styles.sectionContainer} ${styles.notes}`}>
-          <h2>Notes</h2>
-          {notes.split('\n').map((line, index) => {
-            if (line.trim() === '') {
-              return null;
-            }
-            return <p key={index}>{line}</p>;
-          })}
-        </section>
-      )}
-    </div>
+    </ServingsProvider>
   );
 }
 
