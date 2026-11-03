@@ -63,7 +63,7 @@
     --accent: #d8a25a;
     --accent-muted: #3a2f1e;
     --border-default: #3a342e;
-    --border-strong: #8a8279;
+    --border-strong: #3a342e; /* same for dark */
     --divider: #2b2622;
     --hover-surface: #2a2622;
     --hover-surface-subtle: #1b1916;

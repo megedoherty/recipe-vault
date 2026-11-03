@@ -60,3 +60,9 @@
     border-color: transparent;
   }
 }
+
+.customForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}

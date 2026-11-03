@@ -2,6 +2,13 @@
 
 import { createContext, ReactNode, useContext, useMemo, useState } from 'react';
 
+// The parts of an ingredient the scaler needs to scale to an on-hand amount
+export interface ScalableIngredient {
+  id: string;
+  name: string;
+  quantity: string | null;
+}
+
 interface ServingsContextValue {
   // The servings currently selected
   servings: number;
@@ -11,6 +18,7 @@ interface ServingsContextValue {
   canScale: boolean;
   // Multiplier to apply to ingredient quantities
   factor: number;
+  ingredients: ScalableIngredient[];
 }
 
 const ServingsContext = createContext<ServingsContextValue>({
@@ -19,10 +27,14 @@ const ServingsContext = createContext<ServingsContextValue>({
   baseServings: 0,
   canScale: false,
   factor: 1,
+  ingredients: [],
 });
+
+const EMPTY_INGREDIENTS: ScalableIngredient[] = [];
 
 interface ServingsProviderProps {
   baseServings: number | null;
+  ingredients?: ScalableIngredient[];
   children: ReactNode;
 }
 
@@ -30,6 +42,7 @@ interface ServingsProviderProps {
 // and the ingredients it scales. Renders no markup of its own.
 export function ServingsProvider({
   baseServings,
+  ingredients = EMPTY_INGREDIENTS,
   children,
 }: ServingsProviderProps) {
   const base = baseServings ?? 0;
@@ -43,8 +56,9 @@ export function ServingsProvider({
       baseServings: base,
       canScale,
       factor: canScale ? servings / base : 1,
+      ingredients,
     }),
-    [servings, base, canScale],
+    [servings, base, canScale, ingredients],
   );
 
   return (

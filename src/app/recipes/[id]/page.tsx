@@ -49,7 +49,7 @@ export default async function RecipePage({
   const canEdit = canModifyRecipe(user, recipe.userId);
 
   return (
-    <ServingsProvider baseServings={recipe.servings}>
+    <ServingsProvider baseServings={recipe.servings} ingredients={ingredients}>
       <div className={styles.page}>
         <RecipeHeader
           recipeId={id}

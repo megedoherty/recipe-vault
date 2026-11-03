@@ -1,4 +1,4 @@
-import { scaleQuantity } from './scale';
+import { getLeadingAmount, scaleQuantity } from './scale';
 
 describe('scaleQuantity', () => {
   it('returns null and unchanged quantities when there is nothing to scale', () => {
@@ -53,5 +53,25 @@ describe('scaleQuantity', () => {
   it('scales counts with size words', () => {
     expect(scaleQuantity('1 large', 1.5)).toBe('1 ½ large');
     expect(scaleQuantity('3', 2)).toBe('6');
+  });
+});
+
+describe('getLeadingAmount', () => {
+  it('reads the amount and unit', () => {
+    expect(getLeadingAmount('8 oz')).toEqual({ amount: 8, unit: 'oz' });
+    expect(getLeadingAmount('1 1/2 cups (190 g)')).toEqual({
+      amount: 1.5,
+      unit: 'cups',
+    });
+    expect(getLeadingAmount('½ cup')).toEqual({ amount: 0.5, unit: 'cup' });
+    expect(getLeadingAmount('3')).toEqual({ amount: 3, unit: '' });
+    expect(getLeadingAmount('2 (14 oz)')).toEqual({ amount: 2, unit: '' });
+  });
+
+  it('returns null when there is no single amount', () => {
+    expect(getLeadingAmount(null)).toBeNull();
+    expect(getLeadingAmount('pinch')).toBeNull();
+    expect(getLeadingAmount('1-2 cups')).toBeNull();
+    expect(getLeadingAmount('1 to 2 cups')).toBeNull();
   });
 });

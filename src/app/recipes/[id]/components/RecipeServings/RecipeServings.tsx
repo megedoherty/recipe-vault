@@ -6,7 +6,8 @@ import ServingsScaler from '../ServingsScaler/ServingsScaler';
 // The servings control shown with the recipe info. It drives the ingredient
 // quantities through the shared servings context.
 export default function RecipeServings() {
-  const { servings, setServings, baseServings, canScale } = useServings();
+  const { servings, setServings, baseServings, canScale, ingredients } =
+    useServings();
 
   if (!canScale) return null;
 
@@ -14,6 +15,7 @@ export default function RecipeServings() {
     <ServingsScaler
       baseServings={baseServings}
       servings={servings}
+      ingredients={ingredients}
       onChange={setServings}
     />
   );

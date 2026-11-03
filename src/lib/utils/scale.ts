@@ -114,3 +114,31 @@ export function scaleQuantity(
 
   return result + scaleNumbers(quantity.slice(lastIndex), factor);
 }
+
+export interface LeadingAmount {
+  amount: number;
+  // The word right after the amount, e.g. "oz" in "8 oz" ('' if none)
+  unit: string;
+}
+
+/**
+ * The first amount in a free-text ingredient quantity, e.g. "8 oz" -> 8 oz.
+ * Returns null when the quantity doesn't start with a single amount (no
+ * number, or a range like "1-2 cups") since there's nothing exact to match.
+ */
+export function getLeadingAmount(
+  quantity: string | null,
+): LeadingAmount | null {
+  if (!quantity) return null;
+
+  const match = quantity.match(new RegExp(`^\\s*${numberRegex.source}`));
+  if (!match) return null;
+
+  const rest = quantity.slice(match[0].length);
+  if (/^\s?(?:-|–|to)\s?\d/i.test(rest)) return null;
+
+  const amount = numericQuantity(match[1].replace(/\band\s+/i, ''));
+  if (Number.isNaN(amount) || amount <= 0) return null;
+
+  return { amount, unit: rest.match(/^\s?([a-z]+)\b/i)?.[1] ?? '' };
+}
