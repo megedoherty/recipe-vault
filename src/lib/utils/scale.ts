@@ -121,6 +121,19 @@ export interface LeadingAmount {
   unit: string;
 }
 
+function parseLeadingAmount(text: string): LeadingAmount | null {
+  const match = text.match(new RegExp(`^\\s*${numberRegex.source}`));
+  if (!match) return null;
+
+  const rest = text.slice(match[0].length);
+  if (/^\s?(?:-|–|to)\s?\d/i.test(rest)) return null;
+
+  const amount = numericQuantity(match[1].replace(/\band\s+/i, ''));
+  if (Number.isNaN(amount) || amount <= 0) return null;
+
+  return { amount, unit: rest.match(/^\s?([a-z]+)\b/i)?.[1] ?? '' };
+}
+
 /**
  * The first amount in a free-text ingredient quantity, e.g. "8 oz" -> 8 oz.
  * Returns null when the quantity doesn't start with a single amount (no
@@ -129,16 +142,27 @@ export interface LeadingAmount {
 export function getLeadingAmount(
   quantity: string | null,
 ): LeadingAmount | null {
-  if (!quantity) return null;
+  return quantity ? parseLeadingAmount(quantity) : null;
+}
 
-  const match = quantity.match(new RegExp(`^\\s*${numberRegex.source}`));
-  if (!match) return null;
+/**
+ * Every exact amount an ingredient can be measured by, e.g.
+ * "3 tablespoons (15 g)" -> [3 tablespoons, 15 g]. Each parenthetical counts
+ * as its own measurement unless it describes a package ("1 (14 oz) can").
+ */
+export function getMeasurements(quantity: string | null): LeadingAmount[] {
+  if (!quantity) return [];
 
-  const rest = quantity.slice(match[0].length);
-  if (/^\s?(?:-|–|to)\s?\d/i.test(rest)) return null;
+  const measurements: LeadingAmount[] = [];
+  const leading = parseLeadingAmount(quantity);
+  if (leading) measurements.push(leading);
 
-  const amount = numericQuantity(match[1].replace(/\band\s+/i, ''));
-  if (Number.isNaN(amount) || amount <= 0) return null;
+  if (!PACKAGE_SIZE_REGEX.test(quantity)) {
+    for (const match of quantity.matchAll(/\(([^)]*)\)/g)) {
+      const inner = parseLeadingAmount(match[1]);
+      if (inner) measurements.push(inner);
+    }
+  }
 
-  return { amount, unit: rest.match(/^\s?([a-z]+)\b/i)?.[1] ?? '' };
+  return measurements;
 }

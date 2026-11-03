@@ -6,7 +6,7 @@ import Button from '@/components/atoms/Button/Button';
 import Input from '@/components/atoms/Input/Input';
 import Select from '@/components/atoms/Select/Select';
 import Dialog, { DialogRef } from '@/components/molecules/Dialog/Dialog';
-import { getLeadingAmount } from '@/lib/utils/scale';
+import { getMeasurements } from '@/lib/utils/scale';
 
 import type { ScalableIngredient } from '../ServingsContext/ServingsContext';
 import styles from './ServingsScaler.module.css';
@@ -36,33 +36,39 @@ export default function ServingsScaler({
   const dialogRef = useRef<DialogRef>(null);
   const id = useId();
   const [selectedId, setSelectedId] = useState('');
+  const [measurementIndex, setMeasurementIndex] = useState(0);
   const [onHand, setOnHand] = useState('');
 
   // Only ingredients with a single exact amount can be matched
   const options = useMemo(
     () =>
       ingredients.flatMap((ingredient) => {
-        const leading = getLeadingAmount(ingredient.quantity);
-        return leading ? [{ ingredient, ...leading }] : [];
+        const measurements = getMeasurements(ingredient.quantity);
+        return measurements.length > 0 ? [{ ingredient, measurements }] : [];
       }),
     [ingredients],
   );
+  const hasSections = options.some(({ ingredient }) => ingredient.section);
   const selected =
     options.find((option) => option.ingredient.id === selectedId) ?? options[0];
+  const measurement =
+    selected?.measurements[measurementIndex] ?? selected?.measurements[0];
   const onHandAmount = Number(onHand);
   const isValid = onHand.trim() !== '' && onHandAmount > 0;
 
   const openCustom = () => {
     setSelectedId(options[0].ingredient.id);
+    setMeasurementIndex(0);
     setOnHand('');
     dialogRef.current?.showModal();
   };
 
   const applyCustom = () => {
-    if (!selected || !isValid) return;
-    onChange(baseServings * (onHandAmount / selected.amount));
+    if (!measurement || !isValid) return;
+    onChange(baseServings * (onHandAmount / measurement.amount));
     dialogRef.current?.close();
   };
+
   return (
     <div className={styles.container}>
       <div className={styles.stepper} role="group" aria-label="Servings">
@@ -113,7 +119,7 @@ export default function ServingsScaler({
           </Button>
         )}
       </div>
-      {selected && (
+      {selected && measurement && (
         <Dialog
           ref={dialogRef}
           title="Scale to what you have"
@@ -145,12 +151,34 @@ export default function ServingsScaler({
               label="Ingredient"
               direction="vertical"
               value={selected.ingredient.id}
-              onChange={(event) => setSelectedId(event.target.value)}
+              onChange={(event) => {
+                setSelectedId(event.target.value);
+                setMeasurementIndex(0);
+              }}
               options={options.map(({ ingredient }) => ({
                 value: ingredient.id,
                 label: ingredient.name,
+                group: hasSections
+                  ? (ingredient.section ?? 'Other')
+                  : undefined,
               }))}
             />
+            {selected.measurements.length > 1 && (
+              <Select
+                id={`${id}-measurement`}
+                name="measurement"
+                label="Measurement"
+                direction="vertical"
+                value={String(selected.measurements.indexOf(measurement))}
+                onChange={(event) =>
+                  setMeasurementIndex(Number(event.target.value))
+                }
+                options={selected.measurements.map(({ unit }, index) => ({
+                  value: String(index),
+                  label: unit || 'whole',
+                }))}
+              />
+            )}
             <Input
               id={`${id}-amount`}
               name="amount"
@@ -158,7 +186,7 @@ export default function ServingsScaler({
               min="0"
               step="any"
               inputMode="decimal"
-              label={`Amount you have${selected.unit ? ` (${selected.unit})` : ''}`}
+              label={`Amount you have${measurement.unit ? ` (${measurement.unit})` : ''}`}
               placeholder={`Recipe calls for ${selected.ingredient.quantity}`}
               value={onHand}
               onChange={(event) => setOnHand(event.target.value)}

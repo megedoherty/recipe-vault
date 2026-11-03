@@ -6,7 +6,8 @@ interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   label: string;
   name: string;
   id: string;
-  options: readonly { value: string; label: string }[];
+  // Options sharing a `group` are rendered together under an <optgroup>
+  options: readonly { value: string; label: string; group?: string }[];
   emptyOption?: { value: string; label: string };
   hideLabel?: boolean;
   direction?: 'horizontal' | 'vertical';
@@ -27,6 +28,17 @@ export default function Select({
   selectClassName = '',
   ...rest
 }: SelectProps) {
+  // Group consecutive-or-not options by their group, keeping first-seen order
+  const groups: {
+    label?: string;
+    options: SelectProps['options'][number][];
+  }[] = [];
+  for (const option of options) {
+    const existing = groups.find((group) => group.label === option.group);
+    if (existing) existing.options.push(option);
+    else groups.push({ label: option.group, options: [option] });
+  }
+
   return (
     <div className={`${styles.container} ${styles[direction]}`}>
       <label
@@ -45,11 +57,20 @@ export default function Select({
         {emptyOption && (
           <option value={emptyOption.value}>{emptyOption.label}</option>
         )}
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
+        {groups.map(({ label: groupLabel, options: groupOptions }) => {
+          const optionElements = groupOptions.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ));
+          return groupLabel ? (
+            <optgroup key={groupLabel} label={groupLabel}>
+              {optionElements}
+            </optgroup>
+          ) : (
+            optionElements
+          );
+        })}
       </select>
     </div>
   );

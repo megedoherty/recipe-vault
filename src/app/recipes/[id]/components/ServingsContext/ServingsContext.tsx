@@ -7,6 +7,8 @@ export interface ScalableIngredient {
   id: string;
   name: string;
   quantity: string | null;
+  // Title of the ingredient section it belongs to, to tell apart repeats
+  section?: string | null;
 }
 
 interface ServingsContextValue {

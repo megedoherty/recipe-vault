@@ -121,6 +121,69 @@ describe('ServingsScaler', () => {
       expect(onChange).toHaveBeenCalledWith(8);
     });
 
+    it('lets you scale by a parenthetical measurement like grams', () => {
+      const onChange = jest.fn();
+      render(
+        <ServingsScaler
+          baseServings={4}
+          servings={4}
+          ingredients={[
+            { id: 'a', name: 'cocoa powder', quantity: '3 tablespoons (15 g)' },
+          ]}
+          onChange={onChange}
+        />,
+      );
+
+      fireEvent.click(screen.getByRole('button', { name: 'Custom' }));
+      fireEvent.change(screen.getByLabelText('Measurement'), {
+        target: { value: '1' },
+      });
+      fireEvent.change(screen.getByLabelText('Amount you have (g)'), {
+        target: { value: '30' },
+      });
+      fireEvent.click(
+        screen.getByRole('button', { name: 'Scale', hidden: true }),
+      );
+
+      expect(onChange).toHaveBeenCalledWith(8);
+    });
+
+    it('groups ingredients by section when the recipe has sections', () => {
+      render(
+        <ServingsScaler
+          baseServings={4}
+          servings={4}
+          ingredients={[
+            { id: 'a', name: 'sugar', quantity: '1 cup', section: 'Cake' },
+            { id: 'b', name: 'sugar', quantity: '2 cups', section: 'Glaze' },
+          ]}
+          onChange={jest.fn()}
+        />,
+      );
+
+      fireEvent.click(screen.getByRole('button', { name: 'Custom' }));
+      expect(
+        screen.getByRole('group', { name: 'Cake', hidden: true }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('group', { name: 'Glaze', hidden: true }),
+      ).toBeInTheDocument();
+    });
+
+    it('only shows the measurement picker when there is a choice', () => {
+      render(
+        <ServingsScaler
+          baseServings={4}
+          servings={4}
+          ingredients={[{ id: 'a', name: 'flour', quantity: '2 cups' }]}
+          onChange={jest.fn()}
+        />,
+      );
+
+      fireEvent.click(screen.getByRole('button', { name: 'Custom' }));
+      expect(screen.queryByLabelText('Measurement')).not.toBeInTheDocument();
+    });
+
     it('does not scale without a valid amount', () => {
       render(
         <ServingsScaler

@@ -1,4 +1,4 @@
-import { getLeadingAmount, scaleQuantity } from './scale';
+import { getLeadingAmount, getMeasurements, scaleQuantity } from './scale';
 
 describe('scaleQuantity', () => {
   it('returns null and unchanged quantities when there is nothing to scale', () => {
@@ -73,5 +73,22 @@ describe('getLeadingAmount', () => {
     expect(getLeadingAmount('pinch')).toBeNull();
     expect(getLeadingAmount('1-2 cups')).toBeNull();
     expect(getLeadingAmount('1 to 2 cups')).toBeNull();
+  });
+});
+
+describe('getMeasurements', () => {
+  it('returns the main amount and each parenthetical amount', () => {
+    expect(getMeasurements('3 tablespoons (15 g)')).toEqual([
+      { amount: 3, unit: 'tablespoons' },
+      { amount: 15, unit: 'g' },
+    ]);
+  });
+
+  it('ignores package sizes and non-exact amounts', () => {
+    expect(getMeasurements('1 (14 oz) can')).toEqual([{ amount: 1, unit: '' }]);
+    expect(getMeasurements('1-2 cups (120 g)')).toEqual([
+      { amount: 120, unit: 'g' },
+    ]);
+    expect(getMeasurements(null)).toEqual([]);
   });
 });

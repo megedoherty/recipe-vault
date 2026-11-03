@@ -35,6 +35,14 @@ export default async function RecipePage({
   const ingredients = ingredientSections.flatMap(
     (section) => section.ingredients,
   );
+  const scalableIngredients = ingredientSections.flatMap((section) =>
+    section.ingredients.map(({ id, name, quantity }) => ({
+      id,
+      name,
+      quantity,
+      section: section.title,
+    })),
+  );
   const ingredientMap = Object.fromEntries(
     ingredients.map((ingredient) => [ingredient.id, ingredient]),
   );
@@ -49,7 +57,10 @@ export default async function RecipePage({
   const canEdit = canModifyRecipe(user, recipe.userId);
 
   return (
-    <ServingsProvider baseServings={recipe.servings} ingredients={ingredients}>
+    <ServingsProvider
+      baseServings={recipe.servings}
+      ingredients={scalableIngredients}
+    >
       <div className={styles.page}>
         <RecipeHeader
           recipeId={id}
