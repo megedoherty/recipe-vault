@@ -50,6 +50,7 @@ export default function SortBar({ count, page }: SortBarProps) {
         options={sortOptions}
         label="Sort by"
         name="sort"
+        hideLabel
         value={currentSort}
         onChange={handleSortChange}
         id="sort"

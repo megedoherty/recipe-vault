@@ -90,7 +90,7 @@ export default function CombinedShoppingList({
                         : item.name
                     }
                     checked={item.purchased}
-                    alignItems="center"
+                    alignItems="start"
                     onChange={(e) => handleTogglePurchased(item, e)}
                   />
                   {showDetails && (

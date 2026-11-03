@@ -9,6 +9,7 @@
   --accent: #564124;
   --accent-muted: #f2e4cc;
   --border-default: #e3ddd5;
+  --border-strong: #8f857a;
   --divider: #ece6df;
   --hover-surface: #f1ece6;
   --hover-surface-subtle: #fdfcfa;
@@ -16,7 +17,7 @@
   --button-primary-text: var(--text-primary);
   --button-secondary-hover: #f1ece6;
   --button-secondary-active: #e5ded5;
-  --button-secondary-border: #e3ddd5;
+  --button-secondary-border: var(--border-strong);
   --button-disabled-background: #e3ddd5;
   --success: #7c9a6d;
   --warning: #d4a017;
@@ -30,6 +31,7 @@
 
   /* Shared colors */
   --button-primary-background: #d8a25a;
+  --button-primary-border: #a36f30;
   --button-primary-hover: #c08b46;
   --button-primary-active: #a36f30;
   --button-disabled-text: #a39a91;
@@ -61,14 +63,16 @@
     --accent: #d8a25a;
     --accent-muted: #3a2f1e;
     --border-default: #3a342e;
+    --border-strong: #8a8279;
     --divider: #2b2622;
     --hover-surface: #2a2622;
     --hover-surface-subtle: #1b1916;
     --active-surface: #332e29;
     --button-primary-text: var(--text-inverse);
+    --button-primary-border: var(--button-primary-background);
     --button-secondary-hover: #3a342e;
     --button-secondary-active: #352f27;
-    --button-secondary-border: #3a342e;
+    --button-secondary-border: var(--border-strong);
     --button-disabled-background: #fff;
     --success: #8fb28a;
     --warning: #e0b84a;

@@ -35,7 +35,7 @@
 
 .input,
 .textarea {
-  border: 1px solid var(--input-border-color, var(--border-default));
+  border: 1px solid var(--input-border-color, var(--border-strong));
   border-radius: 0.25rem;
   background-color: var(--background-elevated);
   font-size: var(--font-size-small);
@@ -44,7 +44,6 @@
   font-family: var(--font-family-body);
 
   &:focus {
-    outline: none;
     border-color: var(--accent);
     background-color: var(--active-surface);
   }

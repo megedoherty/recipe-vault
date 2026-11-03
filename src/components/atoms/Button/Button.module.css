@@ -29,6 +29,7 @@
 .primary {
   --button-background: var(--button-primary-background);
 
+  border: 1px solid var(--button-primary-border);
   color: var(--button-primary-text);
 
   &:hover:not(:disabled) {

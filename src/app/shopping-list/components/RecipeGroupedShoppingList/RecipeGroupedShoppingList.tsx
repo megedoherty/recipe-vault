@@ -42,7 +42,7 @@ export default function RecipeGroupedShoppingList({
   return (
     <ul className={styles.groupsList}>
       {groups.map((group) => (
-        <li key={group.recipeId ?? 'manual'}>
+        <li key={group.recipeId ?? 'manual'} className={styles.recipeContainer}>
           <div className={styles.groupHeader}>
             <h3>{group.recipeName}</h3>
             <Button

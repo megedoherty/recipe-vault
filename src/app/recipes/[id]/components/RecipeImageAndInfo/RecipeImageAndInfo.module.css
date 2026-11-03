@@ -28,6 +28,10 @@
   gap: 0.5rem;
 }
 
+.infoDetails {
+  width: 100%;
+}
+
 .infoItemLabel {
   font-weight: 600;
 }
