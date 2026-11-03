@@ -15,7 +15,12 @@ import IngredientSectionsEditor from '@/components/organisms/IngredientSectionsE
 import InstructionsSectionsEditor from '@/components/organisms/InstructionsSectionsEditor/InstructionsSectionsEditor';
 import { defaultStorage } from '@/constants';
 import { addRecipe, updateRecipe } from '@/lib/actions/recipes';
-import { parseIngredients, parseInstructions } from '@/lib/utils/parse';
+import {
+  ingredientsToText,
+  instructionsToText,
+  parseIngredients,
+  parseInstructions,
+} from '@/lib/utils/parse';
 import {
   Category,
   EditableRecipe,
@@ -177,11 +182,13 @@ export default function RecipeForm({
         />
         <StorageInfoEditor storage={initialRecipe?.storage ?? defaultStorage} />
       </section>
-      {isCreateMode &&
-      (!initialIngredientSections || ingredientSections.length === 0) ? (
+      {isCreateMode ? (
         <ProcessableSection
           title="Ingredients"
           onProcess={onProcessIngredients}
+          initialProcessed={ingredientSections.length > 0}
+          getText={() => ingredientsToText(ingredientSections)}
+          reprocessWarning="Processing replaces your current rows. Any ingredient matches you chose manually will be reset to our best guess."
           editorComponent={
             <IngredientSectionsEditor
               ingredientSections={ingredientSections}
@@ -200,11 +207,13 @@ export default function RecipeForm({
           />
         </section>
       )}
-      {isCreateMode &&
-      (!initialRecipe?.instructions || instructionSections.length === 0) ? (
+      {isCreateMode ? (
         <ProcessableSection
           title="Instructions"
           onProcess={onProcessInstructions}
+          initialProcessed={instructionSections.length > 0}
+          getText={() => instructionsToText(instructionSections)}
+          reprocessWarning="Processing replaces your current steps. Any ingredients you linked to individual steps will be removed."
           editorComponent={
             <InstructionsSectionsEditor
               instructionSections={instructionSections}

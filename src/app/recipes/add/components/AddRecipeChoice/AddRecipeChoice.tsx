@@ -54,6 +54,11 @@ export default function AddRecipeChoice({
     setMode('manual');
   };
 
+  const goBack = () => {
+    setRecipe(null);
+    setMode(null);
+  };
+
   if (mode === null) {
     return (
       <div className={styles.choiceContainer}>
@@ -81,7 +86,12 @@ export default function AddRecipeChoice({
   if (mode === 'url') {
     return (
       <div className={styles.urlContainer}>
-        <h2>Add Recipe from URL</h2>
+        <div className={styles.header}>
+          <h2>Add Recipe from URL</h2>
+          <Button variant="secondary" size="small" onClick={goBack}>
+            Back
+          </Button>
+        </div>
         <div className={styles.urlInputContainer}>
           <Input
             type="url"
@@ -124,13 +134,21 @@ export default function AddRecipeChoice({
           </button>{' '}
           and/or tell Meghan to investigate.
         </p>
+        <Button variant="secondary" size="small" onClick={goBack}>
+          Back
+        </Button>
       </div>
     );
   }
 
   return (
     <div className={styles.manualContainer}>
-      <h2>Manual Form</h2>
+      <div className={styles.header}>
+        <h2>{recipe ? 'Review Recipe' : 'Manual Form'}</h2>
+        <Button variant="secondary" size="small" onClick={goBack}>
+          Back
+        </Button>
+      </div>
       <RecipeForm
         mode="create"
         categories={categories}

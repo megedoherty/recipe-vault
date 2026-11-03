@@ -1,6 +1,8 @@
 import { IngredientForRecipeEdit } from '@/types';
 
 import {
+  ingredientsToText,
+  instructionsToText,
   parseIngredients,
   parseInstructions,
   standardizeQuantity,
@@ -183,5 +185,72 @@ describe('parseInstructions', () => {
   test('normalizes temperatures to include a degree symbol', () => {
     const result = parseInstructions('Preheat to 350F.');
     expect(result[0].steps[0].text).toBe('Preheat to 350°F.');
+  });
+});
+
+describe('ingredientsToText / instructionsToText', () => {
+  test('ingredientsToText writes section titles and quantity + name lines', () => {
+    const text = ingredientsToText([
+      {
+        id: 'a',
+        title: null,
+        ingredients: [
+          {
+            id: '1',
+            name: 'salt',
+            quantity: null,
+            section: null,
+            ingredientId: null,
+          },
+        ],
+      },
+      {
+        id: 'b',
+        title: 'Frosting',
+        ingredients: [
+          {
+            id: '2',
+            name: 'butter',
+            quantity: '1 cup',
+            section: null,
+            ingredientId: null,
+          },
+        ],
+      },
+    ]);
+    expect(text).toBe('salt\nFrosting:\n1 cup butter');
+  });
+
+  test('instructionsToText writes section titles and step lines', () => {
+    const text = instructionsToText([
+      { id: 'a', title: null, steps: [{ id: '1', text: 'Mix.' }] },
+      { id: 'b', title: 'Bake', steps: [{ id: '2', text: 'Bake at 350°F.' }] },
+    ]);
+    expect(text).toBe('Mix.\nBake:\nBake at 350°F.');
+  });
+
+  test('ingredients survive a round trip through text and back', () => {
+    const original = parseIngredients(
+      '2 cups all-purpose flour\n1 cup granulated sugar\nFrosting:\n1/2 cup unsalted butter',
+      referenceIngredients,
+    );
+    const roundTripped = parseIngredients(
+      ingredientsToText(original),
+      referenceIngredients,
+    );
+    expect(stripIds(roundTripped)).toEqual(stripIds(original));
+  });
+
+  test('instructions survive a round trip through text and back', () => {
+    const original = parseInstructions(
+      'Preheat oven to 350 F.\nMix dry ingredients.\nFrosting:\nBeat butter.',
+    );
+    const roundTripped = parseInstructions(instructionsToText(original));
+    expect(stripIds(roundTripped)).toEqual(stripIds(original));
+  });
+
+  test('empty input produces empty text', () => {
+    expect(ingredientsToText([])).toBe('');
+    expect(instructionsToText([])).toBe('');
   });
 });

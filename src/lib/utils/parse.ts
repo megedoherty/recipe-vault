@@ -434,3 +434,29 @@ export function parseInstructions(text: string): InstructionSection[] {
 
   return sections;
 }
+
+// Inverse of parseIngredients: one line per ingredient, with `Title:` lines
+// for named sections, so the text can be edited in bulk and re-parsed.
+export function ingredientsToText(
+  sections: RecipeIngredientSectionsEditable[],
+): string {
+  return sections
+    .flatMap((section) => [
+      ...(section.title ? [`${section.title}:`] : []),
+      ...section.ingredients.map((ingredient) =>
+        [ingredient.quantity, ingredient.name].filter(Boolean).join(' '),
+      ),
+    ])
+    .join('\n');
+}
+
+// Inverse of parseInstructions: one line per step, with `Title:` lines for
+// named sections.
+export function instructionsToText(sections: InstructionSection[]): string {
+  return sections
+    .flatMap((section) => [
+      ...(section.title ? [`${section.title}:`] : []),
+      ...section.steps.map((step) => step.text),
+    ])
+    .join('\n');
+}
