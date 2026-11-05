@@ -9,8 +9,8 @@ A personal recipe manager. Paste a link to any recipe page and Recipe Vault scra
 - **Search and filter.** Search by text and filter by ingredient, equipment, occasion, servings, rating, and whether you've made the recipe. Sort by last updated, name, newest, or oldest. All filter state lives in the URL, so a filtered view can be bookmarked or shared.
 - **Ratings and "made it" tracking** on each recipe.
 - **Shopping list.** Add selected ingredients from any recipe, check items off as you buy them, and choose whether to show quantities in grams.
-- **Category management** at `/manage`.
-- **Accounts.** Email/password auth through Supabase. Each user sees only their own recipes, with an optional filter to show recipes from all users.
+- **Admin management** at `/manage` for categories, ingredients, and equipment. Admin only.
+- **Accounts.** Email/password auth through Supabase. By default you see only your own recipes, with an optional filter to show everyone's. Recipes are readable by anyone, including signed-out visitors, but only the owner or an admin can change one. Admins are users with `app_metadata.role = 'admin'`, which only the Supabase dashboard or service role can set.
 
 ## Tech stack
 
@@ -28,8 +28,9 @@ A personal recipe manager. Paste a link to any recipe page and Recipe Vault scra
 
 ### Prerequisites
 
-- Node.js 20+
+- Node.js 24 (see `.nvmrc`).
 - A Supabase project
+- The [Supabase CLI](https://supabase.com/docs/guides/cli) (`brew install supabase/tap/supabase`) to apply migrations. Commands that read a remote schema (`db dump`, `db pull`) also need a Docker-compatible runtime, such as Docker Desktop or [Colima](https://github.com/abiosoft/colima).
 
 ### 1. Install dependencies
 
@@ -51,13 +52,35 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 
 ### 3. Set up Supabase
 
-The app expects the following in your Supabase project:
+The database schema and Row Level Security (RLS) policies live in `supabase/migrations/`. To set up a new project:
 
-- **Tables:** `recipe`, `recipe_ingredient`, `ingredient`, `recipe_equipment`, `equipment`, `category`, `meal_type`, `occasion`, `shopping_list_item`
-- **Storage bucket:** `recipe-images` (public), which holds imported recipe images
+```bash
+supabase login
+supabase link --project-ref <your-project-ref>
+supabase db push
+```
+
+This creates the tables (`recipe`, `recipe_ingredient`, `ingredient`, `recipe_equipment`, `equipment`, `category`, `meal_type`, `occasion`, `shopping_list_item`), their policies, and the `is_admin()` and `can_modify_recipe()` helper functions.
+
+Migrations do **not** cover these, so set them up by hand in the dashboard:
+
+- **Storage bucket:** `recipe-images` (public), which holds imported recipe images. Its storage policies aren't in the migrations. Currently any signed-in user can modify any object in it, so restrict that if you add users you don't trust.
 - **Auth:** email/password enabled, with `<your-site>/auth/confirm` added as a redirect URL
+- **Admin user:** set `app_metadata.role` to `admin` on your user (Authentication → Users) to use `/manage`
 
-> The schema isn't checked into this repo yet. The column names the app relies on are in the `*Db` types in `src/types.ts` and the `select` calls in `src/lib/supabase/queries/`.
+#### Changing the database
+
+Make schema and policy changes as new migration files (`supabase migration new <name>`), not in the dashboard, so the files stay the source of truth. Apply them to a staging project first (`supabase link` to it, then `supabase db push`), run the RLS check against it, and only then push to production. The free Supabase plan has no automatic backups, so take a manual `supabase db dump` before pushing to production.
+
+#### Testing RLS
+
+`npm run test:rls` calls the API as signed-out, regular, and admin users and checks that the policies behave as intended. It creates throwaway users, so run it against **staging only**. It refuses to run against the production project.
+
+```bash
+RLS_TEST_REF=<staging-project-ref> npm run test:rls
+```
+
+It gets API keys through the Supabase CLI (you must be logged in), or you can supply `RLS_TEST_ANON_KEY` and `RLS_TEST_SERVICE_KEY`.
 
 ### 4. Run it
 
@@ -77,6 +100,7 @@ Open [http://localhost:3000](http://localhost:3000). Unauthenticated visitors ar
 | `npm run lint`       | Lint JS/TS (ESLint) and CSS (Stylelint)          |
 | `npm run lint:fix`   | Auto-fix lint issues in both                     |
 | `npm test`           | Run the Jest test suite                          |
+| `npm run test:rls`   | Check RLS policies against a staging Supabase project (see above) |
 
 Run a single test file or a single test by name:
 
@@ -94,7 +118,7 @@ src/
 │   ├── recipes/add/        # Import a recipe from a URL
 │   ├── recipes/[id]/       # View a recipe (and /edit)
 │   ├── shopping-list/
-│   ├── manage/             # Category management
+│   ├── manage/             # Admin: categories, ingredients, equipment
 │   └── auth/               # Login, signup, email confirmation
 ├── components/             # Shared UI, organized by atomic design
 │   ├── atoms/              # Button, Input, Checkbox, icons, …
@@ -110,6 +134,10 @@ src/
 │   └── utils/              # Text parsing/normalization helpers
 ├── constants.ts            # PAGE_SIZE, sort options, etc.
 └── types.ts                # All FE + DB types
+supabase/
+├── migrations/             # Schema and RLS policies (source of truth for the database)
+├── tests/                  # RLS check (npm run test:rls)
+└── config.toml             # Supabase CLI config
 ```
 
 ### How data flows
@@ -118,7 +146,7 @@ Data access is split into three layers:
 
 1. **Queries** (`src/lib/supabase/queries/`) read from Supabase and return DB-shaped (`*Db`) objects.
 2. **Transforms** (`src/lib/supabase/transforms.ts`) turn those into camelCase front-end types. They also validate JSON columns and apply section ordering.
-3. **Server Actions** (`src/lib/actions/`) handle every write, including cleanup such as dropping empty steps and reconciling deleted ingredients.
+3. **Server Actions** (`src/lib/actions/`) handle every write, including cleanup such as dropping empty steps and unlinking deleted ingredients from instruction steps.
 
 Components never call the Supabase client directly. To add a field, update the query `select`, the `*Db` type, the FE type in `src/types.ts`, and the transform.
 
@@ -132,7 +160,11 @@ Components never call the Supabase client directly. To add a field, update the q
 - Imports are sorted automatically by `simple-import-sort`, so don't order them by hand. Prettier uses `singleQuote: true`.
 - Use the existing atoms and molecules before writing one-off markup.
 - Supabase clients are created per request and never cached globally (see `src/lib/supabase/server.ts`).
+- Change the database through migrations in `supabase/migrations/`, never directly in the dashboard.
+- Admin checks exist in two places and must agree: `requireAdmin()` in app code, and the `is_admin()` RLS helper in the database.
 
 ## Deployment
 
 This is a standard Next.js app and deploys to [Vercel](https://vercel.com) with no extra configuration. Set the same environment variables in your hosting provider, and add the production URL's `/auth/confirm` path to Supabase's allowed redirect URLs.
+
+Database changes are not deployed by Vercel. Apply new migrations with `supabase db push` (staging first, then production), and decide per change whether the migration or the code should go out first.

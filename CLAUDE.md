@@ -12,6 +12,9 @@ npm run lint:fix     # Auto-fix both
 npm test             # Run Jest test suite
 npx jest path/to/File.test.tsx   # Run a single test file
 npx jest -t "name of test"        # Run tests matching a name
+RLS_TEST_REF=<staging-ref> npm run test:rls   # Check RLS policies (staging only)
+supabase migration new <name>    # New migration in supabase/migrations/
+supabase db push --remote        # Apply pending migrations to the linked project
 ```
 
 Requires `.env.local` with `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`.
@@ -30,7 +33,7 @@ Data access is split into three layers — respect this separation:
 
 1. **`src/lib/supabase/queries/*`** — Raw Supabase reads. Each function creates its own server client and returns a `*Db` shape (snake_case, matching the DB), then hands off to a transform. Never call the Supabase client directly from components.
 2. **`src/lib/supabase/transforms.ts`** — Converts `*Db` shapes → camelCase FE types. This is where JSON columns (`instructions`, `storage`, `instruction_section_order`) are validated with type guards and where section ordering is applied via `sortByOrder`.
-3. **`src/lib/actions/*`** — `'use server'` Server Actions for mutations (create/update/delete recipes, categories, image upload) and the URL recipe parser. Actions handle cleanup logic (e.g. stripping empty instruction steps, reconciling deleted ingredient IDs) before writing.
+3. **`src/lib/actions/*`** — `'use server'` Server Actions for mutations (create/update/delete recipes, categories, image upload) and the URL recipe parser. Actions handle cleanup logic (e.g. stripping empty instruction steps, unlinking deleted ingredients from steps via `unlinkMissingIngredients`) before writing. `RecipeForm` applies the same helper so the editor never shows stale links.
 
 `src/types.ts` is the single source of FE types. It deliberately pairs each DB shape (`RecipeDisplayDb`, `EditableRecipeDb`, …) with its FE counterpart (`RecipeDisplay`, `EditableRecipe`, …). When adding a field, update both the query `select`, the `*Db` type, the FE type, and the transform.
 
@@ -41,6 +44,16 @@ Data access is split into three layers — respect this separation:
 ### Auth
 
 Supabase auth clients are created per-request/per-call (never cached in a global — see comments in `server.ts`/`proxy.ts`, this matters for Fluid compute). `src/lib/supabase/proxy.ts` `updateSession` holds the redirect-to-login logic for unauthenticated users. `getAllRecipes` scopes to the current user's `user_id` by default unless `includeAllUsers` is passed.
+
+### Database and RLS
+
+The schema and Row Level Security policies live in `supabase/migrations/` and are the source of truth. Change them with new migration files, never by editing the dashboard. Policy intent: recipes and lookup tables are readable by everyone (including signed-out visitors); recipes, and their `recipe_ingredient`/`recipe_equipment` rows, are writable only by the owner or an admin; `category`, `ingredient`, and `equipment` are writable only by an admin; `shopping_list_item` is owner-only.
+
+Admin status is `app_metadata.role === 'admin'` (`isAdmin()` in `queries/user.ts`). The database enforces it through the `is_admin()` and `can_modify_recipe()` SQL helpers, so `requireAdmin()` in actions is no longer the only guard. Keep both in sync.
+
+Not covered by migrations: the `recipe-images` bucket and its storage policies, and auth settings.
+
+`npm run test:rls` verifies the policies by calling the API as different users. It creates users with the service-role key, so run it against staging only. It refuses the production project, and that guard should stay. Never run `supabase db push` against production without applying and testing on staging first.
 
 ### UI structure
 
@@ -53,3 +66,4 @@ Search/filter state on the home page is driven entirely by URL search params (`S
 - Imports are auto-sorted by `simple-import-sort` (enforced by eslint) — don't hand-order.
 - Prettier runs through eslint with `singleQuote: true`.
 - Prefer the existing atom/molecule components over new one-off markup.
+- Database changes go through migrations in `supabase/migrations/`.
