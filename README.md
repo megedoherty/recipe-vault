@@ -64,7 +64,7 @@ This creates the tables (`recipe`, `recipe_ingredient`, `ingredient`, `recipe_eq
 
 Migrations do **not** cover these, so set them up by hand in the dashboard:
 
-- **Storage bucket:** `recipe-images` (public), which holds imported recipe images. Its storage policies aren't in the migrations. Currently any signed-in user can modify any object in it, so restrict that if you add users you don't trust.
+- **Storage bucket:** create `recipe-images` (public), which holds imported recipe images. The bucket itself isn't created by migrations, but its access policies are: anyone can view images, any signed-in user can upload, and only the uploader or an admin can replace or delete an image.
 - **Auth:** email/password enabled, with `<your-site>/auth/confirm` added as a redirect URL
 - **Admin user:** set `app_metadata.role` to `admin` on your user (Authentication → Users) to use `/manage`
 

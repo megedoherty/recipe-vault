@@ -402,10 +402,97 @@ check(
   JSON.stringify(slB),
 );
 
+// --- recipe-images storage bucket (the bucket is created by hand in real
+// projects, so make sure it exists on the test project)
+await api('/storage/v1/bucket', {
+  method: 'POST',
+  key: service,
+  body: { id: 'recipe-images', name: 'recipe-images', public: true },
+});
+
+const png = Buffer.from(
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==',
+  'base64',
+);
+const objectPath = (name) => `/storage/v1/object/recipe-images/${name}`;
+const upload = async (name, token, upsert = false) => {
+  const res = await fetch(`${URL}${objectPath(name)}`, {
+    method: 'POST',
+    headers: {
+      apikey: anon,
+      Authorization: `Bearer ${token ?? anon}`,
+      'Content-Type': 'image/png',
+      ...(upsert ? { 'x-upsert': 'true' } : {}),
+    },
+    body: png,
+  });
+  return res.status;
+};
+const remove = async (name, token) => {
+  const res = await fetch(`${URL}${objectPath(name)}`, {
+    method: 'DELETE',
+    headers: { apikey: anon, Authorization: `Bearer ${token ?? anon}` },
+  });
+  return `${res.status} ${(await res.text()).slice(0, 120)}`;
+};
+// Existence is checked by listing the bucket with the service key. That
+// bypasses RLS, and unlike a GET it is never served from a cache (a cached
+// 200 would make a deleted object look like it still exists).
+const exists = async (name) => {
+  const res = await fetch(`${URL}/storage/v1/object/list/recipe-images`, {
+    method: 'POST',
+    headers: {
+      apikey: service,
+      Authorization: `Bearer ${service}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ prefix: '', search: name }),
+  });
+  const items = await res.json();
+  return Array.isArray(items) && items.some((item) => item.name === name);
+};
+// This is how the app serves images: the public URL, no auth.
+const publiclyViewable = async (name) =>
+  (await fetch(`${URL}/storage/v1/object/public/recipe-images/${name}`))
+    .status === 200;
+
+const img1 = `rls-${stamp}-1.png`;
+const img2 = `rls-${stamp}-2.png`;
+
+check(
+  'Signed-out cannot upload an image',
+  (await upload(`rls-${stamp}-anon.png`, null)) >= 400,
+);
+const upA = await upload(img1, A.token);
+check('A can upload an image', upA < 300, `status ${upA}`);
+check('Signed-out visitor can view the image', await publiclyViewable(img1));
+
+await remove(img1, B.token);
+check('B cannot delete A image', await exists(img1));
+await upload(img1, B.token, true);
+check('B cannot overwrite A image', await exists(img1));
+check('B can upload their own image', (await upload(img2, B.token)) < 300);
+await remove(img2, A.token);
+check('A cannot delete B image', await exists(img2));
+
+const adminDelete = await remove(img2, ADM.token);
+check(
+  'Admin can delete another user image',
+  !(await exists(img2)),
+  adminDelete,
+);
+const ownerDelete = await remove(img1, A.token);
+check('A can delete own image', !(await exists(img1)), ownerDelete);
+
 // --- Cleanup: delete test users and leftover rows (staging only)
 await api(`/rest/v1/shopping_list_item?user_id=eq.${A.id}`, {
   method: 'DELETE',
   key: service,
+});
+await api('/storage/v1/object/recipe-images', {
+  method: 'DELETE',
+  key: service,
+  body: { prefixes: [img1, img2] },
 });
 for (const u of [A, B, ADM])
   await api(`/auth/v1/admin/users/${u.id}`, { method: 'DELETE', key: service });

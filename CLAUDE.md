@@ -51,7 +51,7 @@ The schema and Row Level Security policies live in `supabase/migrations/` and ar
 
 Admin status is `app_metadata.role === 'admin'` (`isAdmin()` in `queries/user.ts`). The database enforces it through the `is_admin()` and `can_modify_recipe()` SQL helpers, so `requireAdmin()` in actions is no longer the only guard. Keep both in sync.
 
-Not covered by migrations: the `recipe-images` bucket and its storage policies, and auth settings.
+Image access is also enforced by policies on `storage.objects` (in migrations): public read, signed-in upload, and update/delete only by the uploader (`owner_id`, set by Supabase on upload) or an admin. Not covered by migrations: creating the `recipe-images` bucket itself, and auth settings.
 
 `npm run test:rls` verifies the policies by calling the API as different users. It creates users with the service-role key, so run it against staging only. It refuses the production project, and that guard should stay. Never run `supabase db push` against production without applying and testing on staging first.
 
