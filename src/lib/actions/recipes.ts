@@ -6,6 +6,7 @@ import { redirect } from 'next/navigation';
 import { uploadImageFromUrl } from '@/lib/actions/images';
 import { canModifyRecipe, getUser } from '@/lib/supabase/queries/user';
 import { createClient } from '@/lib/supabase/server';
+import unlinkMissingIngredients from '@/lib/utils/unlinkMissingIngredients';
 import {
   InstructionSection,
   RecipeIngredientDb,
@@ -57,27 +58,25 @@ const cleanInstructionSections = (
     .filter((section) => section.steps.length > 0) as unknown as Json;
 };
 
-/**
- * Removes deleted ingredient IDs from all steps in instruction sections.
- */
-const removeDeletedIngredientIds = (
-  instructionSections: InstructionSection[],
-  deletedIngredientIds: string[],
-): InstructionSection[] => {
-  if (deletedIngredientIds.length === 0) {
-    return instructionSections;
-  }
+// Ingredients without a name are dropped when saving
+const hasName = (ingredient: { name: string }) => ingredient.name.trim() !== '';
 
-  return instructionSections.map((section) => ({
-    ...section,
-    steps: section.steps.map((step) => ({
-      ...step,
-      ingredientIds: step.ingredientIds?.filter(
-        (id) => !deletedIngredientIds.includes(id),
+/**
+ * Removes links to ingredients that won't exist after saving (deleted, or left
+ * with an empty name) from all steps, so no step points at a missing ingredient.
+ */
+const unlinkUnsavedIngredients = (
+  instructionSections: InstructionSection[],
+  ingredientSections: RecipeIngredientSectionsEditable[],
+): InstructionSection[] =>
+  unlinkMissingIngredients(
+    instructionSections,
+    new Set(
+      ingredientSections.flatMap((section) =>
+        section.ingredients.filter(hasName).map((ingredient) => ingredient.id),
       ),
-    })),
-  }));
-};
+    ),
+  );
 
 /**
  * Creates the ingredients insert object for the recipe based on the FE sections object.
@@ -100,7 +99,7 @@ const createIngredientsInsert = (
         position: index,
       })),
     )
-    .filter((ingredient) => ingredient.name.trim() !== '');
+    .filter(hasName);
 };
 
 /**
@@ -166,7 +165,9 @@ export async function addRecipe(
       category_id,
       source_url,
       image_url: imageUrlInput || null, // Temporary, will update if upload succeeds
-      instructions: cleanInstructionSections(instructionSections),
+      instructions: cleanInstructionSections(
+        unlinkUnsavedIngredients(instructionSections, ingredientSections),
+      ),
       ingredient_section_order: ingredientSectionOrder,
       instruction_section_order: instructionSectionOrder,
       servings,
@@ -316,8 +317,8 @@ export async function updateRecipe(
     }
   }
 
-  // Check if we need to delete any ingredients BEFORE updating the recipe
-  // so we can remove their IDs from instruction steps
+  // Find the recipe's current ingredients so any that were removed can be
+  // deleted below
   const { data: currentIngredientIds } = await supabase
     .from('recipe_ingredient')
     .select('id')
@@ -335,14 +336,11 @@ export async function updateRecipe(
       )
     : [];
 
-  // Remove deleted ingredient IDs from all instruction steps
-  const cleanedInstructionSections =
-    ingredientsToDelete.length > 0
-      ? removeDeletedIngredientIds(
-          instructionSections,
-          ingredientsToDelete.map((i) => i.id),
-        )
-      : instructionSections;
+  // Remove links to ingredients that won't exist after this save from all steps
+  const cleanedInstructionSections = unlinkUnsavedIngredients(
+    instructionSections,
+    ingredientSections,
+  );
 
   // Update recipe with cleaned instruction sections
   const { data: recipeData, error } = await supabase

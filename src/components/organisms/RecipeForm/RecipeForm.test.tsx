@@ -177,3 +177,65 @@ describe('RecipeForm text editing', () => {
     ).not.toBeInTheDocument();
   });
 });
+
+describe('RecipeForm ingredient links', () => {
+  const linkedRecipe = {
+    ...initialRecipe,
+    instructions: [
+      {
+        id: 'a',
+        title: null,
+        steps: [{ id: 'st1', text: 'Mix.', ingredientIds: ['i1', 'i2'] }],
+      },
+    ],
+  };
+
+  const renderUpdate = () =>
+    render(
+      <RecipeForm
+        {...props}
+        mode="update"
+        recipeId="r1"
+        initialRecipe={linkedRecipe}
+        initialIngredientSections={ingredientSections}
+      />,
+    );
+
+  // A link to an ingredient that no longer exists renders as a chip with no
+  // label, so a stale link shows up as a button with no accessible name.
+  const emptyChips = () => screen.queryAllByRole('button', { name: '' });
+
+  it('should show the ingredients linked to a step', () => {
+    renderUpdate();
+
+    expect(screen.getByText('2 cups all-purpose flour')).toBeInTheDocument();
+    expect(screen.getByText('1/2 cup butter')).toBeInTheDocument();
+    expect(emptyChips()).toHaveLength(0);
+  });
+
+  it('should unlink an ingredient from its steps when the ingredient is deleted', () => {
+    renderUpdate();
+
+    fireEvent.click(
+      screen.getAllByRole('button', { name: 'Delete ingredient' })[0],
+    );
+
+    expect(
+      screen.queryByText('2 cups all-purpose flour'),
+    ).not.toBeInTheDocument();
+    expect(screen.getByText('1/2 cup butter')).toBeInTheDocument();
+    expect(emptyChips()).toHaveLength(0);
+  });
+
+  it('should unlink every ingredient in a section when the section is deleted', () => {
+    renderUpdate();
+
+    fireEvent.click(
+      screen.getAllByRole('button', { name: /delete section/i })[1],
+    );
+
+    expect(screen.queryByText('1/2 cup butter')).not.toBeInTheDocument();
+    expect(screen.getByText('2 cups all-purpose flour')).toBeInTheDocument();
+    expect(emptyChips()).toHaveLength(0);
+  });
+});

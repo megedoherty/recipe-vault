@@ -21,6 +21,7 @@ import {
   parseIngredients,
   parseInstructions,
 } from '@/lib/utils/parse';
+import unlinkMissingIngredients from '@/lib/utils/unlinkMissingIngredients';
 import {
   Category,
   EditableRecipe,
@@ -69,20 +70,37 @@ export default function RecipeForm({
     initialRecipe?.equipmentIds ?? [],
   );
 
+  // Steps can only link to ingredients that are still in the recipe. Deriving
+  // this (instead of pruning when an ingredient is deleted) covers every way an
+  // ingredient can disappear: deleting a row, deleting a section, or
+  // re-processing the ingredient text.
+  const linkedInstructionSections = useMemo(
+    () =>
+      unlinkMissingIngredients(
+        instructionSections,
+        new Set(
+          ingredientSections.flatMap((section) =>
+            section.ingredients.map((ingredient) => ingredient.id),
+          ),
+        ),
+      ),
+    [instructionSections, ingredientSections],
+  );
+
   const isCreateMode = mode === 'create';
 
   const actionFunction = isCreateMode
     ? addRecipe.bind(
         null,
         ingredientSections,
-        instructionSections,
+        linkedInstructionSections,
         selectedEquipment,
       )
     : updateRecipe.bind(
         null,
         recipeId!,
         ingredientSections,
-        instructionSections,
+        linkedInstructionSections,
         selectedEquipment,
       );
 
@@ -212,11 +230,11 @@ export default function RecipeForm({
           title="Instructions"
           onProcess={onProcessInstructions}
           initialProcessed={instructionSections.length > 0}
-          getText={() => instructionsToText(instructionSections)}
+          getText={() => instructionsToText(linkedInstructionSections)}
           reprocessWarning="Processing replaces your current steps. Any ingredients you linked to individual steps will be removed."
           editorComponent={
             <InstructionsSectionsEditor
-              instructionSections={instructionSections}
+              instructionSections={linkedInstructionSections}
               setInstructionSections={setInstructionSections}
               ingredients={allIngredients}
             />
@@ -226,7 +244,7 @@ export default function RecipeForm({
         <section className={styles.sectionContainer}>
           <h2>Instructions</h2>
           <InstructionsSectionsEditor
-            instructionSections={instructionSections}
+            instructionSections={linkedInstructionSections}
             setInstructionSections={setInstructionSections}
             ingredients={allIngredients}
           />

@@ -19,11 +19,16 @@ export default function Step({
 
   let ingredientsUsed: string[] = [];
   if (ingredientIds && ingredientIds?.length > 0) {
-    ingredientsUsed = ingredientIds
-      .map((ingredientId) => ingredients[ingredientId])
-      .map((ingredient) =>
-        `${ingredient.quantity ?? ''} ${ingredient.name}`.trim(),
-      );
+    // A step can reference an ingredient that was since removed from the
+    // recipe; skip those rather than crashing the page.
+    ingredientsUsed = ingredientIds.flatMap((ingredientId) => {
+      const ingredient = ingredients[ingredientId] as
+        | RecipeIngredientDisplay
+        | undefined;
+      return ingredient
+        ? [`${ingredient.quantity ?? ''} ${ingredient.name}`.trim()]
+        : [];
+    });
   }
 
   const status = getStepStatus?.(id);
