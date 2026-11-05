@@ -1,9 +1,4 @@
-import {
-  DragDropContext,
-  Draggable,
-  Droppable,
-  DropResult,
-} from '@hello-pangea/dnd';
+import { Draggable, Droppable } from '@hello-pangea/dnd';
 import { MoveVertical, X } from 'lucide-react';
 import { Dispatch, SetStateAction } from 'react';
 
@@ -34,32 +29,6 @@ export default function IngredientListEditor({
   section,
   ingredients,
 }: IngredientListEditorProps) {
-  const onDragEnd = (result: DropResult) => {
-    if (!result.destination) return;
-
-    const { source, destination } = result;
-
-    if (source.index === destination.index) return;
-
-    setIngredientSections((prev) =>
-      prev.map((section) => {
-        // Check if this is the section where the drag happened
-        if (section.id === source.droppableId) {
-          // Create a new ingredients array
-          const newIngredients = [...section.ingredients];
-          const [movedIngredient] = newIngredients.splice(source.index, 1);
-          newIngredients.splice(destination.index, 0, movedIngredient);
-
-          return {
-            ...section,
-            ingredients: newIngredients,
-          };
-        }
-        return section;
-      }),
-    );
-  };
-
   const handleFieldChange = (
     sectionIndex: number,
     ingredientIndex: number,
@@ -101,135 +70,133 @@ export default function IngredientListEditor({
   };
 
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
-      <Droppable droppableId={sectionId}>
-        {(provided) => (
-          <div
-            ref={provided.innerRef}
-            {...provided.droppableProps}
-            className={styles.ingredientsContainer}
-          >
-            {section.ingredients.map((ingredient, ingredientIndex) => (
-              <Draggable
-                draggableId={ingredient.id}
-                key={ingredient.id}
-                index={ingredientIndex}
-              >
-                {(provided) => (
-                  <div
-                    className={styles.ingredient}
-                    ref={provided.innerRef}
-                    {...provided.draggableProps}
+    <Droppable droppableId={sectionId}>
+      {(provided) => (
+        <div
+          ref={provided.innerRef}
+          {...provided.droppableProps}
+          className={styles.ingredientsContainer}
+        >
+          {section.ingredients.map((ingredient, ingredientIndex) => (
+            <Draggable
+              draggableId={ingredient.id}
+              key={ingredient.id}
+              index={ingredientIndex}
+            >
+              {(provided) => (
+                <div
+                  className={styles.ingredient}
+                  ref={provided.innerRef}
+                  {...provided.draggableProps}
+                >
+                  <Button
+                    variant="secondary"
+                    iconOnly
+                    size="small"
+                    aria-label="Reorder ingredient"
+                    className={styles.dragHandleButton}
+                    {...provided.dragHandleProps}
                   >
-                    <Button
-                      variant="secondary"
-                      iconOnly
-                      size="small"
-                      aria-label="Reorder ingredient"
-                      className={styles.dragHandleButton}
-                      {...provided.dragHandleProps}
-                    >
-                      <MoveVertical />
-                    </Button>
-                    <Input
-                      containerClassName={styles.quantityInput}
-                      label="Quantity"
-                      name={`${section.title}-quantity-${ingredientIndex}`}
-                      id={`${section.title}-quantity-${ingredientIndex}`}
-                      type="text"
-                      value={ingredient.quantity || ''}
-                      onChange={(e) =>
-                        handleFieldChange(
-                          sectionIndex,
-                          ingredientIndex,
-                          'quantity',
-                          e.target.value,
-                        )
-                      }
-                      hideLabel
-                    />
-                    <Input
-                      label="Ingredient"
-                      containerClassName={styles.ingredientInput}
-                      name={`section-${section.title}-ingredient-${ingredientIndex}`}
-                      id={`${section.title}-ingredient-${ingredientIndex}`}
-                      type="text"
-                      value={ingredient.name}
-                      onChange={(e) =>
-                        handleFieldChange(
-                          sectionIndex,
-                          ingredientIndex,
-                          'name',
-                          e.target.value,
-                        )
-                      }
-                      hideLabel
-                    />
-                    <SelectableSearchPopover
-                      containerClassName={styles.ingredientPickerContainer}
-                      popoverId="ingredient-picker-popover"
-                      popoverAriaLabel="Ingredient picker"
-                      searchPlaceholder="Ingredient name"
-                      searchLabel="Search ingredients"
-                      searchId="ingredient-picker-search"
-                      buttonContent={
-                        <span className={styles.ingredientIdButtonText}>
-                          {ingredient.ingredientId
-                            ? (ingredients.find(
-                                (ic) => ic.id === ingredient.ingredientId,
-                              )?.name ?? '')
-                            : 'Pick ingredient'}
-                        </span>
-                      }
-                      buttonSize="medium"
-                      noResultsText="No ingredients found"
-                      items={ingredients}
-                      groupItems={(items) => {
-                        const grouped = Object.groupBy(
-                          items,
-                          (ingredient) => ingredient.category || '',
-                        );
-                        return grouped as Record<
-                          string,
-                          IngredientForRecipeEdit[]
-                        >;
-                      }}
-                      getItemLabel={(ingredient) => ingredient.name}
-                      getItemChecked={(itemId) =>
-                        ingredient.ingredientId === itemId
-                      }
-                      onToggleItem={(itemId) => {
-                        const newValue =
-                          ingredient.ingredientId === itemId ? null : itemId;
-                        handleFieldChange(
-                          sectionIndex,
-                          ingredientIndex,
-                          'ingredientId',
-                          newValue,
-                        );
-                      }}
-                      buttonClassName={styles.ingredientIdButton}
-                    />
-                    <Button
-                      variant="secondary"
-                      iconOnly
-                      className={styles.deleteButton}
-                      size="small"
-                      onClick={() =>
-                        handleDeleteIngredient(sectionIndex, ingredientIndex)
-                      }
-                      aria-label="Delete ingredient"
-                    >
-                      <X />
-                    </Button>
-                  </div>
-                )}
-              </Draggable>
-            ))}
-            {provided.placeholder}
-          </div>
-        )}
-      </Droppable>
-    </DragDropContext>
+                    <MoveVertical />
+                  </Button>
+                  <Input
+                    containerClassName={styles.quantityInput}
+                    label="Quantity"
+                    name={`${section.title}-quantity-${ingredientIndex}`}
+                    id={`${section.title}-quantity-${ingredientIndex}`}
+                    type="text"
+                    value={ingredient.quantity || ''}
+                    onChange={(e) =>
+                      handleFieldChange(
+                        sectionIndex,
+                        ingredientIndex,
+                        'quantity',
+                        e.target.value,
+                      )
+                    }
+                    hideLabel
+                  />
+                  <Input
+                    label="Ingredient"
+                    containerClassName={styles.ingredientInput}
+                    name={`section-${section.title}-ingredient-${ingredientIndex}`}
+                    id={`${section.title}-ingredient-${ingredientIndex}`}
+                    type="text"
+                    value={ingredient.name}
+                    onChange={(e) =>
+                      handleFieldChange(
+                        sectionIndex,
+                        ingredientIndex,
+                        'name',
+                        e.target.value,
+                      )
+                    }
+                    hideLabel
+                  />
+                  <SelectableSearchPopover
+                    containerClassName={styles.ingredientPickerContainer}
+                    popoverId="ingredient-picker-popover"
+                    popoverAriaLabel="Ingredient picker"
+                    searchPlaceholder="Ingredient name"
+                    searchLabel="Search ingredients"
+                    searchId="ingredient-picker-search"
+                    buttonContent={
+                      <span className={styles.ingredientIdButtonText}>
+                        {ingredient.ingredientId
+                          ? (ingredients.find(
+                              (ic) => ic.id === ingredient.ingredientId,
+                            )?.name ?? '')
+                          : 'Pick ingredient'}
+                      </span>
+                    }
+                    buttonSize="medium"
+                    noResultsText="No ingredients found"
+                    items={ingredients}
+                    groupItems={(items) => {
+                      const grouped = Object.groupBy(
+                        items,
+                        (ingredient) => ingredient.category || '',
+                      );
+                      return grouped as Record<
+                        string,
+                        IngredientForRecipeEdit[]
+                      >;
+                    }}
+                    getItemLabel={(ingredient) => ingredient.name}
+                    getItemChecked={(itemId) =>
+                      ingredient.ingredientId === itemId
+                    }
+                    onToggleItem={(itemId) => {
+                      const newValue =
+                        ingredient.ingredientId === itemId ? null : itemId;
+                      handleFieldChange(
+                        sectionIndex,
+                        ingredientIndex,
+                        'ingredientId',
+                        newValue,
+                      );
+                    }}
+                    buttonClassName={styles.ingredientIdButton}
+                  />
+                  <Button
+                    variant="secondary"
+                    iconOnly
+                    className={styles.deleteButton}
+                    size="small"
+                    onClick={() =>
+                      handleDeleteIngredient(sectionIndex, ingredientIndex)
+                    }
+                    aria-label="Delete ingredient"
+                  >
+                    <X />
+                  </Button>
+                </div>
+              )}
+            </Draggable>
+          ))}
+          {provided.placeholder}
+        </div>
+      )}
+    </Droppable>
   );
 }

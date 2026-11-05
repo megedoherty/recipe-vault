@@ -1,9 +1,4 @@
-import {
-  DragDropContext,
-  Draggable,
-  Droppable,
-  DropResult,
-} from '@hello-pangea/dnd';
+import { Draggable, Droppable } from '@hello-pangea/dnd';
 import { MoveVertical, X } from 'lucide-react';
 
 import Button from '@/components/atoms/Button/Button';
@@ -35,24 +30,6 @@ export default function InstructionListEditor({
   section,
   ingredients,
 }: InstructionListEditorProps) {
-  const onDragEnd = (result: DropResult) => {
-    if (!result.destination) return;
-
-    const { source, destination } = result;
-
-    if (source.index === destination.index) return;
-
-    setSection((section) => {
-      const newSteps = [...section.steps];
-      const [movedStep] = newSteps.splice(source.index, 1);
-      newSteps.splice(destination.index, 0, movedStep);
-      return {
-        ...section,
-        steps: newSteps,
-      };
-    });
-  };
-
   const handleTextChange = (stepIndex: number, value: string) => {
     setSection((section) => ({
       ...section,
@@ -95,116 +72,113 @@ export default function InstructionListEditor({
   };
 
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
-      <Droppable droppableId={sectionId}>
-        {(provided) => (
-          <div
-            ref={provided.innerRef}
-            {...provided.droppableProps}
-            className={styles.stepsContainer}
-          >
-            {section.steps.map((step, stepIndex) => (
-              <Draggable draggableId={step.id} key={step.id} index={stepIndex}>
-                {(provided) => (
-                  <div
-                    className={styles.step}
-                    ref={provided.innerRef}
-                    {...provided.draggableProps}
+    <Droppable droppableId={sectionId}>
+      {(provided) => (
+        <div
+          ref={provided.innerRef}
+          {...provided.droppableProps}
+          className={styles.stepsContainer}
+        >
+          {section.steps.map((step, stepIndex) => (
+            <Draggable draggableId={step.id} key={step.id} index={stepIndex}>
+              {(provided) => (
+                <div
+                  className={styles.step}
+                  ref={provided.innerRef}
+                  {...provided.draggableProps}
+                >
+                  <Button
+                    variant="secondary"
+                    iconOnly
+                    size="small"
+                    aria-label="Reorder step"
+                    {...provided.dragHandleProps}
                   >
-                    <Button
-                      variant="secondary"
-                      iconOnly
-                      size="small"
-                      aria-label="Reorder step"
-                      {...provided.dragHandleProps}
-                    >
-                      <MoveVertical />
-                    </Button>
-                    <Input
-                      label="Step"
-                      name={`${section.title}-step-${stepIndex}`}
-                      id={`${section.title}-step-${stepIndex}`}
-                      type="textarea"
-                      value={step.text || ''}
-                      onChange={(e) =>
-                        handleTextChange(stepIndex, e.target.value)
-                      }
-                      hideLabel
-                    />
-                    <Button
-                      variant="secondary"
-                      iconOnly
-                      size="small"
-                      onClick={() => handleDeleteStep(stepIndex)}
-                      aria-label="Delete step"
-                    >
-                      <X />
-                    </Button>
-                    <div className={styles.linkedIngredientsContainer}>
-                      <div className={styles.linkedIngredientsHeader}>
-                        <p className={styles.linkedIngredientsLabel}>
-                          Ingredients used:
-                        </p>
-                        <SelectableSearchPopover<RecipeEditableIngredient>
-                          popoverId="ingredient-picker-popover"
-                          popoverAriaLabel="Ingredient picker"
-                          searchPlaceholder="Ingredient name"
-                          searchLabel="Search ingredients"
-                          searchId="ingredient-picker-search"
-                          buttonContent="Add ingredients"
-                          noResultsText="No ingredients found"
-                          items={ingredients}
-                          groupItems={(items) => {
-                            const grouped = Object.groupBy(
-                              items,
-                              (ingredient) => ingredient.section || '',
-                            );
+                    <MoveVertical />
+                  </Button>
+                  <Input
+                    label="Step"
+                    name={`${section.title}-step-${stepIndex}`}
+                    id={`${section.title}-step-${stepIndex}`}
+                    type="textarea"
+                    value={step.text || ''}
+                    onChange={(e) =>
+                      handleTextChange(stepIndex, e.target.value)
+                    }
+                    hideLabel
+                  />
+                  <Button
+                    variant="secondary"
+                    iconOnly
+                    size="small"
+                    onClick={() => handleDeleteStep(stepIndex)}
+                    aria-label="Delete step"
+                  >
+                    <X />
+                  </Button>
+                  <div className={styles.linkedIngredientsContainer}>
+                    <div className={styles.linkedIngredientsHeader}>
+                      <p className={styles.linkedIngredientsLabel}>
+                        Ingredients used:
+                      </p>
+                      <SelectableSearchPopover<RecipeEditableIngredient>
+                        popoverId="ingredient-picker-popover"
+                        popoverAriaLabel="Ingredient picker"
+                        searchPlaceholder="Ingredient name"
+                        searchLabel="Search ingredients"
+                        searchId="ingredient-picker-search"
+                        buttonContent="Add ingredients"
+                        noResultsText="No ingredients found"
+                        items={ingredients}
+                        groupItems={(items) => {
+                          const grouped = Object.groupBy(
+                            items,
+                            (ingredient) => ingredient.section || '',
+                          );
 
-                            return grouped as Record<
-                              string,
-                              RecipeEditableIngredient[]
-                            >;
-                          }}
-                          getItemLabel={(ingredient) =>
-                            `${ingredient.quantity ?? ''} ${ingredient.name}`.trim()
-                          }
-                          getItemChecked={(itemId) =>
-                            step.ingredientIds?.includes(itemId) || false
-                          }
-                          onToggleItem={(ingredientId) =>
-                            handleToggleIngredient(stepIndex, ingredientId)
-                          }
-                          canSelectMultiple={true}
-                        />
-                      </div>
-                      {step.ingredientIds && step.ingredientIds.length > 0 && (
-                        <div className={styles.linkedIngredientsList}>
-                          {step.ingredientIds?.map((ingredientId) => (
-                            <Chip
-                              key={ingredientId}
-                              onClick={() =>
-                                handleToggleIngredient(stepIndex, ingredientId)
-                              }
-                            >
-                              {getChipLabel(
-                                ingredients.find(
-                                  (ingredient) =>
-                                    ingredient.id === ingredientId,
-                                ),
-                              )}
-                            </Chip>
-                          ))}
-                        </div>
-                      )}
+                          return grouped as Record<
+                            string,
+                            RecipeEditableIngredient[]
+                          >;
+                        }}
+                        getItemLabel={(ingredient) =>
+                          `${ingredient.quantity ?? ''} ${ingredient.name}`.trim()
+                        }
+                        getItemChecked={(itemId) =>
+                          step.ingredientIds?.includes(itemId) || false
+                        }
+                        onToggleItem={(ingredientId) =>
+                          handleToggleIngredient(stepIndex, ingredientId)
+                        }
+                        canSelectMultiple={true}
+                      />
                     </div>
+                    {step.ingredientIds && step.ingredientIds.length > 0 && (
+                      <div className={styles.linkedIngredientsList}>
+                        {step.ingredientIds?.map((ingredientId) => (
+                          <Chip
+                            key={ingredientId}
+                            onClick={() =>
+                              handleToggleIngredient(stepIndex, ingredientId)
+                            }
+                          >
+                            {getChipLabel(
+                              ingredients.find(
+                                (ingredient) => ingredient.id === ingredientId,
+                              ),
+                            )}
+                          </Chip>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                )}
-              </Draggable>
-            ))}
-            {provided.placeholder}
-          </div>
-        )}
-      </Droppable>
-    </DragDropContext>
+                </div>
+              )}
+            </Draggable>
+          ))}
+          {provided.placeholder}
+        </div>
+      )}
+    </Droppable>
   );
 }

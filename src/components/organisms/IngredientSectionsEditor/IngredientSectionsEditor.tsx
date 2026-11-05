@@ -1,9 +1,11 @@
+import { DragDropContext, DropResult } from '@hello-pangea/dnd';
 import { Plus, Trash2 } from 'lucide-react';
 import { Dispatch, SetStateAction } from 'react';
 
 import Button from '@/components/atoms/Button/Button';
 import Input from '@/components/atoms/Input/Input';
 import IngredientListEditor from '@/components/molecules/IngredientListEditor/IngredientListEditor';
+import moveBetweenSections from '@/lib/utils/moveBetweenSections';
 import {
   IngredientForRecipeEdit,
   RecipeIngredientSectionsEditable,
@@ -77,59 +79,72 @@ export default function IngredientSectionsEditor({
     setIngredientSections((prev) => prev.filter((_, i) => i !== sectionIndex));
   };
 
+  const handleDragEnd = (result: DropResult) => {
+    setIngredientSections((prev) =>
+      moveBetweenSections(
+        prev,
+        result,
+        (section) => section.ingredients,
+        (section, ingredients) => ({ ...section, ingredients }),
+      ),
+    );
+  };
+
   return (
-    <div className={styles.container}>
-      {ingredientSections.map((section, sectionIndex) => {
-        return (
-          <div key={section.id} className={styles.section}>
-            <div className={styles.sectionHeader}>
-              <h3>Section {sectionIndex + 1}</h3>
+    <DragDropContext onDragEnd={handleDragEnd}>
+      <div className={styles.container}>
+        {ingredientSections.map((section, sectionIndex) => {
+          return (
+            <div key={section.id} className={styles.section}>
+              <div className={styles.sectionHeader}>
+                <h3>Section {sectionIndex + 1}</h3>
+                <Button
+                  variant="secondary"
+                  iconOnly
+                  onClick={() => handleDeleteSection(sectionIndex)}
+                  aria-label="Delete section"
+                >
+                  <Trash2 />
+                </Button>
+              </div>
+              <Input
+                label="Title"
+                name={`section-${sectionIndex}`}
+                id={`section-${sectionIndex}`}
+                type="text"
+                value={section.title || ''}
+                onChange={(e) =>
+                  handleSectionTitleChange(sectionIndex, e.target.value)
+                }
+              />
+              <div className={styles.ingredients}>
+                <p>Ingredients</p>
+                <IngredientListEditor
+                  sectionId={section.id}
+                  sectionIndex={sectionIndex}
+                  setIngredientSections={setIngredientSections}
+                  section={section}
+                  ingredients={ingredients}
+                />
+              </div>
               <Button
-                variant="secondary"
-                iconOnly
-                onClick={() => handleDeleteSection(sectionIndex)}
-                aria-label="Delete section"
+                onClick={() => handleAddIngredient(sectionIndex)}
+                size="small"
+                className={styles.addButton}
               >
-                <Trash2 />
+                Add Ingredient
               </Button>
             </div>
-            <Input
-              label="Title"
-              name={`section-${sectionIndex}`}
-              id={`section-${sectionIndex}`}
-              type="text"
-              value={section.title || ''}
-              onChange={(e) =>
-                handleSectionTitleChange(sectionIndex, e.target.value)
-              }
-            />
-            <div className={styles.ingredients}>
-              <p>Ingredients</p>
-              <IngredientListEditor
-                sectionId={section.id}
-                sectionIndex={sectionIndex}
-                setIngredientSections={setIngredientSections}
-                section={section}
-                ingredients={ingredients}
-              />
-            </div>
-            <Button
-              onClick={() => handleAddIngredient(sectionIndex)}
-              size="small"
-              className={styles.addButton}
-            >
-              Add Ingredient
-            </Button>
-          </div>
-        );
-      })}
-      <Button
-        onClick={handleAddSection}
-        size="small"
-        className={styles.addSectionButton}
-      >
-        <Plus /> Add Section
-      </Button>
-    </div>
+          );
+        })}
+        <Button
+          onClick={handleAddSection}
+          size="small"
+          className={styles.addSectionButton}
+        >
+          <Plus /> Add Section
+        </Button>
+      </div>
+    </DragDropContext>
   );
 }
