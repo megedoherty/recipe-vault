@@ -5,8 +5,9 @@ import { useOptimistic, useState } from 'react';
 import Tabs from '@/components/atoms/Tabs/Tabs';
 import { setPreferGramsCookie } from '@/lib/utils/preferences';
 import { groupByRecipe, groupCombined } from '@/lib/utils/shoppingList';
-import { ShoppingListItem } from '@/types';
+import { IngredientForRecipeEdit, ShoppingListItem } from '@/types';
 
+import AddCustomListButton from '../AddCustomListButton/AddCustomListButton';
 import ClearListButton from '../ClearListButton/ClearListButton';
 import CombinedShoppingList from '../CombinedShoppingList/CombinedShoppingList';
 import RecipeGroupedShoppingList from '../RecipeGroupedShoppingList/RecipeGroupedShoppingList';
@@ -15,6 +16,8 @@ import styles from './ShoppingListView.module.css';
 interface ShoppingListViewProps {
   items: ShoppingListItem[];
   initialPreferGrams: boolean;
+  // Master ingredients for matching lines in a custom list
+  ingredientOptions?: IngredientForRecipeEdit[];
 }
 
 export type OptimisticShoppingListAction =
@@ -43,6 +46,7 @@ function shoppingListReducer(
 export default function ShoppingListView({
   items,
   initialPreferGrams,
+  ingredientOptions = [],
 }: ShoppingListViewProps) {
   const [preferGrams, setPreferGrams] = useState(initialPreferGrams);
   const [optimisticItems, dispatchOptimistic] = useOptimistic(
@@ -65,9 +69,12 @@ export default function ShoppingListView({
     <div>
       <div className={styles.header}>
         <h1>Shopping List</h1>
-        <ClearListButton
-          onClear={() => dispatchOptimistic({ type: 'clear' })}
-        />
+        <div className={styles.actions}>
+          <AddCustomListButton ingredientOptions={ingredientOptions} />
+          <ClearListButton
+            onClear={() => dispatchOptimistic({ type: 'clear' })}
+          />
+        </div>
       </div>
       <Tabs
         label="Shopping list view"

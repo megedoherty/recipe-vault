@@ -691,4 +691,22 @@ describe('groupByRecipe', () => {
     expect(groups[0].recipeName).toBe('Manually Added');
     expect(groups[0].items).toHaveLength(2);
   });
+
+  test('groups custom one-off lists by their name, separate from manual items', () => {
+    const items = [
+      makeItem({ id: 'a', recipeId: null, recipeName: 'Party' }),
+      makeItem({ id: 'b', recipeId: null, recipeName: ' party ' }),
+      makeItem({ id: 'c', recipeId: null, recipeName: 'Errands' }),
+      makeItem({ id: 'd', recipeId: null, recipeName: null }),
+    ];
+
+    const groups = groupByRecipe(items);
+    expect(groups.map((group) => group.recipeName)).toEqual([
+      'Party',
+      'Errands',
+      'Manually Added',
+    ]);
+    expect(groups[0].items.map((item) => item.id)).toEqual(['a', 'b']);
+    expect(groups.every((group) => group.recipeId === null)).toBe(true);
+  });
 });

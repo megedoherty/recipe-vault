@@ -70,6 +70,61 @@ export async function addToShoppingList(
   return { success: true };
 }
 
+export interface CustomListItem {
+  name: string;
+  quantity: string | null;
+  // Master ingredient id (as a string) when the line was matched to one
+  ingredientId: string | null;
+}
+
+/**
+ * Adds a one-off, named list of items (not tied to a saved recipe) to the
+ * current user's shopping list. Rows get a null recipe_id and the given name.
+ */
+export async function addCustomListToShoppingList(
+  listName: string,
+  items: CustomListItem[],
+): Promise<ActionsResponse> {
+  const cleanItems = items.filter((item) => item.name.trim() !== '');
+
+  if (cleanItems.length === 0) {
+    return { success: false, error: 'No items to add' };
+  }
+
+  const supabase = await createClient();
+  const { data: userData } = await supabase.auth.getUser();
+  const user = userData.user;
+
+  if (!user) {
+    return { success: false, error: 'User not found' };
+  }
+
+  const recipeName = listName.trim() === '' ? null : listName.trim();
+
+  const rows = cleanItems.map((item) => ({
+    user_id: user.id,
+    recipe_id: null,
+    recipe_name: recipeName,
+    name: item.name.trim(),
+    quantity: item.quantity?.trim() ? item.quantity.trim() : null,
+    normalized_ingredient_id: item.ingredientId
+      ? Number(item.ingredientId)
+      : null,
+    purchased: false,
+  }));
+
+  const { error } = await supabase.from('shopping_list_item').insert(rows);
+
+  if (error) {
+    console.error(error);
+    return { success: false, error: error.message };
+  }
+
+  revalidatePath('/shopping-list');
+
+  return { success: true };
+}
+
 /**
  * Marks all shopping list rows matching the given item IDs as purchased/unpurchased.
  * Called with a combined-view row's full sourceItemIds, so checking one combined

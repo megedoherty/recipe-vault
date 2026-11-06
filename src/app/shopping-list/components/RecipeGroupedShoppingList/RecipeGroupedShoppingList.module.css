@@ -34,3 +34,14 @@
   color: var(--text-muted);
   text-decoration: line-through;
 }
+
+.recipeLink {
+  color: var(--link);
+}
+
+.recipeLink:hover,
+.recipeLink:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 2px;
+}

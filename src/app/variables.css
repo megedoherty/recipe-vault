@@ -8,6 +8,7 @@
   --text-inverse: #fff;
   --accent: #564124;
   --accent-muted: #f2e4cc;
+  --link: #9a4a1f;
   --border-default: #e3ddd5;
   --border-strong: #8f857a;
   --divider: #ece6df;
@@ -62,8 +63,9 @@
     --text-inverse: #1a1714;
     --accent: #d8a25a;
     --accent-muted: #3a2f1e;
+    --link: var(--accent);
     --border-default: #3a342e;
-    --border-strong: #3a342e; /* same for dark */
+    --border-strong: var(--border-default); /* same for dark */
     --divider: #2b2622;
     --hover-surface: #2a2622;
     --hover-surface-subtle: #1b1916;

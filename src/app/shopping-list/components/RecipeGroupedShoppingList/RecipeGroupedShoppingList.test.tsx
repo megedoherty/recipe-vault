@@ -153,4 +153,40 @@ describe('RecipeGroupedShoppingList', () => {
     });
     expect(mockRemove).toHaveBeenCalledWith(['a']);
   });
+
+  it('links recipe group headings to the recipe, but not custom or manual groups', () => {
+    const customGroup: ShoppingListByRecipe = {
+      recipeId: null,
+      recipeName: 'Party',
+      items: [
+        {
+          id: 'z',
+          recipeId: null,
+          recipeName: 'Party',
+          name: 'salt',
+          quantity: null,
+          normalizedIngredientId: null,
+          normalizedIngredientName: null,
+          category: 'Other',
+          purchased: false,
+        },
+      ],
+    };
+    render(
+      <RecipeGroupedShoppingList
+        groups={[...groups, customGroup]}
+        combinedItems={[]}
+        onOptimisticUpdate={jest.fn()}
+      />,
+    );
+
+    expect(screen.getByRole('link', { name: 'Recipe A' })).toHaveAttribute(
+      'href',
+      '/recipes/r1',
+    );
+    expect(screen.getByText('Party')).toBeInTheDocument();
+    expect(
+      screen.queryByRole('link', { name: 'Party' }),
+    ).not.toBeInTheDocument();
+  });
 });

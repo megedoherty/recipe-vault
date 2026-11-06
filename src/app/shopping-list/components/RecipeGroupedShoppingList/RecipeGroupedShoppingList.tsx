@@ -1,6 +1,7 @@
 'use client';
 
 import { Trash2 } from 'lucide-react';
+import Link from 'next/link';
 import { startTransition } from 'react';
 
 import Button from '@/components/atoms/Button/Button';
@@ -42,9 +43,23 @@ export default function RecipeGroupedShoppingList({
   return (
     <ul className={styles.groupsList}>
       {groups.map((group) => (
-        <li key={group.recipeId ?? 'manual'} className={styles.recipeContainer}>
+        <li
+          key={group.recipeId ?? `custom:${group.recipeName}`}
+          className={styles.recipeContainer}
+        >
           <div className={styles.groupHeader}>
-            <h3>{group.recipeName}</h3>
+            <h3>
+              {group.recipeId ? (
+                <Link
+                  href={`/recipes/${group.recipeId}`}
+                  className={styles.recipeLink}
+                >
+                  {group.recipeName}
+                </Link>
+              ) : (
+                group.recipeName
+              )}
+            </h3>
             <Button
               aria-label={`Remove ${group.recipeName}`}
               variant="secondary"

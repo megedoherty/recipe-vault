@@ -542,23 +542,37 @@ export function groupCombined(
     .filter((group): group is CombinedShoppingListItem => group !== null);
 }
 
+const CUSTOM_GROUP_PREFIX = 'custom:';
+
+function recipeGroupKey(item: ShoppingListItem): string {
+  if (item.recipeId) {
+    return item.recipeId;
+  }
+  const customName = item.recipeName?.trim().toLowerCase();
+  return customName ? `${CUSTOM_GROUP_PREFIX}${customName}` : 'manual';
+}
+
 /**
- * Groups shopping list items by recipe, with a "Manually Added" group for
- * items with no recipeId.
+ * Groups shopping list items by recipe. Items with no recipeId but a name come
+ * from a custom one-off list and group by that name; the rest fall into a
+ * "Manually Added" group.
  */
 export function groupByRecipe(
   items: ShoppingListItem[],
 ): ShoppingListByRecipe[] {
-  const groups = Object.groupBy(items, (item) => item.recipeId ?? 'manual');
+  const groups = Object.groupBy(items, recipeGroupKey);
 
   return Object.entries(groups)
-    .map(([recipeId, groupItems]) => {
+    .map(([key, groupItems]) => {
       if (!groupItems || groupItems.length === 0) {
         return null;
       }
 
+      const isNamedRecipe =
+        !key.startsWith(CUSTOM_GROUP_PREFIX) && key !== 'manual';
+
       return {
-        recipeId: recipeId === 'manual' ? null : recipeId,
+        recipeId: isNamedRecipe ? key : null,
         recipeName: groupItems[0].recipeName ?? 'Manually Added',
         items: groupItems,
       };
