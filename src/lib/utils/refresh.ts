@@ -2,8 +2,8 @@ import { EditableRecipe, ParsedRecipe } from '@/types';
 
 /**
  * Combines a re-imported recipe with the saved one so a refresh doesn't wipe
- * user-set data. The parser doesn't know about equipment, storage or occasion,
- * and only guesses category, meal type and notes, so those stay as saved
+ * user-set data. The parser doesn't know about storage or occasion, and only
+ * guesses category, meal type, notes and equipment, so those stay as saved
  * (the guesses only fill gaps). Name, instructions and servings come from the
  * re-import.
  */

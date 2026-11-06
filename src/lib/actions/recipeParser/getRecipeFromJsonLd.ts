@@ -122,12 +122,11 @@ export const getRecipeFromJsonLd = (
           imageUrl: images[0] ?? null,
           servings: getRecipeServings(entity),
           categoryId,
-          // TODO
-          equipmentIds: [], // TODO
+          equipmentIds: [],
           storage: defaultStorage,
-          notes: null, // TODO
-          mealTypeId: null, // TODO
-          occasionId: null, // TODO
+          notes: null,
+          mealTypeId: null,
+          occasionId: null,
         },
         ingredients: parseIngredients(recipeIngredientText, ingredients),
         imageUrls: images,

@@ -5,6 +5,7 @@ import * as cheerio from 'cheerio';
 import { getUser } from '@/lib/supabase/queries/user';
 import {
   Category,
+  Equipment,
   IngredientForRecipeEdit,
   MealType,
   ParsedRecipe,
@@ -13,6 +14,7 @@ import {
 import { parseIngredients, parseInstructions } from '../../utils/parse';
 import { safeFetch } from '../../utils/safeFetch';
 import { getCategoryId } from './getCategory';
+import { getEquipmentIds } from './getEquipment';
 import { findIngredientsOrInstructions } from './getIngredientsOrInstructions';
 import { getMealType } from './getMealType';
 import { findNotes } from './getNotes';
@@ -59,6 +61,7 @@ export async function parseRecipeFromUrl(
   ingredients: IngredientForRecipeEdit[],
   categories: Category[],
   mealTypes: MealType[],
+  equipment: Equipment[] = [],
 ): Promise<ParsedRecipe> {
   if (!(await getUser())) {
     throw new Error('User not found');
@@ -164,6 +167,11 @@ export async function parseRecipeFromUrl(
     toReturn.recipe.mealTypeId =
       mealTypes.find((m) => m.name === mealTypeName)?.id ?? null;
   }
+
+  toReturn.recipe.equipmentIds = getEquipmentIds(
+    equipment,
+    toReturn.recipe.instructions,
+  );
 
   const notes = findNotes($);
   if (notes) {

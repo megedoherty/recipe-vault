@@ -44,6 +44,7 @@ export default function AddRecipeChoice({
       ingredients,
       categories,
       mealTypes,
+      equipment,
     );
     setRecipe(parsedRecipe);
     setMode('manual');

@@ -71,6 +71,7 @@ export default async function EditRecipePage({
         ingredients,
         categories,
         mealTypes,
+        equipment,
       );
 
       if (
