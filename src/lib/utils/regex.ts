@@ -78,7 +78,7 @@ export const ingredientWithOrOptions = /(.*)\sor\s(.*)/i;
 // result: [ "(140 grams)", "140", undefined, "gram" ]
 // result: [ "(100 - 200 grams)", "100", "200", "gram" ]
 export const ouncesOrGramsInParenthesesRegex =
-  /(?:\(|\[|\/ ?)(?:(\d+)(?: ?- ?(\d+))?) ?(ounce|oz|gram|g|ml|milliliter)s?(?:\)|\])?/;
+  /(?:\(|\[|\/ ?)(?:(\d+(?:\.\d+)?)(?: ?- ?(\d+(?:\.\d+)?))?) ?(ounce|oz|gram|g|ml|milliliter)s?(?:\)|\])?/;
 export const METRIC_QUANTITY_1 = 1;
 export const METRIC_QUANTITY_2 = 2;
 export const METRIC_UNIT = 3;
@@ -87,7 +87,7 @@ export const METRIC_UNIT = 3;
 // result: [ "340 - 453 g", "340", "453" ]
 // result: [ "120 g", "120", undefined ]
 export const gramsWithOptionalRangeRegex =
-  /^\s*(\d+)(?: ?- ?(\d+))? ?(?:gram|g)(?!\w)s?(?:\s|,|$)/i;
+  /^\s*(\d+(?:\.\d+)?)(?: ?- ?(\d+(?:\.\d+)?))? ?(?:gram|g)(?!\w)s?(?:\s|,|$)/i;
 
 // Number immediately before "g"/"gram(s)" anywhere in the string, not just
 // right after an opening paren — e.g. "(16 Tbsp; 226 g)", "1 stick, 113 g".
