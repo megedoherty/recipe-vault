@@ -21,9 +21,6 @@ export const MEASUREMENT_OPTION = [
   'stick',
 ] as const;
 
-// TODO: two ingredients together
-// 1 large egg + 1 egg yolk, at room temperature
-
 // example: 1, 10, 1 1/2, 1 / 2, ⅕
 export const numberRegex =
   /((?:\d+)? ?(?:and )?(?:\d+ ?\/ ?\d+)|(?:\d+ ?[½¼¾⅓⅔⅕⅖⅗⅘⅙⅛⅜⅝⅞])|(?:\d+\.\d+)|(?:\d+|[½¼¾⅓⅔⅕⅖⅗⅘⅙⅛⅜⅝⅞]))/;
@@ -161,3 +158,23 @@ export const nonNumericQuantityRegex = new RegExp(
   'i',
 );
 export const NON_NUMERIC_QUANTITY = 1;
+
+// Separator between two distinct ingredients on one line, only when followed
+// by a number: "1 large egg + 1 egg yolk", "1 large egg, plus 1 egg yolk"
+// (but not "..., plus more as needed" or "..., plus an extra pinch")
+export const combinedIngredientSeparatorRegex =
+  /\s*(?:,\s*plus|\+|\bplus\b)\s+(?=\d|[½¼¾⅓⅔⅕⅖⅗⅘⅙⅛⅜⅝⅞])/i;
+
+// A quantity followed by a real unit (not a size word like "large"):
+// "2 tablespoons", "1 cup". Used to tell "1 egg + 2 tbsp milk"-style additions
+// to the same ingredient ("1 cup flour, plus 2 tablespoons") from new ones.
+export const quantityWithRealUnitRegex = new RegExp(
+  `^${numberRegex.source} ?(?:${MEASUREMENT_OPTION.filter(
+    (u) => !['large', 'medium', 'small'].includes(u),
+  ).join('|')})s?\\.?`,
+  'i',
+);
+
+// "1 large yolk", "2 whites" -> missing the word "egg"
+export const bareEggPartRegex =
+  /^(\d+ (?:(?:large|medium|small) )?)(yolk|white)/i;

@@ -9,6 +9,8 @@ import {
 
 import {
   anythingInParenthesesRegex,
+  bareEggPartRegex,
+  combinedIngredientSeparatorRegex,
   EGG_AMOUNT,
   EGG_SIZE,
   eggLineRegex,
@@ -16,6 +18,7 @@ import {
   nonNumericQuantityRegex,
   nonNumericQuantityTerms,
   numberRegex,
+  quantityWithRealUnitRegex,
   rangeQuantityAndUnitLineRegex,
   SIMPLE_NUMBER,
   simpleNumberAndTextRegex,
@@ -121,13 +124,25 @@ function parseNameWithQuantity(
   name = name.replace(/\broom\s*temp\b/gi, 'room temperature');
 
   // Standardize room temperature, make it ", room temperature"
-  if (/\broom\s*temperature\b/i.test(name)) {
+  // Only when the phrase ends a clause, so "room temperature preferred" is
+  // left alone rather than being mangled into "…preferred"
+  const roomTempEnd = '(?=\\s*(?:[,;(]|$))';
+  if (new RegExp(`\\broom\\s*temperature${roomTempEnd}`, 'i').test(name)) {
     name = name
       .replace(
-        /\s*,\s*(?:softened\s+to\s+)?(?:at\s+)?room\s*temperature\s*/gi,
+        new RegExp(
+          `\\s*,\\s*(?:softened\\s+to\\s+)?(?:at\\s+)?room\\s*temperature${roomTempEnd}\\s*`,
+          'gi',
+        ),
         '',
       )
-      .replace(/\s*(?:softened\s+to\s+)?(?:at\s+)?room\s*temperature\s*/gi, '')
+      .replace(
+        new RegExp(
+          `\\s*(?:softened\\s+to\\s+)?(?:at\\s+)?room\\s*temperature${roomTempEnd}\\s*`,
+          'gi',
+        ),
+        '',
+      )
       .replace(/\s*softened\s*/gi, ' ')
       .replace(/\s+/g, ' ')
       .trim();
@@ -152,6 +167,34 @@ function parseNameWithQuantity(
   }
 
   return { name, quantity: standardizeQuantity(normalizedQuantity) };
+}
+
+// Splits a line listing two ingredients into two lines:
+// "1 large egg + 1 egg yolk, at room temperature" ->
+//   ["1 large egg, at room temperature", "1 egg yolk, at room temperature"]
+// Lines describing a single ingredient are returned unchanged:
+// "3 cups plus 2 tablespoons flour", "1 cup flour, plus more as needed"
+export function splitCombinedIngredientLine(line: string): string[] {
+  const trimmed = line.trim();
+  if (twoQuantitiesAndUnitsWithMathLineRegex.test(trimmed)) return [line];
+
+  const match = combinedIngredientSeparatorRegex.exec(trimmed);
+  if (!match) return [line];
+
+  const left = trimmed.slice(0, match.index).trim();
+  let right = trimmed.slice(match.index + match[0].length).trim();
+
+  // "plus 2 tablespoons more" is an extra amount of the same ingredient
+  if (!left || quantityWithRealUnitRegex.test(right)) return [line];
+
+  right = right.replace(bareEggPartRegex, '$1egg $2');
+
+  // Trailing note ("..., at room temperature") applies to both ingredients
+  const commaIndex = right.indexOf(',');
+  const suffix = commaIndex === -1 ? '' : right.slice(commaIndex);
+  const leftWithSuffix = suffix && !left.includes(',') ? left + suffix : left;
+
+  return [leftWithSuffix, right];
 }
 
 function parseIngredientLine(line: string): ParsedIngredient {
@@ -380,18 +423,20 @@ export function parseIngredients(
           acc.push({ id: crypto.randomUUID(), title: null, ingredients: [] });
         }
 
-        // Parse the ingredient and add it to the last section
-        const parsed = parseIngredientLine(line);
-        acc[acc.length - 1].ingredients.push({
-          name: parsed.name,
-          quantity: parsed.quantity,
-          id: crypto.randomUUID(),
-          section: null,
-          ingredientId: findClosestIngredient(
-            parsed.name,
-            lowercaseIngredients,
-          ),
-        });
+        // Parse the ingredient(s) and add them to the last section
+        for (const part of splitCombinedIngredientLine(line)) {
+          const parsed = parseIngredientLine(part);
+          acc[acc.length - 1].ingredients.push({
+            name: parsed.name,
+            quantity: parsed.quantity,
+            id: crypto.randomUUID(),
+            section: null,
+            ingredientId: findClosestIngredient(
+              parsed.name,
+              lowercaseIngredients,
+            ),
+          });
+        }
       }
 
       return acc;

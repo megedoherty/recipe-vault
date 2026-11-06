@@ -5,6 +5,7 @@ import {
   instructionsToText,
   parseIngredients,
   parseInstructions,
+  splitCombinedIngredientLine,
   standardizeQuantity,
 } from './parse';
 
@@ -161,6 +162,52 @@ describe('parseIngredients', () => {
     expect(byName['eggs']).toBe('30'); // egg special case -> whole egg
     expect(byName['unsalted butter']).toBe('50');
     expect(byName['salt']).toBe('60'); // salt special case -> table salt
+  });
+
+  test.each([
+    [
+      '1 large egg + 1 egg yolk, at room temperature',
+      ['1 large egg, at room temperature', '1 egg yolk, at room temperature'],
+    ],
+    [
+      '1 large egg + 1 large yolk, at room temperature',
+      [
+        '1 large egg, at room temperature',
+        '1 large egg yolk, at room temperature',
+      ],
+    ],
+    ['1 large egg, plus 1 large egg yolk', ['1 large egg', '1 large egg yolk']],
+  ])('splits %s', (line, expected) => {
+    expect(splitCombinedIngredientLine(line)).toEqual(expected);
+  });
+
+  test.each([
+    '2 teaspoons fresh chopped sage leaves, plus an extra pinch for topping',
+    '3 cups (390 g) bread flour, plus more as needed',
+    '3 cups plus 2 tablespoons (444 g) all-purpose flour',
+    '1 cup flour, plus 2 tablespoons for dusting',
+    '1 egg whisked with 1 teaspoon milk, for egg wash',
+  ])('leaves %s alone', (line) => {
+    expect(splitCombinedIngredientLine(line)).toEqual([line]);
+  });
+
+  test('keeps trailing words after "room temperature" intact', () => {
+    const result = parseIngredients(
+      '1 large egg + 1 egg yolk, room temperature preferred',
+      referenceIngredients,
+    );
+    expect(result[0].ingredients.map((i) => i.name)).toEqual([
+      'egg, room temperature preferred',
+      'egg yolk, room temperature preferred',
+    ]);
+  });
+
+  test('parseIngredients produces two ingredients', () => {
+    const result = parseIngredients(
+      '1 large egg + 1 egg yolk, at room temperature',
+      referenceIngredients,
+    );
+    expect(result[0].ingredients).toHaveLength(2);
   });
 });
 
