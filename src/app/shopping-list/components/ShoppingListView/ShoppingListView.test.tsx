@@ -95,14 +95,13 @@ describe('ShoppingListView', () => {
   });
 
   it('should use initialPreferGrams to set the starting unit toggle state', () => {
-    render(<ShoppingListView {...defaultProps} initialPreferGrams={false} />);
-    expect(
-      screen.getByRole('button', { name: 'Show grams' }),
-    ).toBeInTheDocument();
+    const { unmount } = render(
+      <ShoppingListView {...defaultProps} initialPreferGrams={false} />,
+    );
+    expect(screen.getByRole('switch', { name: 'Grams' })).not.toBeChecked();
+    unmount();
 
     render(<ShoppingListView {...defaultProps} initialPreferGrams={true} />);
-    expect(
-      screen.getByRole('button', { name: 'Show imperial units' }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('switch', { name: 'Grams' })).toBeChecked();
   });
 });

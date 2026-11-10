@@ -5,6 +5,7 @@ import { ChangeEvent, startTransition, useState } from 'react';
 
 import Button from '@/components/atoms/Button/Button';
 import Checkbox from '@/components/atoms/Checkbox/Checkbox';
+import Switch from '@/components/atoms/Switch/Switch';
 import {
   removeFromShoppingList,
   setPurchased,
@@ -29,9 +30,14 @@ export default function CombinedShoppingList({
   onToggleUnits,
 }: CombinedShoppingListProps) {
   const [showDetails, setShowDetails] = useState(true);
+  const [hidePurchased, setHidePurchased] = useState(false);
+
+  const visibleItems = hidePurchased
+    ? items.filter((item) => !item.purchased)
+    : items;
 
   const itemsByCategory = Object.groupBy(
-    sortByIngredientCategory(items),
+    sortByIngredientCategory(visibleItems),
     (item) => item.category,
   );
 
@@ -64,13 +70,21 @@ export default function CombinedShoppingList({
   return (
     <div>
       <div className={styles.toggleRow}>
-        <Button variant="secondary" onClick={onToggleUnits}>
-          {preferGrams ? 'Show imperial units' : 'Show grams'}
-        </Button>
-        <Button variant="secondary" onClick={() => setShowDetails((v) => !v)}>
-          {showDetails ? 'Hide details' : 'Show details'}
-        </Button>
+        <Switch label="Grams" checked={preferGrams} onChange={onToggleUnits} />
+        <Switch
+          label="Details"
+          checked={showDetails}
+          onChange={() => setShowDetails((v) => !v)}
+        />
+        <Switch
+          label="Hide checked"
+          checked={hidePurchased}
+          onChange={() => setHidePurchased((v) => !v)}
+        />
       </div>
+      {visibleItems.length === 0 && (
+        <p>Everything on your list is checked off.</p>
+      )}
       <ul className={styles.categoriesList}>
         {Object.entries(itemsByCategory).map(([category, items]) => (
           <li key={category}>

@@ -143,43 +143,85 @@ describe('CombinedShoppingList', () => {
     expect(screen.getByText('1 cup milk (Recipe A)')).toBeInTheDocument();
   });
 
-  it('should hide ingredient details when "Hide details" is clicked', () => {
+  it('should hide ingredient details when the "Details" switch is turned off', () => {
     render(<CombinedShoppingList {...defaultProps} />);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Hide details' }));
+    const details = screen.getByRole('switch', { name: 'Details' });
+    expect(details).toBeChecked();
+
+    fireEvent.click(details);
 
     expect(screen.queryByText('1 cup milk (Recipe A)')).not.toBeInTheDocument();
     expect(
       screen.getByRole('checkbox', { name: '2 cups milk' }),
     ).toBeInTheDocument();
+    expect(screen.getByRole('switch', { name: 'Details' })).not.toBeChecked();
+  });
+
+  it('should hide checked items when the "Hide checked" switch is turned on', () => {
+    render(<CombinedShoppingList {...defaultProps} />);
+
+    const hideChecked = screen.getByRole('switch', { name: 'Hide checked' });
+    expect(hideChecked).not.toBeChecked();
+
+    fireEvent.click(hideChecked);
+
     expect(
-      screen.getByRole('button', { name: 'Show details' }),
+      screen.queryByRole('checkbox', { name: '1 cup flour' }),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByText('Flours & Starches')).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('checkbox', { name: '2 cups milk' }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('switch', { name: 'Hide checked' })).toBeChecked();
+  });
+
+  it('should show checked items again when the "Hide checked" switch is turned off', () => {
+    render(<CombinedShoppingList {...defaultProps} />);
+
+    fireEvent.click(screen.getByRole('switch', { name: 'Hide checked' }));
+    fireEvent.click(screen.getByRole('switch', { name: 'Hide checked' }));
+
+    expect(
+      screen.getByRole('checkbox', { name: '1 cup flour' }),
     ).toBeInTheDocument();
   });
 
-  it('should show "Show imperial units" when preferGrams is true', () => {
+  it('should show a message when every item is checked and hidden', () => {
+    render(
+      <CombinedShoppingList
+        {...defaultProps}
+        items={items.map((item) => ({ ...item, purchased: true }))}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole('switch', { name: 'Hide checked' }));
+
+    expect(
+      screen.getByText('Everything on your list is checked off.'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('switch', { name: 'Hide checked' }),
+    ).toBeInTheDocument();
+  });
+
+  it('should turn the "Grams" switch on when preferGrams is true', () => {
     render(<CombinedShoppingList {...defaultProps} preferGrams={true} />);
-    expect(
-      screen.getByRole('button', { name: 'Show imperial units' }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('switch', { name: 'Grams' })).toBeChecked();
   });
 
-  it('should show "Show grams" when preferGrams is false', () => {
+  it('should turn the "Grams" switch off when preferGrams is false', () => {
     render(<CombinedShoppingList {...defaultProps} preferGrams={false} />);
-    expect(
-      screen.getByRole('button', { name: 'Show grams' }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('switch', { name: 'Grams' })).not.toBeChecked();
   });
 
-  it('should call onToggleUnits when the unit toggle button is clicked', () => {
+  it('should call onToggleUnits when the "Grams" switch is clicked', () => {
     const onToggleUnits = jest.fn();
     render(
       <CombinedShoppingList {...defaultProps} onToggleUnits={onToggleUnits} />,
     );
 
-    fireEvent.click(
-      screen.getByRole('button', { name: 'Show imperial units' }),
-    );
+    fireEvent.click(screen.getByRole('switch', { name: 'Grams' }));
 
     expect(onToggleUnits).toHaveBeenCalled();
   });
