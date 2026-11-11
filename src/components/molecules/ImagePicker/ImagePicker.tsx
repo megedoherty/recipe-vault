@@ -45,6 +45,7 @@ export default function ImagePicker({
                 fill
                 sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 200px"
                 className={styles.image}
+                unoptimized
               />
             </button>
           ))}
