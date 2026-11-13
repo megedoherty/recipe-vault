@@ -32,7 +32,6 @@
 
   /* Shared colors */
   --button-primary-background: #d8a25a;
-  --button-primary-border: #a36f30;
   --button-primary-hover: #c08b46;
   --button-primary-active: #a36f30;
   --button-disabled-text: #a39a91;
@@ -71,7 +70,6 @@
     --hover-surface-subtle: #1b1916;
     --active-surface: #332e29;
     --button-primary-text: var(--text-inverse);
-    --button-primary-border: var(--button-primary-background);
     --button-secondary-hover: #3a342e;
     --button-secondary-active: #352f27;
     --button-secondary-border: var(--border-strong);
