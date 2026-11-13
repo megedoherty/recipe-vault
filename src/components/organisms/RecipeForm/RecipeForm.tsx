@@ -134,7 +134,7 @@ export default function RecipeForm({
         <h2>Basic Information</h2>
         <Input
           label="Recipe Name"
-          name="name"
+          name="recipeName"
           id="recipeName"
           type="text"
           defaultValue={initialRecipe?.name ?? ''}

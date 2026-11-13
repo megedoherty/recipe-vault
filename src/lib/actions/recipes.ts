@@ -116,7 +116,7 @@ export async function addRecipe(
   formData: FormData,
 ): Promise<ActionsResponse> {
   const rawFormData = Object.fromEntries(formData);
-  const recipeName = rawFormData.name as string;
+  const recipeName = rawFormData.recipeName as string;
   const source_url = rawFormData.sourceUrl as string;
   const imageUrlInput = rawFormData.imageUrl as string;
   const category_id = rawFormData.categoryId
@@ -253,7 +253,7 @@ export async function updateRecipe(
   formData: FormData,
 ): Promise<ActionsResponse> {
   const rawFormData = Object.fromEntries(formData);
-  const name = rawFormData.name as string;
+  const name = rawFormData.recipeName as string;
   const imageUrlInput = rawFormData.imageUrl as string;
   const source_url = rawFormData.sourceUrl as string;
   const category_id = rawFormData.categoryId

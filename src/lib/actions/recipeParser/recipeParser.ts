@@ -37,6 +37,8 @@ const TRACKING_PARAMS = new Set([
   'ref',
   'ref_src',
   'si',
+  'smid',
+  'smtyp',
 ]);
 
 function stripTrackingParams(urlObj: URL): string {

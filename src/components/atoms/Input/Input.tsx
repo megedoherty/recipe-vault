@@ -37,6 +37,16 @@ export default function Input({
   const sharedClasses =
     `${fullWidthClass} ${errorClass} ${inputClassName}`.trim();
 
+  const isCredentialField = type === 'email' || type === 'password';
+  const passwordManagerProps = isCredentialField
+    ? {}
+    : {
+        autoComplete: 'off',
+        'data-lpignore': 'true',
+        'data-1p-ignore': true,
+        'data-bwignore': true,
+      };
+
   return (
     <div
       className={`${styles.container} ${fullWidthClass} ${containerClassName} ${styles[direction]}`}
@@ -49,6 +59,7 @@ export default function Input({
           id={id}
           name={name}
           className={`${styles.textarea} ${sharedClasses}`}
+          {...passwordManagerProps}
           {...props}
         />
       ) : (
@@ -57,6 +68,7 @@ export default function Input({
           id={id}
           name={name}
           className={`${styles.input} ${sharedClasses}`}
+          {...passwordManagerProps}
           {...props}
         />
       )}
