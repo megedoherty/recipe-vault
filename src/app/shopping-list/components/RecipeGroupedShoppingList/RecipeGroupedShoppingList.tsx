@@ -48,7 +48,7 @@ export default function RecipeGroupedShoppingList({
           className={styles.recipeContainer}
         >
           <div className={styles.groupHeader}>
-            <h3>
+            <h2>
               {group.recipeId ? (
                 <Link
                   href={`/recipes/${group.recipeId}`}
@@ -59,7 +59,7 @@ export default function RecipeGroupedShoppingList({
               ) : (
                 group.recipeName
               )}
-            </h3>
+            </h2>
             <Button
               aria-label={`Remove ${group.recipeName}`}
               variant="secondary"

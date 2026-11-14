@@ -88,7 +88,7 @@ export default function CombinedShoppingList({
       <ul className={styles.categoriesList}>
         {Object.entries(itemsByCategory).map(([category, items]) => (
           <li key={category}>
-            <h3>{category}</h3>
+            <h2>{category}</h2>
             <ul
               className={`${styles.itemList} ${showDetails ? '' : styles.compactList}`}
             >
