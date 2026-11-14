@@ -23,6 +23,7 @@ import {
   SIMPLE_NUMBER,
   simpleNumberAndTextRegex,
   simpleQuantityAndUnitLineRegex,
+  slashMetricAmountRegex,
   twoQuantitiesAndUnitsWithMathLineRegex,
 } from './regex';
 
@@ -204,6 +205,11 @@ function parseIngredientLine(line: string): ParsedIngredient {
   // Do some standardization: trim
   // Remove extra spaces inside parentheses: "( 12g)" -> "(12g)", "(12g )" -> "(12g)"
   trimmedLine = trimmedLine.replace(/\(\s+/g, '(').replace(/\s+\)/g, ')');
+
+  // Some sites write metric amounts after a slash instead of in parentheses:
+  // "1 ½ cups/340 grams butter" -> "1 ½ cups (340 grams) butter".
+  // Requires a letter before the slash so fractions like "1/2" are untouched.
+  trimmedLine = trimmedLine.replace(slashMetricAmountRegex, '$1 ($2)');
 
   // Remove "optional:" prefix, and add it as a suffix. This makes parsing easier.
   if (/^optional:\s+/i.test(trimmedLine)) {

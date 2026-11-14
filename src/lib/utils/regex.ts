@@ -89,6 +89,11 @@ export const METRIC_UNIT = 3;
 export const gramsWithOptionalRangeRegex =
   /^\s*(\d+(?:\.\d+)?)(?: ?- ?(\d+(?:\.\d+)?))? ?(?:gram|g)(?!\w)s?(?:\s|,|$)/i;
 
+// Metric amount after a slash following a unit: "cups/340 grams", "tablespoon/45 g"
+// result: "cups/340 grams" -> $1 = "cups", $2 = "340 grams"
+export const slashMetricAmountRegex =
+  /([a-z.])\s*\/\s*(\d+(?:\.\d+)?\s*(?:grams?|g|ml|milliliters?)(?!\w))/i;
+
 // Number immediately before "g"/"gram(s)" anywhere in the string, not just
 // right after an opening paren — e.g. "(16 Tbsp; 226 g)", "1 stick, 113 g".
 // Looser than ouncesOrGramsInParenthesesRegex, which requires the number to

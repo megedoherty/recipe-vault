@@ -95,6 +95,39 @@ describe('parseIngredients', () => {
     expect(result[0].ingredients[0].quantity).toBe('1 teaspoon');
   });
 
+  test('treats a slash-separated metric amount like a parenthesized one', () => {
+    const result = parseIngredients(
+      [
+        '1 ½ cups/340 grams cold unsalted butter (3 sticks), cut into ½-inch pieces',
+        '¾ cup/150 grams granulated sugar',
+        '½ cup plus 1 tablespoon/45 grams cocoa powder',
+        '¾ cup/90 grams slivered almonds, chopped walnuts or pecans (optional)',
+        '½ cup flour',
+      ].join('\n'),
+      referenceIngredients,
+    );
+    const ingredients = result[0].ingredients.map(({ name, quantity }) => ({
+      name,
+      quantity,
+    }));
+    expect(ingredients).toEqual([
+      {
+        name: 'cold unsalted butter (3 sticks), cut into ½-inch pieces',
+        quantity: '1 ½ cups (340 grams)',
+      },
+      { name: 'granulated sugar', quantity: '¾ cup (150 grams)' },
+      {
+        name: 'cocoa powder',
+        quantity: '½ cup plus 1 tablespoon (45 grams)',
+      },
+      {
+        name: 'slivered almonds, chopped walnuts or pecans (optional)',
+        quantity: '¾ cup (90 grams)',
+      },
+      { name: 'flour', quantity: '½ cup' },
+    ]);
+  });
+
   test('handles the egg special case (drops size, keeps count)', () => {
     const result = parseIngredients('2 large eggs', referenceIngredients);
     expect(result[0].ingredients[0]).toMatchObject({
