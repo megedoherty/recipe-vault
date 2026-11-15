@@ -1,8 +1,9 @@
 'use client';
 
-import { ChangeEvent, useState, useTransition } from 'react';
+import { ChangeEvent, startTransition, useOptimistic, useState } from 'react';
 
 import Checkbox from '@/components/atoms/Checkbox/Checkbox';
+import { useToast } from '@/components/molecules/Toast/ToastProvider';
 import { toggleRecipeMade } from '@/lib/actions/recipes';
 
 interface MadeCheckboxProps {
@@ -17,17 +18,25 @@ export default function MadeCheckbox({
   initialChecked,
   readOnly = false,
 }: MadeCheckboxProps) {
-  const [isPending, startTransition] = useTransition();
+  const { showToast } = useToast();
+
+  // The last state the server confirmed
   const [checked, setChecked] = useState(initialChecked);
+
+  // What we show: flips immediately, and React drops it back to `checked`
+  // when the transition ends, so a failed request rolls back by itself
+  const [optimisticChecked, setOptimisticChecked] = useOptimistic(checked);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const newChecked = e.target.checked;
     startTransition(async () => {
+      setOptimisticChecked(newChecked);
       try {
         await toggleRecipeMade(recipeId, newChecked);
-        setChecked(newChecked);
+        startTransition(() => setChecked(newChecked));
       } catch (error) {
         console.error(error);
+        showToast("Couldn't save. Please try again!");
       }
     });
   };
@@ -36,9 +45,9 @@ export default function MadeCheckbox({
     <Checkbox
       label="I made this"
       name="made"
-      checked={checked}
+      checked={optimisticChecked}
       onChange={handleChange}
-      disabled={isPending || readOnly}
+      disabled={readOnly}
       alignItems="center"
     />
   );

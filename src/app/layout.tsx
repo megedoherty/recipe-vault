@@ -6,6 +6,7 @@ import { Inter, Lora } from 'next/font/google';
 import { ReactNode } from 'react';
 
 import Navbar from '@/components/atoms/Navbar/Navbar';
+import ToastProvider from '@/components/molecules/Toast/ToastProvider';
 
 const inter = Inter({
   variable: '--font-inter',
@@ -30,10 +31,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${lora.variable}`}>
       <body>
-        <header>
-          <Navbar />
-        </header>
-        <main>{children}</main>
+        <ToastProvider>
+          <header>
+            <Navbar />
+          </header>
+          <main>{children}</main>
+        </ToastProvider>
       </body>
     </html>
   );

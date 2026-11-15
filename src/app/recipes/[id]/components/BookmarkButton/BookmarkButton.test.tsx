@@ -4,6 +4,12 @@ import { toggleRecipeBookmarked } from '@/lib/actions/recipes';
 
 import BookmarkButton from './BookmarkButton';
 
+const mockShowToast = jest.fn();
+
+jest.mock('@/components/molecules/Toast/ToastProvider', () => ({
+  useToast: () => ({ showToast: mockShowToast, dismissToast: jest.fn() }),
+}));
+
 jest.mock('@/lib/actions/recipes', () => ({
   toggleRecipeBookmarked: jest.fn(),
 }));
@@ -20,6 +26,34 @@ const defaultProps = {
 describe('BookmarkButton', () => {
   beforeEach(() => {
     mockToggle.mockReset();
+    mockShowToast.mockReset();
+  });
+
+  it('should show an error toast when the action fails', async () => {
+    const consoleErrorSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+    mockToggle.mockRejectedValue(new Error('nope'));
+
+    render(<BookmarkButton {...defaultProps} />);
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'Bookmark recipe' }));
+    });
+
+    expect(mockShowToast).toHaveBeenCalledWith(
+      "Couldn't update bookmark. Please try again!",
+    );
+    consoleErrorSpy.mockRestore();
+  });
+
+  it('should not show a toast when the action succeeds', async () => {
+    mockToggle.mockResolvedValue(undefined);
+    render(<BookmarkButton {...defaultProps} />);
+
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'Bookmark recipe' }));
+    });
+    expect(mockShowToast).not.toHaveBeenCalled();
   });
 
   it('should render unpressed when not bookmarked', () => {

@@ -67,3 +67,5 @@ Search/filter state on the home page is driven entirely by URL search params (`S
 - Prettier runs through eslint with `singleQuote: true`.
 - Prefer the existing atom/molecule components over new one-off markup.
 - Database changes go through migrations in `supabase/migrations/`.
+- Mutations that should feel instant (toggles, ratings) use `startTransition` + `useOptimistic` over a local `useState`, and keep the control enabled while the request runs (see `BookmarkButton`). Use `isPending` only for batch actions where a double submit would cause harm, like adding to the shopping list. Server actions from one client run in order, which this relies on.
+- Show errors from background or optimistic actions (toggles, ratings) with `useToast().showToast(message)` from `components/molecules/Toast/ToastProvider` (mounted in the root layout; auto-dismisses, announced via an `aria-live` region). Keep inline errors (local error state plus a `role="alert"` element, as in `NameEntry` and `AddCustomListButton`) for form and field validation.

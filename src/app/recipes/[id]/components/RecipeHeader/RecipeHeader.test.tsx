@@ -6,6 +6,10 @@ jest.mock('@/lib/actions/shoppingList', () => ({
   addToShoppingList: jest.fn(),
 }));
 
+jest.mock('@/components/molecules/Toast/ToastProvider', () => ({
+  useToast: () => ({ showToast: jest.fn(), dismissToast: jest.fn() }),
+}));
+
 jest.mock('@/lib/actions/recipes', () => ({
   toggleRecipeBookmarked: jest.fn(),
   deleteRecipe: jest.fn(),

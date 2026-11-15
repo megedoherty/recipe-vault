@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { startTransition, useOptimistic, useState } from 'react';
 
 import RatingInput from '@/components/atoms/RatingInput/RatingInput';
+import { useToast } from '@/components/molecules/Toast/ToastProvider';
 import { updateRecipeRating } from '@/lib/actions/recipes';
 
 interface RatingInputFormProps {
@@ -17,16 +18,24 @@ export default function RatingInputForm({
   initialRating,
   readOnly = false,
 }: RatingInputFormProps) {
+  const { showToast } = useToast();
+
+  // The last rating the server confirmed
   const [rating, setRating] = useState(initialRating || 0);
-  const [isPending, startTransition] = useTransition();
+
+  // What we show: updates immediately, and React drops it back to `rating`
+  // when the transition ends, so a failed request rolls back by itself
+  const [optimisticRating, setOptimisticRating] = useOptimistic(rating);
 
   const handleChange = (newRating: number) => {
     startTransition(async () => {
+      setOptimisticRating(newRating);
       try {
         await updateRecipeRating(recipeId, newRating);
-        setRating(newRating);
+        startTransition(() => setRating(newRating));
       } catch (error) {
         console.error(error);
+        showToast("Couldn't save rating. Please try again!");
       }
     });
   };
@@ -34,9 +43,8 @@ export default function RatingInputForm({
   return (
     <form>
       <RatingInput
-        rating={rating}
+        rating={optimisticRating}
         onRatingChange={handleChange}
-        isDisabled={isPending}
         readOnly={readOnly}
       />
     </form>

@@ -1,0 +1,60 @@
+.region {
+  position: fixed;
+  inset-block-end: 1rem;
+  inset-inline: 1rem;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+
+  /* The empty region must never block clicks on the page below */
+  pointer-events: none;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  max-width: min(28rem, 100%);
+  padding: 0.5rem 0.5rem 0.5rem 1rem;
+  border: 1px solid var(--border-default);
+  border-inline-start: 0.25rem solid var(--border-strong);
+  border-radius: var(--border-radius-default);
+  background-color: var(--background-elevated);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-md);
+  pointer-events: auto;
+  animation: slide-in 150ms ease-out;
+}
+
+.error {
+  border-inline-start-color: var(--error);
+}
+
+.info {
+  border-inline-start-color: var(--accent);
+}
+
+.message {
+  margin: 0;
+  font-size: var(--font-size-small);
+}
+
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    animation: none;
+  }
+}

@@ -4,6 +4,7 @@ import { Bookmark } from 'lucide-react';
 import { startTransition, useOptimistic, useState } from 'react';
 
 import Button from '@/components/atoms/Button/Button';
+import { useToast } from '@/components/molecules/Toast/ToastProvider';
 import { toggleRecipeBookmarked } from '@/lib/actions/recipes';
 
 interface BookmarkButtonProps {
@@ -15,6 +16,8 @@ export default function BookmarkButton({
   recipeId,
   initialBookmarked,
 }: BookmarkButtonProps) {
+  const { showToast } = useToast();
+
   // The last state the server confirmed
   const [bookmarked, setBookmarked] = useState(initialBookmarked);
 
@@ -32,6 +35,7 @@ export default function BookmarkButton({
         startTransition(() => setBookmarked(newBookmarked));
       } catch (error) {
         console.error(error);
+        showToast("Couldn't update bookmark. Please try again!");
       }
     });
   };
