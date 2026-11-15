@@ -1,6 +1,7 @@
 'use server';
 
 import { User } from '@supabase/supabase-js';
+import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
 import { uploadImageFromUrl } from '@/lib/actions/images';
@@ -480,6 +481,40 @@ export async function toggleRecipeMade(
   if (error || !data) {
     throw new Error(error?.message ?? 'Failed to toggle recipe made');
   }
+}
+
+/**
+ * Bookmark or un-bookmark a recipe. Bookmarks belong to the recipe's owner, so
+ * unlike made/rating this is not open to admins: toggling it on someone else's
+ * recipe would change the owner's flag.
+ */
+export async function toggleRecipeBookmarked(
+  recipeId: string,
+  bookmarked: boolean,
+): Promise<void> {
+  const user = await getUser();
+  if (!user) {
+    throw new Error('User not found');
+  }
+
+  // One round trip: matching user_id in the update is the ownership check, so
+  // no separate lookup is needed. If nothing matches, it isn't their recipe.
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('recipe')
+    .update({ bookmarked })
+    .eq('id', recipeId)
+    .eq('user_id', user.id)
+    .select('id');
+
+  if (error) {
+    throw new Error(error.message ?? 'Failed to update recipe bookmark');
+  }
+  if (!data || data.length === 0) {
+    throw new Error('Recipe not found');
+  }
+
+  revalidatePath('/');
 }
 
 /**

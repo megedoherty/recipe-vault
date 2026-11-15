@@ -4,6 +4,7 @@ import Button from '@/components/atoms/Button/Button';
 import { IngredientForRecipeEdit, RecipeIngredientDisplay } from '@/types';
 
 import AddToShoppingListButton from '../AddToShoppingListButton/AddToShoppingListButton';
+import BookmarkButton from '../BookmarkButton/BookmarkButton';
 import DeleteButton from '../DeleteButton/DeleteButton';
 import styles from './RecipeHeader.module.css';
 
@@ -18,6 +19,10 @@ interface RecipeHeaderProps {
   isLoggedIn: boolean;
   // Whether the user can edit or delete the recipe (owner or admin)
   canEdit: boolean;
+  // Whether the user can bookmark the recipe (owner only, not admins)
+  canBookmark: boolean;
+  // Whether the recipe is currently bookmarked
+  bookmarked: boolean;
   // The recipe ingredients
   ingredients: RecipeIngredientDisplay[];
   // Ingredients a shopping list line can be swapped for
@@ -30,6 +35,8 @@ export default function RecipeHeader({
   sourceUrl,
   isLoggedIn,
   canEdit,
+  canBookmark,
+  bookmarked,
   ingredients,
   ingredientOptions,
 }: RecipeHeaderProps) {
@@ -39,6 +46,12 @@ export default function RecipeHeader({
         <h1>{name}</h1>
         {isLoggedIn && (
           <div className={styles.headerButtons}>
+            {canBookmark && (
+              <BookmarkButton
+                recipeId={recipeId}
+                initialBookmarked={bookmarked}
+              />
+            )}
             {canEdit && (
               <Button
                 href={`/recipes/${recipeId}/edit`}

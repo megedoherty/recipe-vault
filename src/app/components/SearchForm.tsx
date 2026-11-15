@@ -72,6 +72,7 @@ export default function SearchForm({
   );
   const equipmentIds = getStringArraySearchParam(searchParams, 'equipment');
   const includeAllUsers = searchParams.get('includeAllUsers') === 'true';
+  const bookmarked = searchParams.get('bookmarked') === 'true';
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     const queryString = generateQueryString(e);
@@ -150,6 +151,7 @@ export default function SearchForm({
           servingsRange={servingsRange}
           formRef={formRef}
           includeAllUsersInitialValue={includeAllUsers}
+          bookmarkedInitialValue={bookmarked}
         />
         <div className={styles.buttonsContainer}>
           <Button

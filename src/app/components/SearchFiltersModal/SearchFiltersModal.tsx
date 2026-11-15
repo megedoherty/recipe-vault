@@ -10,6 +10,7 @@ import {
 } from '@/types';
 
 import AllUsersFilter from '../AllUsersFilter/AllUsersFilter';
+import BookmarkedFilter from '../BookmarkedFilter/BookmarkedFilter';
 import EquipmentFilter from '../EquipmentFilter/EquipmentFilter';
 import IngredientFilter from '../IngredientFilter/IngredientFilter';
 import MadeFilter from '../MadeFilter/MadeFilter';
@@ -33,6 +34,7 @@ interface SearchFiltersModalProps {
   occasions: Occasion[];
   occasionIdInitialValue: string;
   includeAllUsersInitialValue: boolean;
+  bookmarkedInitialValue: boolean;
 }
 
 export default function SearchFiltersModal({
@@ -50,6 +52,7 @@ export default function SearchFiltersModal({
   occasionIdInitialValue,
   formRef,
   includeAllUsersInitialValue,
+  bookmarkedInitialValue,
 }: SearchFiltersModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [activeFilters, setActiveFilters] = useState(() => {
@@ -66,6 +69,7 @@ export default function SearchFiltersModal({
       ...(madeInitialValue !== undefined ? ['made'] : []),
       ...(occasionIdInitialValue ? ['occasion'] : []),
       ...(includeAllUsersInitialValue ? ['includeAllUsers'] : []),
+      ...(bookmarkedInitialValue ? ['bookmarked'] : []),
     ];
   });
 
@@ -107,6 +111,12 @@ export default function SearchFiltersModal({
           <AllUsersFilter
             key={`includeAllUsers-${includeAllUsersInitialValue}`}
             initialValue={includeAllUsersInitialValue}
+            updateActiveFilters={updateActiveFilters}
+            formRef={formRef}
+          />
+          <BookmarkedFilter
+            key={`bookmarked-${bookmarkedInitialValue}`}
+            initialValue={bookmarkedInitialValue}
             updateActiveFilters={updateActiveFilters}
             formRef={formRef}
           />

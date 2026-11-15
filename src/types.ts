@@ -52,6 +52,7 @@ export interface RecipeDisplayDb {
   source_url: string | null;
   rating: number | null;
   made: boolean;
+  bookmarked: boolean;
   instructions: Json;
   instruction_section_order: Json;
   category: { name: string } | null;
@@ -76,6 +77,7 @@ export interface RecipeDisplay {
   userId: string | null;
   name: string;
   made: boolean;
+  bookmarked: boolean;
   imageUrl: string | null;
   sourceUrl: string | null;
   instructions: InstructionSection[];
@@ -96,6 +98,7 @@ export interface RecipeSummary {
   imageUrl: string | null;
   rating: number | null;
   made: boolean;
+  bookmarked: boolean;
 }
 
 // The type used when querying for a recipe to edit it

@@ -349,6 +349,50 @@ check(
     }),
   ),
 );
+
+// --- Bookmarking is an owner write that must not count as an edit
+const readUpdatedAt = async () =>
+  (await api(`/rest/v1/recipe?id=eq.${rid}&select=updated_at`)).json?.[0]
+    ?.updated_at;
+const beforeBookmark = await readUpdatedAt();
+check(
+  'A can bookmark own recipe',
+  allowed(
+    await api(`/rest/v1/recipe?id=eq.${rid}`, {
+      method: 'PATCH',
+      token: A.token,
+      body: { bookmarked: true },
+    }),
+  ),
+);
+check(
+  'Bookmarking does not change updated_at',
+  !!beforeBookmark && (await readUpdatedAt()) === beforeBookmark,
+);
+check(
+  'A can update own recipe again',
+  allowed(
+    await api(`/rest/v1/recipe?id=eq.${rid}`, {
+      method: 'PATCH',
+      token: A.token,
+      body: { name: 'A renamed again' },
+    }),
+  ),
+);
+check(
+  'Editing a recipe still changes updated_at',
+  (await readUpdatedAt()) !== beforeBookmark,
+);
+check(
+  'B cannot bookmark A recipe',
+  blocked(
+    await api(`/rest/v1/recipe?id=eq.${rid}`, {
+      method: 'PATCH',
+      token: B.token,
+      body: { bookmarked: false },
+    }),
+  ),
+);
 check(
   'A can update own ingredient',
   allowed(

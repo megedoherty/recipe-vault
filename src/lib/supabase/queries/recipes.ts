@@ -23,7 +23,7 @@ export async function getRecipeForDisplay(
   const { data } = await supabase
     .from('recipe')
     .select(
-      'user_id, image_url, instructions, name, made, rating, source_url, category(name), instruction_section_order, recipe_equipment(equipment(name)), servings, storage, notes, meal_type(name), occasion(name)',
+      'user_id, image_url, instructions, name, made, bookmarked, rating, source_url, category(name), instruction_section_order, recipe_equipment(equipment(name)), servings, storage, notes, meal_type(name), occasion(name)',
     )
     .eq('id', id)
     .single();
@@ -109,6 +109,10 @@ interface GetAllRecipesParams {
   mealTypeId?: number;
   occasionId?: number;
   includeAllUsers?: boolean;
+  // Only return recipes the current user has bookmarked
+  bookmarked?: boolean;
+  // List the current user's bookmarked recipes first
+  pinBookmarked?: boolean;
   sort?: SortOption;
   page?: number;
 }
@@ -136,13 +140,22 @@ export async function getAllRecipes({
   mealTypeId,
   occasionId,
   includeAllUsers = false,
+  bookmarked = false,
+  pinBookmarked = false,
   sort = 'last_updated',
   page = 1,
 }: GetAllRecipesParams = {}): Promise<GetAllRecipesResult> {
   const supabase = await createClient();
   let query = supabase
     .from('recipe')
-    .select('id, name, image_url, rating, made', { count: 'exact' });
+    .select('id, name, image_url, rating, made, bookmarked, user_id', {
+      count: 'exact',
+    });
+
+  // Bookmarks first, then the chosen sort as the tiebreaker
+  if (pinBookmarked) {
+    query = query.order('bookmarked', { ascending: false });
+  }
 
   switch (sort) {
     case 'last_updated':
@@ -159,12 +172,23 @@ export async function getAllRecipes({
       break;
   }
 
-  // Filter by user_id by default unless includeAllUsers is true
-  if (!includeAllUsers) {
-    const { data: claimsData } = await supabase.auth.getClaims();
-    if (claimsData?.claims?.sub) {
-      query = query.eq('user_id', claimsData.claims.sub);
+  const { data: claimsData } = await supabase.auth.getClaims();
+  const currentUserId = claimsData?.claims?.sub;
+
+  // Filter by user_id by default unless includeAllUsers is true. Bookmarks are
+  // personal, so the bookmarked filter always stays within the user's recipes.
+  if (!includeAllUsers || bookmarked) {
+    if (currentUserId) {
+      query = query.eq('user_id', currentUserId);
     }
+  }
+
+  if (bookmarked) {
+    if (!currentUserId) {
+      // Signed-out visitors have no bookmarks
+      return getAllRecipesEmptyResult;
+    }
+    query = query.eq('bookmarked', true);
   }
 
   if (name) {
@@ -361,6 +385,8 @@ export async function getAllRecipes({
           imageUrl: recipe.image_url,
           rating: recipe.rating,
           made: recipe.made,
+          // The flag is the owner's; never show it on someone else's recipe
+          bookmarked: recipe.bookmarked && recipe.user_id === currentUserId,
         })),
         count: count ?? 0,
       }

@@ -53,8 +53,13 @@ export default async function RecipePage({
 
   const { name, instructions, made, imageUrl, sourceUrl, rating, notes } =
     recipe;
+
   // Only the owner (or an admin) can edit; everyone else gets a read-only view
   const canEdit = canModifyRecipe(user, recipe.userId);
+
+  // Bookmarks are the owner's alone, so admins editing another user's recipe
+  // don't get the button
+  const canBookmark = !!user && recipe.userId === user.id;
 
   return (
     <ServingsProvider
@@ -68,6 +73,8 @@ export default async function RecipePage({
           sourceUrl={sourceUrl}
           isLoggedIn={!!user}
           canEdit={canEdit}
+          canBookmark={canBookmark}
+          bookmarked={recipe.bookmarked}
           ingredients={ingredients}
           ingredientOptions={ingredientOptions}
         />

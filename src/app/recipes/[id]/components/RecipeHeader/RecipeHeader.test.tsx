@@ -6,6 +6,11 @@ jest.mock('@/lib/actions/shoppingList', () => ({
   addToShoppingList: jest.fn(),
 }));
 
+jest.mock('@/lib/actions/recipes', () => ({
+  toggleRecipeBookmarked: jest.fn(),
+  deleteRecipe: jest.fn(),
+}));
+
 const defaultProps = {
   recipeId: '1',
   name: 'Recipe Name',
@@ -14,6 +19,8 @@ const defaultProps = {
   rating: 3,
   ingredients: [],
   canEdit: true,
+  canBookmark: true,
+  bookmarked: false,
 };
 
 describe('RecipeHeader', () => {
@@ -53,6 +60,22 @@ describe('RecipeHeader', () => {
     ).not.toBeInTheDocument();
     expect(
       screen.queryByRole('button', { name: 'Delete recipe' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('should show the bookmark button to the owner', () => {
+    render(<RecipeHeader {...defaultProps} isLoggedIn={true} />);
+    expect(
+      screen.getByRole('button', { name: 'Bookmark recipe' }),
+    ).toBeInTheDocument();
+  });
+
+  it('should hide the bookmark button if the user cannot bookmark, even if they can edit', () => {
+    render(
+      <RecipeHeader {...defaultProps} isLoggedIn={true} canBookmark={false} />,
+    );
+    expect(
+      screen.queryByRole('button', { name: /bookmark/i }),
     ).not.toBeInTheDocument();
   });
 });

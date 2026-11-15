@@ -4,7 +4,7 @@ import { getAllRecipes } from '@/lib/supabase/queries/recipes';
 
 import Pagination from '../Pagination/Pagination';
 import SortBar from '../SortBar/SortBar';
-import { parseQueryParams } from './RecipeList.utils';
+import { parseQueryParams, shouldPinBookmarked } from './RecipeList.utils';
 import styles from './RecipesList.module.css';
 
 interface RecipesListProps {
@@ -12,6 +12,7 @@ interface RecipesListProps {
 }
 
 export default async function RecipesList({ query }: RecipesListProps) {
+  const params = parseQueryParams(query);
   const {
     includeAllUsers,
     name,
@@ -25,9 +26,10 @@ export default async function RecipesList({ query }: RecipesListProps) {
     minRating,
     mealTypeId,
     occasionId,
+    bookmarked,
     sort,
     page,
-  } = parseQueryParams(query);
+  } = params;
 
   const { recipes, count } = await getAllRecipes({
     name,
@@ -42,6 +44,8 @@ export default async function RecipesList({ query }: RecipesListProps) {
     mealTypeId,
     occasionId,
     includeAllUsers,
+    bookmarked,
+    pinBookmarked: shouldPinBookmarked(params),
     sort,
     page,
   });

@@ -14,7 +14,7 @@ export default function RecipeCard({
   recipe,
   priority = false,
 }: RecipeCardProps) {
-  const { name, id, imageUrl, rating, made } = recipe;
+  const { name, id, imageUrl, rating, made, bookmarked } = recipe;
 
   return (
     <article className={styles.card}>
@@ -42,6 +42,11 @@ export default function RecipeCard({
             className={styles.defaultImage}
             unoptimized
           />
+        )}
+        {bookmarked && (
+          <div className={styles.bookmarked} role="img" aria-label="Bookmarked">
+            <div className={styles.ribbon} />
+          </div>
         )}
       </div>
       <div className={styles.content}>

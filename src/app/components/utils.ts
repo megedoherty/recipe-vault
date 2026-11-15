@@ -102,5 +102,10 @@ export function generateQueryString(e: FormEvent<HTMLFormElement>) {
     params.set('includeAllUsers', 'true');
   }
 
+  const bookmarkedValue = formData.get('bookmarked');
+  if (bookmarkedValue === 'true') {
+    params.set('bookmarked', 'true');
+  }
+
   return params.toString();
 }

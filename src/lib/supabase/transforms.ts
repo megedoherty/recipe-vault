@@ -99,6 +99,7 @@ export function transformRecipe(recipe: RecipeDisplayDb): RecipeDisplay {
     userId: recipe.user_id,
     name: recipe.name,
     made: recipe.made,
+    bookmarked: recipe.bookmarked,
     imageUrl: recipe.image_url,
     sourceUrl: recipe.source_url,
     instructions,

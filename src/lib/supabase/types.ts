@@ -130,6 +130,7 @@ export type Database = {
       };
       recipe: {
         Row: {
+          bookmarked: boolean;
           category_id: number | null;
           created_at: string;
           id: string;
@@ -150,6 +151,7 @@ export type Database = {
           user_id: string | null;
         };
         Insert: {
+          bookmarked?: boolean;
           category_id?: number | null;
           created_at?: string;
           id?: string;
@@ -170,6 +172,7 @@ export type Database = {
           user_id?: string | null;
         };
         Update: {
+          bookmarked?: boolean;
           category_id?: number | null;
           created_at?: string;
           id?: string;

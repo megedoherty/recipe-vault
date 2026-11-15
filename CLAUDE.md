@@ -53,7 +53,7 @@ Admin status is `app_metadata.role === 'admin'` (`isAdmin()` in `queries/user.ts
 
 Image access is also enforced by policies on `storage.objects` (in migrations): public read, signed-in upload, and update/delete only by the uploader (`owner_id`, set by Supabase on upload) or an admin. Not covered by migrations: creating the `recipe-images` bucket itself, and auth settings.
 
-`npm run test:rls` verifies the policies by calling the API as different users. It creates users with the service-role key, so run it against staging only. It refuses the production project, and that guard should stay. Never run `supabase db push` against production without applying and testing on staging first.
+`npm run test:rls` verifies the policies by calling the API as different users. It creates users with the service-role key, so run it against staging only. It refuses the production project, and that guard should stay. Never run `supabase db push` against production without applying and testing on staging first. The `/db-migrate` skill (`.claude/skills/db-migrate/`) walks through the full staging-then-production procedure, including backups.
 
 ### UI structure
 
