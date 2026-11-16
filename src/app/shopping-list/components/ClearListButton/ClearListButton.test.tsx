@@ -9,18 +9,7 @@ jest.mock('@/lib/actions/shoppingList', () => ({
 }));
 
 describe('ClearListButton', () => {
-  beforeEach(() => {
-    HTMLDialogElement.prototype.showModal = jest.fn(function (
-      this: HTMLDialogElement,
-    ) {
-      this.setAttribute('open', '');
-    });
-    HTMLDialogElement.prototype.close = jest.fn(function (
-      this: HTMLDialogElement,
-    ) {
-      this.removeAttribute('open');
-    });
-  });
+  beforeEach(() => {});
 
   it('should render the trigger button', () => {
     render(<ClearListButton onClear={jest.fn()} />);

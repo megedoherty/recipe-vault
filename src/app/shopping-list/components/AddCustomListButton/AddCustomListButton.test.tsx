@@ -13,16 +13,11 @@ const ingredientOptions = [{ id: '1', name: 'lemon', category: 'Produce' }];
 describe('AddCustomListButton', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    HTMLDialogElement.prototype.showModal = jest.fn(function (
-      this: HTMLDialogElement,
-    ) {
-      this.setAttribute('open', '');
-    });
-    HTMLDialogElement.prototype.close = jest.fn(function (
-      this: HTMLDialogElement,
-    ) {
-      this.removeAttribute('open');
-    });
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   const openAndProcess = async (text: string) => {

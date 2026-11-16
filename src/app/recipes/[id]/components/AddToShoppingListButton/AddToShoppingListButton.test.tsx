@@ -35,18 +35,7 @@ const defaultProps = {
 };
 
 describe('AddToShoppingListButton', () => {
-  beforeEach(() => {
-    HTMLDialogElement.prototype.showModal = jest.fn(function (
-      this: HTMLDialogElement,
-    ) {
-      this.setAttribute('open', '');
-    });
-    HTMLDialogElement.prototype.close = jest.fn(function (
-      this: HTMLDialogElement,
-    ) {
-      this.removeAttribute('open');
-    });
-  });
+  beforeEach(() => {});
 
   const openDialog = async () => {
     render(<AddToShoppingListButton {...defaultProps} />);

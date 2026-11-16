@@ -52,11 +52,6 @@ describe('ServingsScaler', () => {
       { id: 'c', name: 'salt', quantity: 'pinch' },
     ];
 
-    beforeEach(() => {
-      HTMLDialogElement.prototype.showModal = jest.fn();
-      HTMLDialogElement.prototype.close = jest.fn();
-    });
-
     it('hides the custom button when no ingredient has an exact amount', () => {
       render(
         <ServingsScaler
