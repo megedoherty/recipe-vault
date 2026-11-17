@@ -1,5 +1,6 @@
 import Image from 'next/image';
 
+import { isAllowedImageUrl } from '@/lib/utils/imageUrl';
 import { StorageInfo } from '@/types';
 
 import MadeCheckbox from '../MadeCheckbox/MadeCheckbox';
@@ -39,7 +40,7 @@ export default function RecipeImageAndInfo({
 }: RecipeImageAndInfoProps) {
   return (
     <div className={styles.container}>
-      {imageUrl && (
+      {isAllowedImageUrl(imageUrl) && (
         <div className={styles.imageContainer}>
           <Image
             src={imageUrl}

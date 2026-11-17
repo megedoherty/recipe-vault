@@ -7,6 +7,7 @@ import { redirect } from 'next/navigation';
 import { uploadImageFromUrl } from '@/lib/actions/images';
 import { canModifyRecipe, getUser } from '@/lib/supabase/queries/user';
 import { createClient } from '@/lib/supabase/server';
+import { isAllowedImageUrl } from '@/lib/utils/imageUrl';
 import unlinkMissingIngredients from '@/lib/utils/unlinkMissingIngredients';
 import {
   InstructionSection,
@@ -15,6 +16,9 @@ import {
 } from '@/types';
 
 import { Json } from '../supabase/types';
+
+// Tells the recipe page to toast that the image couldn't be imported
+const IMAGE_ERROR_QUERY = '?imageError=1';
 
 interface ActionsResponse {
   success: boolean;
@@ -120,6 +124,7 @@ export async function addRecipe(
   const recipeName = rawFormData.recipeName as string;
   const source_url = rawFormData.sourceUrl as string;
   const imageUrlInput = rawFormData.imageUrl as string;
+  const isSupabaseUrl = isAllowedImageUrl(imageUrlInput?.trim());
   const category_id = rawFormData.categoryId
     ? Number(rawFormData.categoryId)
     : null;
@@ -165,7 +170,7 @@ export async function addRecipe(
       name: recipeName,
       category_id,
       source_url,
-      image_url: imageUrlInput || null, // Temporary, will update if upload succeeds
+      image_url: isSupabaseUrl ? imageUrlInput : null, // Set after a successful upload
       instructions: cleanInstructionSections(
         unlinkUnsavedIngredients(instructionSections, ingredientSections),
       ),
@@ -186,18 +191,6 @@ export async function addRecipe(
       success: false,
       error: error?.message ?? 'Failed to create recipe',
     };
-  }
-
-  // Upload image if provided and not already a Supabase URL
-  if (imageUrlInput && !imageUrlInput.trim().includes('supabase.co')) {
-    const uploadedUrl = await uploadImageFromUrl(imageUrlInput, data.id);
-    if (uploadedUrl) {
-      // Update recipe with uploaded image URL
-      await supabase
-        .from('recipe')
-        .update({ image_url: uploadedUrl })
-        .eq('id', data.id);
-    }
   }
 
   const ingredients: RecipeIngredientDb[] = createIngredientsInsert(
@@ -235,7 +228,22 @@ export async function addRecipe(
     };
   }
 
-  redirect(`/recipes/${data.id}`);
+  // Upload image if provided and not already a Supabase URL. Done last so a
+  // failed insert above doesn't leave an orphaned image in storage.
+  let imageFailed = false;
+  if (imageUrlInput && !isSupabaseUrl) {
+    const uploadedUrl = await uploadImageFromUrl(imageUrlInput, data.id);
+    imageFailed = !uploadedUrl;
+    if (uploadedUrl) {
+      // Update recipe with uploaded image URL
+      await supabase
+        .from('recipe')
+        .update({ image_url: uploadedUrl })
+        .eq('id', data.id);
+    }
+  }
+
+  redirect(`/recipes/${data.id}${imageFailed ? IMAGE_ERROR_QUERY : ''}`);
 }
 
 /**
@@ -306,16 +314,18 @@ export async function updateRecipe(
   const currentImageUrl = currentRecipe?.image_url || '';
 
   // Only upload if image has changed and is not already a Supabase URL
-  let image_url = imageUrlInput;
+  // If the upload fails, keep the existing image rather than saving an
+  // external URL that next/image can't render
+  let image_url: string | null = imageUrlInput || null;
+  let imageFailed = false;
   if (
     imageUrlInput &&
     imageUrlInput !== currentImageUrl &&
-    !imageUrlInput.trim().includes('supabase.co')
+    !isAllowedImageUrl(imageUrlInput.trim())
   ) {
     const uploadedUrl = await uploadImageFromUrl(imageUrlInput, recipeId);
-    if (uploadedUrl) {
-      image_url = uploadedUrl;
-    }
+    imageFailed = !uploadedUrl;
+    image_url = uploadedUrl ?? currentImageUrl;
   }
 
   // Find the recipe's current ingredients so any that were removed can be
@@ -374,7 +384,7 @@ export async function updateRecipe(
 
   // Remove the previous image from storage now that the recipe points to the new one
   if (
-    image_url !== currentImageUrl &&
+    (image_url ?? '') !== currentImageUrl &&
     currentImageUrl.includes('supabase.co')
   ) {
     const urlParts = currentImageUrl.split('/recipe-images/');
@@ -452,7 +462,7 @@ export async function updateRecipe(
     }
   }
 
-  redirect(`/recipes/${recipeData.id}`);
+  redirect(`/recipes/${recipeData.id}${imageFailed ? IMAGE_ERROR_QUERY : ''}`);
 }
 
 /**

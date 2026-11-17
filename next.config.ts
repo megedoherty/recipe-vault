@@ -1,18 +1,12 @@
 import type { NextConfig } from 'next';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+import { getImageRemotePatterns } from './src/lib/utils/imageUrl';
 
 const nextConfig: NextConfig = {
   images: {
-    remotePatterns: supabaseUrl
-      ? [
-          {
-            protocol: 'https',
-            hostname: new URL(supabaseUrl).hostname,
-            pathname: '/storage/v1/object/public/recipe-images/**',
-          },
-        ]
-      : [],
+    remotePatterns: getImageRemotePatterns(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+    ),
   },
 };
 

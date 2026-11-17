@@ -1,5 +1,6 @@
 'use server';
 
+import { FETCH_USER_AGENT } from '@/constants';
 import { getUser } from '@/lib/supabase/queries/user';
 import { createClient } from '@/lib/supabase/server';
 import { safeFetch } from '@/lib/utils/safeFetch';
@@ -28,6 +29,11 @@ export async function uploadImageFromUrl(
     const response = await safeFetch(imageUrl, {
       maxBytes: MAX_IMAGE_BYTES,
       timeoutMs: 10000,
+      // Some sites 403 requests that have no User-Agent/Accept headers
+      headers: {
+        'User-Agent': FETCH_USER_AGENT,
+        Accept: 'image/avif,image/webp,image/*,*/*;q=0.8',
+      },
     });
     if (response.status < 200 || response.status >= 300) {
       throw new Error(`Failed to fetch image: ${response.status}`);

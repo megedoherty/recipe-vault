@@ -2,6 +2,7 @@
 
 import * as cheerio from 'cheerio';
 
+import { FETCH_USER_AGENT } from '@/constants';
 import { getUser } from '@/lib/supabase/queries/user';
 import {
   Category,
@@ -87,9 +88,7 @@ export async function parseRecipeFromUrl(
     const response = await safeFetch(fetchUrl, {
       timeoutMs: 10000,
       headers: {
-        // Some recipe sites reject requests without a browser-like User-Agent.
-        'User-Agent':
-          'Mozilla/5.0 (compatible; RecipeVault/1.0; +https://github.com)',
+        'User-Agent': FETCH_USER_AGENT,
       },
     });
 

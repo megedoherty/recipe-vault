@@ -1,5 +1,10 @@
 import { StorageInfo } from './types';
 
+// Sent on server-side fetches of user-supplied URLs. Some sites reject
+// requests that have no User-Agent.
+export const FETCH_USER_AGENT =
+  'Mozilla/5.0 (compatible; RecipeVault/1.0; +https://github.com)';
+
 export const storageLocations = ['Room Temperature', 'Fridge'] as const;
 
 export const defaultStorage: StorageInfo[] = [

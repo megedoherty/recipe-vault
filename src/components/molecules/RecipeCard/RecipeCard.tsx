@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { isAllowedImageUrl } from '@/lib/utils/imageUrl';
 import { RecipeSummary } from '@/types';
 
 import styles from './RecipeCard.module.css';
@@ -24,7 +25,7 @@ export default function RecipeCard({
         aria-label={`View ${name} recipe`}
       />
       <div className={styles.imageContainer}>
-        {imageUrl ? (
+        {isAllowedImageUrl(imageUrl) ? (
           <Image
             src={imageUrl}
             alt={`${name} recipe image`}

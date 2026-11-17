@@ -8,6 +8,7 @@ import {
 import { canModifyRecipe, getUser } from '@/lib/supabase/queries/user';
 
 import CookingModeToggle from './components/CookingModeToggle/CookingModeToggle';
+import ImageErrorToast from './components/ImageErrorToast/ImageErrorToast';
 import IngredientsAndInstructionsSection from './components/IngredientsAndInstructionsSection/IngredientsAndInstructionsSection';
 import RecipeHeader from './components/RecipeHeader/RecipeHeader';
 import RecipeImageAndInfo from './components/RecipeImageAndInfo/RecipeImageAndInfo';
@@ -67,6 +68,7 @@ export default async function RecipePage({
       ingredients={scalableIngredients}
     >
       <div className={styles.page}>
+        <ImageErrorToast />
         <RecipeHeader
           recipeId={id}
           name={name}
