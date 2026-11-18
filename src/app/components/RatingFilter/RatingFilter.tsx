@@ -34,7 +34,11 @@ export default function RatingFilter({
     };
 
     form.addEventListener('reset', handleReset);
-  }, [formRef, updateActiveFilters, ratingInitialValue]);
+
+    return () => {
+      form.removeEventListener('reset', handleReset);
+    };
+  }, [formRef, updateActiveFilters]);
 
   return (
     <div>

@@ -118,7 +118,7 @@ export default function SearchForm({
           hideLabel
         />
         <Select
-          label="Category"
+          label="Meal type"
           name="mealTypeId"
           id="mealTypeId"
           defaultValue={mealTypeId}
