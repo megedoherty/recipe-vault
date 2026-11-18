@@ -153,7 +153,7 @@ export function transformRecipeForEdit(
     categoryId: recipe.category_id,
     equipmentIds: recipe.recipe_equipment.map((e) => e.equipment_id.toString()),
     servings: recipe.servings,
-    storage: isValidStorage(recipe.storage) ? recipe.storage : [],
+    storage,
     notes: recipe.notes,
     mealTypeId: recipe.meal_type_id,
     occasionId: recipe.occasion_id,
