@@ -147,10 +147,10 @@ export default function IngredientEntry({
       ) : (
         <>
           <div>
-            <p className={styles.name}>
+            <div className={styles.name}>
               {optimistic.name}
               {isPending ? <LoadingSpinner size="small" /> : ''}
-            </p>
+            </div>
             <p className={styles.meta}>
               {optimistic.category}
               {parentName ? ` · child of ${parentName}` : ''}
