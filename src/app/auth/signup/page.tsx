@@ -4,7 +4,7 @@ import { signUp } from '@/lib/actions/auth';
 
 import styles from './page.module.css';
 
-export default function LoginPage() {
+export default function SignupPage() {
   return (
     <div className={styles.page}>
       <h1>Sign Up</h1>
