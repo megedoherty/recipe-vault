@@ -134,6 +134,16 @@ describe('parseRecipeFromUrl', () => {
       expect(result.imageUrls).toEqual(['https://cdn.com/chocolate-cake.jpg']);
     });
 
+    it('saves the source URL without tracking params', async () => {
+      respondWith(html);
+
+      const result = await parse(
+        'https://example.com/recipe/?fbclid=abc123&utm_source=fb&id=3',
+      );
+
+      expect(result.recipe.sourceUrl).toBe('https://example.com/recipe/?id=3');
+    });
+
     it('prefers HTML ingredients when the page has them', async () => {
       respondWith(
         html.replace(

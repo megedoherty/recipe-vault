@@ -107,7 +107,7 @@ export async function parseRecipeFromUrl(
   const $ = cheerio.load(html);
 
   // Check for JSON-LD structured data
-  const toReturn = getRecipeFromJsonLd($, url, ingredients, categories);
+  const toReturn = getRecipeFromJsonLd($, fetchUrl, ingredients, categories);
 
   // Parse the HTML as a backup and for extra data
   if (!toReturn?.recipe.name) {
