@@ -71,6 +71,27 @@ describe('parseIngredients', () => {
     expect(result[0].ingredients).toHaveLength(1);
   });
 
+  test('keeps temperature units uppercase when lowercasing the name', () => {
+    const result = stripIds(
+      parseIngredients(
+        '½ cup buttermilk, warmed to 110°F',
+        referenceIngredients,
+      ),
+    );
+    expect(result[0].ingredients[0].name).toBe('buttermilk, warmed to 110°F');
+  });
+
+  test('keeps a multi-measure parenthetical with its amount when splitting', () => {
+    const result = stripIds(
+      parseIngredients(
+        '1 cup (240 g) plus 2 tbsp (28 g; 1/4 stick) butter',
+        referenceIngredients,
+      ),
+    );
+    const names = result[0].ingredients.map((i) => i.name);
+    expect(names).toEqual(['butter', 'butter']);
+  });
+
   test('puts ingredients with no header into a default section (title: null)', () => {
     const result = parseIngredients('1 cup flour', referenceIngredients);
     expect(result[0].title).toBeNull();
@@ -210,6 +231,24 @@ describe('parseIngredients', () => {
       ],
     ],
     ['1 large egg, plus 1 large egg yolk', ['1 large egg', '1 large egg yolk']],
+    [
+      '¼ cup/34 grams plus 4 cups/540 grams all-purpose flour',
+      [
+        '¼ cup/34 grams all-purpose flour',
+        '4 cups/540 grams all-purpose flour',
+      ],
+    ],
+    [
+      '¼ cup (34 g) plus 4 cups (540 g) all-purpose flour',
+      ['¼ cup (34 g) all-purpose flour', '4 cups (540 g) all-purpose flour'],
+    ],
+    [
+      '¼ cup/34 grams plus 4 cups/540 grams all-purpose flour, sifted',
+      [
+        '¼ cup/34 grams all-purpose flour, sifted',
+        '4 cups/540 grams all-purpose flour, sifted',
+      ],
+    ],
   ])('splits %s', (line, expected) => {
     expect(splitCombinedIngredientLine(line)).toEqual(expected);
   });
@@ -218,7 +257,9 @@ describe('parseIngredients', () => {
     '2 teaspoons fresh chopped sage leaves, plus an extra pinch for topping',
     '3 cups (390 g) bread flour, plus more as needed',
     '3 cups plus 2 tablespoons (444 g) all-purpose flour',
+    '3 cups plus 2 tablespoons/444 grams all-purpose flour',
     '1 cup flour, plus 2 tablespoons for dusting',
+    '1 cup (240 g) flour, plus 2 tablespoons (15 g) for dusting',
     '1 egg whisked with 1 teaspoon milk, for egg wash',
   ])('leaves %s alone', (line) => {
     expect(splitCombinedIngredientLine(line)).toEqual([line]);
@@ -232,6 +273,19 @@ describe('parseIngredients', () => {
     expect(result[0].ingredients.map((i) => i.name)).toEqual([
       'egg, room temperature preferred',
       'egg yolk, room temperature preferred',
+    ]);
+  });
+
+  test('parses separately weighed amounts as two lines of the same ingredient', () => {
+    const result = parseIngredients(
+      '¼ cup/34 grams plus 4 cups/540 grams all-purpose flour',
+      referenceIngredients,
+    );
+    expect(
+      result[0].ingredients.map(({ name, quantity }) => ({ name, quantity })),
+    ).toEqual([
+      { name: 'all-purpose flour', quantity: '¼ cup (34 grams)' },
+      { name: 'all-purpose flour', quantity: '4 cups (540 grams)' },
     ]);
   });
 

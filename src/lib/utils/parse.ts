@@ -8,6 +8,7 @@ import {
 } from '@/types';
 
 import {
+  amountWithMetricRegex,
   anythingInParenthesesRegex,
   bareEggPartRegex,
   combinedIngredientSeparatorRegex,
@@ -110,7 +111,12 @@ function parseNameWithQuantity(
   let name = normalizedLine
     .substring(normalizedQuantity.length)
     .trim()
-    .toLowerCase();
+    .toLowerCase()
+    // Keep temperature units uppercase: "110°f" -> "110°F"
+    .replace(
+      /(\d\s*°)([cf])(?!\w)/g,
+      (_, pre, unit) => pre + unit.toUpperCase(),
+    );
 
   // Remove the word packed if it exists - usually brown sugar
   name = name
@@ -170,6 +176,25 @@ function parseNameWithQuantity(
   return { name, quantity: standardizeQuantity(normalizedQuantity) };
 }
 
+// Handles "<amount> plus <amount> <name>" where both amounts carry their own
+// metric weight. Returns null for anything else, including one combined
+// measure with a single weight ("3 cups plus 2 tablespoons (444 g) flour").
+function splitSeparatelyMeasuredAmounts(
+  left: string,
+  right: string,
+): string[] | null {
+  const leftAmount = amountWithMetricRegex.exec(left);
+  if (!leftAmount || leftAmount[0].length !== left.length) return null;
+
+  const rightAmount = amountWithMetricRegex.exec(right);
+  if (!rightAmount) return null;
+
+  const name = right.slice(rightAmount[0].length).trim();
+  if (!name || name.startsWith(',')) return null;
+
+  return [`${left} ${name}`, `${rightAmount[0]} ${name}`];
+}
+
 // Splits a line listing two ingredients into two lines:
 // "1 large egg + 1 egg yolk, at room temperature" ->
 //   ["1 large egg, at room temperature", "1 egg yolk, at room temperature"]
@@ -184,6 +209,12 @@ export function splitCombinedIngredientLine(line: string): string[] {
 
   const left = trimmed.slice(0, match.index).trim();
   let right = trimmed.slice(match.index + match[0].length).trim();
+
+  // "¼ cup/34 grams plus 4 cups/540 grams flour": each amount has its own
+  // weight, so they are measured separately (often for different steps).
+  // Split into one line per amount, each with the shared name.
+  const separateAmounts = splitSeparatelyMeasuredAmounts(left, right);
+  if (separateAmounts) return separateAmounts;
 
   // "plus 2 tablespoons more" is an extra amount of the same ingredient
   if (!left || quantityWithRealUnitRegex.test(right)) return [line];

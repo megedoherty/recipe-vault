@@ -94,6 +94,18 @@ export const gramsWithOptionalRangeRegex =
 export const slashMetricAmountRegex =
   /([a-z.])\s*\/\s*(\d+(?:\.\d+)?\s*(?:grams?|g|ml|milliliters?)(?!\w))/i;
 
+// A quantity and unit followed by its own metric weight, written either after
+// a slash or in parentheses, at the start of the string.
+// example: "¼ cup/34 grams", "4 cups (540 g)"
+// result: [ "¼ cup/34 grams", ... ]
+// A parenthetical is consumed through its closing paren, so extra measures
+// like "(28 g; 1/4 stick)" stay with the amount.
+const metric = '\\d+(?:\\.\\d+)?\\s*(?:grams?|g|ml|milliliters?)(?!\\w)';
+export const amountWithMetricRegex = new RegExp(
+  `^${quantityAndUnitRegex.source}(?:\\s*\\/\\s*${metric}|\\s*\\(\\s*${metric}[^)]*\\)?)`,
+  'i',
+);
+
 // Number immediately before "g"/"gram(s)" anywhere in the string, not just
 // right after an opening paren — e.g. "(16 Tbsp; 226 g)", "1 stick, 113 g".
 // Looser than ouncesOrGramsInParenthesesRegex, which requires the number to

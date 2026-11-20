@@ -158,6 +158,39 @@ describe('parseRecipeFromUrl', () => {
       expect(result.ingredients[0].ingredients[0].name).toBe('eggs');
     });
 
+    it('keeps the JSON-LD ingredients when the page only has headings', async () => {
+      respondWith(
+        html.replace(
+          '</body>',
+          '<div class="ingredients"><h2>Nutrition</h2><p>3 eggs</p></div></body>',
+        ),
+      );
+
+      const result = await parse();
+
+      expect(result.ingredients).toHaveLength(1);
+      expect(result.ingredients[0].ingredients.map((i) => i.name)).toEqual([
+        'flour',
+      ]);
+    });
+
+    it('drops page headings that have no ingredients under them', async () => {
+      respondWith(
+        html.replace(
+          '</body>',
+          `<div class="ingredients">
+            <h3>For the dough</h3><ul><li>3 eggs</li></ul>
+            <h3>Featured Products</h3>
+          </div></body>`,
+        ),
+      );
+
+      const result = await parse();
+
+      expect(result.ingredients.map((s) => s.title)).toEqual(['For the dough']);
+      expect(result.ingredients[0].ingredients).toHaveLength(1);
+    });
+
     it('merges and dedupes JSON-LD and page images', async () => {
       respondWith(
         html.replace(
@@ -211,6 +244,17 @@ describe('parseRecipeFromUrl', () => {
         'Use a stand mixer.',
       ]);
       expect(result.recipe.equipmentIds).toEqual(['5']);
+    });
+
+    it('drops page headings that have no instruction steps under them', async () => {
+      respondWith(
+        page.replace('</ol></div>', '</ol><h3>Featured Products</h3></div>'),
+      );
+
+      const result = await parse();
+
+      expect(result.recipe.instructions).toHaveLength(1);
+      expect(result.recipe.instructions[0].steps).toHaveLength(2);
     });
 
     it('guesses the meal type from the name when the category does not decide it', async () => {

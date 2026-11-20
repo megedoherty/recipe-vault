@@ -1,4 +1,5 @@
 import {
+  amountWithMetricRegex,
   anythingInParenthesesRegex,
   EGG_AMOUNT,
   EGG_SIZE,
@@ -298,5 +299,26 @@ describe('line regexes', () => {
       expect(result2![SIMPLE_NUMBER]).toEqual('30');
       expect(result2![SIMPLE_TEXT]).toEqual('oreos');
     });
+  });
+});
+
+describe('amountWithMetricRegex', () => {
+  it.each([
+    ['¼ cup/34 grams', '¼ cup/34 grams'],
+    ['4 cups/540 grams all-purpose flour', '4 cups/540 grams'],
+    ['4 cups (540 g) all-purpose flour', '4 cups (540 g)'],
+    ['1 cup / 240 ml milk', '1 cup / 240 ml'],
+    ['2 tbsp (28 g; 1/4 stick) butter', '2 tbsp (28 g; 1/4 stick)'],
+  ])('matches the amount and its weight in %s', (input, expected) => {
+    expect(input.match(amountWithMetricRegex)?.[0]).toBe(expected);
+  });
+
+  it.each([
+    '3 cups plus 2 tablespoons (444 g) flour',
+    '1/2 cup flour',
+    '1 cup (3 sticks) butter',
+    '2 eggs',
+  ])('does not match %s', (input) => {
+    expect(input.match(amountWithMetricRegex)).toBeNull();
   });
 });

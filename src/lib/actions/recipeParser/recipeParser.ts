@@ -115,11 +115,14 @@ export async function parseRecipeFromUrl(
     toReturn.recipe.name = $('h1').text().trim();
   }
 
-  // Always find the ingredients since Recipe schema doesn't allow for sections
+  // Always find the ingredients since Recipe schema doesn't allow for sections.
+  // Headings with nothing under them (a stray "Nutrition" or "Featured
+  // Products" heading) are dropped, so they can't add an empty section or
+  // replace the JSON-LD ingredients when the HTML held no real ingredients.
   const ingredientsParsed = parseIngredients(
     findIngredientsOrInstructions($, 'ingredients'),
     ingredients,
-  );
+  ).filter((section) => section.ingredients.length > 0);
   if (ingredientsParsed.length > 0) {
     toReturn.ingredients = ingredientsParsed;
   }
@@ -129,9 +132,10 @@ export async function parseRecipeFromUrl(
     !toReturn?.recipe.instructions ||
     toReturn.recipe.instructions.length === 0
   ) {
+    // Drop headings with no steps under them (a trailing promo heading)
     toReturn.recipe.instructions = parseInstructions(
       findIngredientsOrInstructions($, 'instructions'),
-    );
+    ).filter((section) => section.steps.length > 0);
   }
 
   // Find the recipe images - JSON-LD might not give options or have any
