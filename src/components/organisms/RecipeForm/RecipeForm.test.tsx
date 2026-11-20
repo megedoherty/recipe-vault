@@ -1,5 +1,6 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
+import { addRecipe } from '@/lib/actions/recipes';
 import { InstructionSection, RecipeIngredientSectionsEditable } from '@/types';
 
 import RecipeForm from './RecipeForm';
@@ -14,10 +15,16 @@ jest.mock('next/form', () => ({
   default: ({
     children,
     className,
+    action,
   }: {
     children: React.ReactNode;
     className?: string;
-  }) => <form className={className}>{children}</form>,
+    action?: (formData: FormData) => void;
+  }) => (
+    <form className={className} action={action}>
+      {children}
+    </form>
+  ),
 }));
 
 const props = {
@@ -237,5 +244,57 @@ describe('RecipeForm ingredient links', () => {
     expect(screen.queryByText('1/2 cup butter')).not.toBeInTheDocument();
     expect(screen.getByText('2 cups all-purpose flour')).toBeInTheDocument();
     expect(emptyChips()).toHaveLength(0);
+  });
+});
+
+describe('RecipeForm save errors', () => {
+  const submit = () =>
+    fireEvent.click(screen.getByRole('button', { name: 'Add Recipe' }));
+
+  const renderForm = () =>
+    render(
+      <RecipeForm
+        {...props}
+        mode="create"
+        initialRecipe={initialRecipe}
+        initialIngredientSections={ingredientSections}
+      />,
+    );
+
+  it('should link to the existing recipe when the URL is a duplicate', async () => {
+    (addRecipe as jest.Mock).mockResolvedValue({
+      success: false,
+      error: 'You already have a recipe from this URL',
+      existingId: 'r9',
+      existingName: 'Pancakes',
+    });
+
+    renderForm();
+    submit();
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'You already imported Pancakes.',
+    );
+    expect(screen.getByRole('link', { name: 'Pancakes' })).toHaveAttribute(
+      'href',
+      '/recipes/r9',
+    );
+  });
+
+  it('should show other errors in a plain alert', async () => {
+    (addRecipe as jest.Mock).mockResolvedValue({
+      success: false,
+      error: 'Failed to create recipe',
+    });
+
+    renderForm();
+    submit();
+
+    await waitFor(() =>
+      expect(screen.getByRole('alert')).toHaveTextContent(
+        'Failed to create recipe',
+      ),
+    );
+    expect(screen.queryByRole('link')).toBeNull();
   });
 });

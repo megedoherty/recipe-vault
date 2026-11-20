@@ -2,10 +2,13 @@
 
 import { useState } from 'react';
 
+import Alert from '@/components/atoms/Alert/Alert';
 import Button from '@/components/atoms/Button/Button';
 import Input from '@/components/atoms/Input/Input';
+import DuplicateRecipeAlert from '@/components/molecules/DuplicateRecipeAlert/DuplicateRecipeAlert';
 import RecipeForm from '@/components/organisms/RecipeForm/RecipeForm';
 import { parseRecipeFromUrl } from '@/lib/actions/recipeParser/recipeParser';
+import { checkDuplicateRecipe } from '@/lib/actions/recipes';
 import {
   Category,
   Equipment,
@@ -37,17 +40,54 @@ export default function AddRecipeChoice({
   const [mode, setMode] = useState<AddMode>(null);
   const [recipeUrl, setRecipeUrl] = useState('');
   const [recipe, setRecipe] = useState<ParsedRecipe | null>(null);
+  const [isFetching, setIsFetching] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+  const [duplicate, setDuplicate] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
 
   const fetchAndParseRecipe = async () => {
-    const parsedRecipe = await parseRecipeFromUrl(
-      recipeUrl,
-      ingredients,
-      categories,
-      mealTypes,
-      equipment,
-    );
-    setRecipe(parsedRecipe);
-    setMode('manual');
+    setIsFetching(true);
+    setFetchError(null);
+    setDuplicate(null);
+
+    try {
+      // Check before scraping so a known duplicate costs no fetch
+      const existing = await checkDuplicateRecipe(recipeUrl);
+      if (existing) {
+        setDuplicate(existing);
+        return;
+      }
+
+      const parsedRecipe = await parseRecipeFromUrl(
+        recipeUrl,
+        ingredients,
+        categories,
+        mealTypes,
+        equipment,
+      );
+
+      // The page may declare a canonical URL different from the one typed
+      const canonical = parsedRecipe.recipe.sourceUrl;
+      if (canonical) {
+        const existingCanonical = await checkDuplicateRecipe(canonical);
+        if (existingCanonical) {
+          setDuplicate(existingCanonical);
+          return;
+        }
+      }
+
+      setRecipe(parsedRecipe);
+      setMode('manual');
+    } catch (error) {
+      console.error(error);
+      setFetchError(
+        'Could not fetch that recipe. Check the URL and try again.',
+      );
+    } finally {
+      setIsFetching(false);
+    }
   };
 
   const switchToManual = () => {
@@ -100,16 +140,34 @@ export default function AddRecipeChoice({
             label="Recipe URL"
             id="recipeUrl"
             value={recipeUrl}
-            onChange={(e) => setRecipeUrl(e.target.value)}
+            onChange={(e) => {
+              setRecipeUrl(e.target.value);
+              setDuplicate(null);
+              setFetchError(null);
+            }}
             placeholder="https://example.com/recipe"
+            hasError={!!duplicate}
+            aria-invalid={duplicate ? true : undefined}
+            aria-describedby={duplicate ? 'duplicateRecipeAlert' : undefined}
           />
+          {duplicate && (
+            <DuplicateRecipeAlert
+              recipe={duplicate}
+              id="duplicateRecipeAlert"
+            />
+          )}
+          {fetchError && (
+            <Alert>
+              <p>{fetchError}</p>
+            </Alert>
+          )}
           <Button
             variant="primary"
             onClick={fetchAndParseRecipe}
-            disabled={!recipeUrl.trim()}
+            disabled={!recipeUrl.trim() || isFetching || !!duplicate}
             className={styles.fetchButton}
           >
-            Fetch Recipe
+            {isFetching ? 'Fetching…' : 'Fetch Recipe'}
           </Button>
         </div>
       </div>
@@ -127,7 +185,7 @@ export default function AddRecipeChoice({
     console.groupEnd();
 
     return (
-      <div className={styles.errorContainer} role="alert">
+      <Alert>
         <p>
           Error parsing recipe. Please{' '}
           <button className={styles.manualButton} onClick={switchToManual}>
@@ -138,7 +196,7 @@ export default function AddRecipeChoice({
         <Button variant="secondary" size="small" onClick={goBack}>
           Back
         </Button>
-      </div>
+      </Alert>
     );
   }
 

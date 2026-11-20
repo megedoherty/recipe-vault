@@ -5,10 +5,12 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
 import { uploadImageFromUrl } from '@/lib/actions/images';
+import { findRecipeBySourceUrl } from '@/lib/supabase/queries/recipes';
 import { canModifyRecipe, getUser } from '@/lib/supabase/queries/user';
 import { createClient } from '@/lib/supabase/server';
 import { isAllowedImageUrl } from '@/lib/utils/imageUrl';
 import unlinkMissingIngredients from '@/lib/utils/unlinkMissingIngredients';
+import { normalizeSourceUrl } from '@/lib/utils/url';
 import {
   InstructionSection,
   RecipeIngredientDb,
@@ -23,6 +25,36 @@ const IMAGE_ERROR_QUERY = '?imageError=1';
 interface ActionsResponse {
   success: boolean;
   error?: string;
+  // Set when the error is a duplicate source URL, so the UI can link to it
+  existingId?: string;
+  existingName?: string;
+}
+
+const DUPLICATE_RECIPE_ERROR = 'You already have a recipe from this URL';
+const UNIQUE_VIOLATION = '23505';
+
+/**
+ * The duplicate-URL error, with the id of the recipe already using the URL so
+ * the UI can link to it.
+ */
+const duplicateRecipeResponse = async (
+  sourceUrl: string | null,
+): Promise<ActionsResponse> => {
+  const existing = sourceUrl ? await findRecipeBySourceUrl(sourceUrl) : null;
+  return {
+    success: false,
+    error: DUPLICATE_RECIPE_ERROR,
+    ...(existing && { existingId: existing.id, existingName: existing.name }),
+  };
+};
+
+/**
+ * Lets the add form check for an already-imported URL before scraping it.
+ */
+export async function checkDuplicateRecipe(
+  url: string,
+): Promise<{ id: string; name: string } | null> {
+  return findRecipeBySourceUrl(url);
 }
 
 /**
@@ -122,7 +154,7 @@ export async function addRecipe(
 ): Promise<ActionsResponse> {
   const rawFormData = Object.fromEntries(formData);
   const recipeName = rawFormData.recipeName as string;
-  const source_url = rawFormData.sourceUrl as string;
+  const source_url = normalizeSourceUrl(rawFormData.sourceUrl as string);
   const imageUrlInput = rawFormData.imageUrl as string;
   const isSupabaseUrl = isAllowedImageUrl(imageUrlInput?.trim());
   const category_id = rawFormData.categoryId
@@ -143,6 +175,19 @@ export async function addRecipe(
 
   if (!user) {
     return { success: false, error: 'User not found' };
+  }
+
+  // Guards against races and URLs edited in the form after the pre-parse check
+  if (source_url) {
+    const existing = await findRecipeBySourceUrl(source_url);
+    if (existing) {
+      return {
+        success: false,
+        error: DUPLICATE_RECIPE_ERROR,
+        existingId: existing.id,
+        existingName: existing.name,
+      };
+    }
   }
 
   // Extract section order
@@ -184,6 +229,10 @@ export async function addRecipe(
     })
     .select('id')
     .single();
+
+  if (error?.code === UNIQUE_VIOLATION) {
+    return duplicateRecipeResponse(source_url);
+  }
 
   if (error || !data || !data.id) {
     console.error(error);
@@ -264,7 +313,7 @@ export async function updateRecipe(
   const rawFormData = Object.fromEntries(formData);
   const name = rawFormData.recipeName as string;
   const imageUrlInput = rawFormData.imageUrl as string;
-  const source_url = rawFormData.sourceUrl as string;
+  const source_url = normalizeSourceUrl(rawFormData.sourceUrl as string);
   const category_id = rawFormData.categoryId
     ? Number(rawFormData.categoryId)
     : null;
@@ -373,6 +422,10 @@ export async function updateRecipe(
     .eq('id', recipeId)
     .select()
     .single();
+
+  if (error?.code === UNIQUE_VIOLATION) {
+    return duplicateRecipeResponse(source_url);
+  }
 
   if (error || !recipeData) {
     console.error(error);

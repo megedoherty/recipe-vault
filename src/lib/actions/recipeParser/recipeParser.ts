@@ -14,6 +14,7 @@ import {
 
 import { parseIngredients, parseInstructions } from '../../utils/parse';
 import { safeFetch } from '../../utils/safeFetch';
+import { stripTrackingParams } from '../../utils/url';
 import { getCategoryId } from './getCategory';
 import { getEquipmentIds } from './getEquipment';
 import { findIngredientsOrInstructions } from './getIngredientsOrInstructions';
@@ -21,43 +22,6 @@ import { getMealType } from './getMealType';
 import { findNotes } from './getNotes';
 import { getRecipeFromJsonLd } from './getRecipeFromJsonLd';
 import { getRecipeImages } from './getRecipeImages';
-
-const TRACKING_PARAM_PREFIXES = ['utm_', 'mc_', 'pk_', 'hsa_', 'vero_'];
-const TRACKING_PARAMS = new Set([
-  'fbclid',
-  'gclid',
-  'dclid',
-  'msclkid',
-  'twclid',
-  'ttclid',
-  'igshid',
-  'yclid',
-  'mkt_tok',
-  '_hsenc',
-  '_hsmi',
-  'ref',
-  'ref_src',
-  'si',
-  'smid',
-  'smtyp',
-]);
-
-function stripTrackingParams(urlObj: URL): string {
-  const cleaned = new URL(urlObj.toString());
-
-  for (const key of [...cleaned.searchParams.keys()]) {
-    const lowerKey = key.toLowerCase();
-
-    if (
-      TRACKING_PARAMS.has(lowerKey) ||
-      TRACKING_PARAM_PREFIXES.some((prefix) => lowerKey.startsWith(prefix))
-    ) {
-      cleaned.searchParams.delete(key);
-    }
-  }
-
-  return cleaned.toString();
-}
 
 export async function parseRecipeFromUrl(
   url: string,

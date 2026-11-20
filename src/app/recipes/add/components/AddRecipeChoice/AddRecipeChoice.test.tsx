@@ -1,11 +1,16 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { parseRecipeFromUrl } from '@/lib/actions/recipeParser/recipeParser';
+import { checkDuplicateRecipe } from '@/lib/actions/recipes';
 
 import AddRecipeChoice from './AddRecipeChoice';
 
 jest.mock('@/lib/actions/recipeParser/recipeParser', () => ({
   parseRecipeFromUrl: jest.fn(),
+}));
+
+jest.mock('@/lib/actions/recipes', () => ({
+  checkDuplicateRecipe: jest.fn(),
 }));
 
 jest.mock('@/components/organisms/RecipeForm/RecipeForm', () => ({
@@ -112,5 +117,97 @@ describe('AddRecipeChoice', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Back' }));
     expect(screen.getByText(choiceHeading)).toBeInTheDocument();
+  });
+
+  describe('duplicate URLs', () => {
+    const fetchRecipe = (url: string) => {
+      render(<AddRecipeChoice {...props} />);
+      fireEvent.click(screen.getByRole('button', { name: 'Add from URL' }));
+      fireEvent.change(screen.getByLabelText('Recipe URL'), {
+        target: { value: url },
+      });
+      fireEvent.click(screen.getByRole('button', { name: 'Fetch Recipe' }));
+    };
+
+    it('should link to the existing recipe without parsing', async () => {
+      (checkDuplicateRecipe as jest.Mock).mockResolvedValue({
+        id: 'r1',
+        name: 'Cake',
+      });
+
+      fetchRecipe('https://example.com/cake');
+
+      expect(await screen.findByRole('alert')).toHaveTextContent(
+        'You already imported Cake.',
+      );
+      expect(screen.getByRole('link', { name: 'Cake' })).toHaveAttribute(
+        'href',
+        '/recipes/r1',
+      );
+      expect(parseRecipeFromUrl).not.toHaveBeenCalled();
+    });
+
+    it('should flag the input and disable fetching until the URL changes', async () => {
+      (checkDuplicateRecipe as jest.Mock).mockResolvedValue({
+        id: 'r1',
+        name: 'Cake',
+      });
+
+      fetchRecipe('https://example.com/cake');
+
+      const alert = await screen.findByRole('alert');
+      const input = screen.getByLabelText('Recipe URL');
+      expect(input).toHaveAttribute('aria-invalid', 'true');
+      expect(input).toHaveAttribute('aria-describedby', alert.id);
+      expect(
+        screen.getByRole('button', { name: 'Fetch Recipe' }),
+      ).toBeDisabled();
+
+      fireEvent.change(input, { target: { value: 'https://example.com/pie' } });
+
+      expect(screen.queryByRole('alert')).toBeNull();
+      expect(input).not.toHaveAttribute('aria-invalid');
+      expect(
+        screen.getByRole('button', { name: 'Fetch Recipe' }),
+      ).toBeEnabled();
+    });
+
+    it('should check the canonical URL found by the parser', async () => {
+      (checkDuplicateRecipe as jest.Mock)
+        .mockResolvedValueOnce(null)
+        .mockResolvedValueOnce({ id: 'r2', name: 'Cake' });
+      (parseRecipeFromUrl as jest.Mock).mockResolvedValue({
+        recipe: {
+          name: 'Cake',
+          sourceUrl: 'https://example.com/canonical-cake',
+          instructions: [{ id: '1' }],
+        },
+        ingredients: [{ id: '1' }],
+        imageUrls: null,
+      });
+
+      fetchRecipe('https://example.com/cake?x=1');
+
+      expect(await screen.findByRole('link', { name: 'Cake' })).toHaveAttribute(
+        'href',
+        '/recipes/r2',
+      );
+      expect(checkDuplicateRecipe).toHaveBeenLastCalledWith(
+        'https://example.com/canonical-cake',
+      );
+      expect(screen.queryByText('Review Recipe')).toBeNull();
+    });
+
+    it('should show an error when fetching fails', async () => {
+      jest.spyOn(console, 'error').mockImplementation(() => {});
+      (checkDuplicateRecipe as jest.Mock).mockResolvedValue(null);
+      (parseRecipeFromUrl as jest.Mock).mockRejectedValue(new Error('boom'));
+
+      fetchRecipe('https://example.com/cake');
+
+      expect(await screen.findByRole('alert')).toHaveTextContent(
+        'Could not fetch that recipe',
+      );
+    });
   });
 });

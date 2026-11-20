@@ -1,0 +1,23 @@
+.alert {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding: 1rem;
+  background: color-mix(in srgb, var(--error) 10%, var(--background));
+  border: 1px solid var(--error);
+  border-left-width: 0.375rem;
+  border-radius: var(--border-radius-default);
+
+  & a {
+    color: var(--link);
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover,
+    &:active {
+      text-decoration: underline;
+    }
+  }
+}

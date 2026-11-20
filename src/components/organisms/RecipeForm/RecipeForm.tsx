@@ -3,10 +3,12 @@
 import Form from 'next/form';
 import { useActionState, useMemo, useState } from 'react';
 
+import Alert from '@/components/atoms/Alert/Alert';
 import Button from '@/components/atoms/Button/Button';
 import Input from '@/components/atoms/Input/Input';
 import Select from '@/components/atoms/Select/Select';
 import CategorySelect from '@/components/molecules/CategorySelect/CategorySelect';
+import DuplicateRecipeAlert from '@/components/molecules/DuplicateRecipeAlert/DuplicateRecipeAlert';
 import ImagePicker from '@/components/molecules/ImagePicker/ImagePicker';
 import ProcessableSection from '@/components/molecules/ProcessableSection/ProcessableSection';
 import StorageInfoEditor from '@/components/molecules/StorageInfoEditor/StorageInfoEditor';
@@ -261,7 +263,17 @@ export default function RecipeForm({
           hideLabel
         />
       </section>
-      {state?.error && <p>{state.error}</p>}
+      {state?.existingId && state.existingName ? (
+        <DuplicateRecipeAlert
+          recipe={{ id: state.existingId, name: state.existingName }}
+        />
+      ) : (
+        state?.error && (
+          <Alert>
+            <p>{state.error}</p>
+          </Alert>
+        )
+      )}
       <Button
         variant="primary"
         type="submit"

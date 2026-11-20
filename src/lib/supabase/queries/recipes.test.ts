@@ -3,6 +3,7 @@ import { createSupabaseMock } from '@/lib/actions/testUtils';
 
 import { createClient } from '../server';
 import {
+  findRecipeBySourceUrl,
   getAllRecipes,
   getRecipeForDisplay,
   getRecipeForEdit,
@@ -29,6 +30,46 @@ const recipeRow = (overrides: Record<string, unknown> = {}) => ({
   bookmarked: true,
   user_id: 'u1',
   ...overrides,
+});
+
+describe('findRecipeBySourceUrl', () => {
+  it("looks up the signed-in user's recipe by normalized URL", async () => {
+    const supabase = setup({
+      user: { id: 'u1' },
+      tables: { recipe: [{ data: { id: 'r1', name: 'Cake' } }] },
+    });
+
+    await expect(
+      findRecipeBySourceUrl('https://Example.com/cake/?utm_source=x#top'),
+    ).resolves.toEqual({ id: 'r1', name: 'Cake' });
+
+    const builder = supabase.builders.recipe[0];
+    expect(builder.eq).toHaveBeenCalledWith('user_id', 'u1');
+    expect(builder.eq).toHaveBeenCalledWith(
+      'source_url',
+      'https://example.com/cake',
+    );
+  });
+
+  it('returns null when there is no match', async () => {
+    setup({ user: { id: 'u1' }, tables: { recipe: [{ data: null }] } });
+
+    await expect(
+      findRecipeBySourceUrl('https://example.com/cake'),
+    ).resolves.toBeNull();
+  });
+
+  it('returns null without querying for a blank URL or signed-out user', async () => {
+    const supabase = setup({ user: { id: 'u1' } });
+    await expect(findRecipeBySourceUrl('  ')).resolves.toBeNull();
+    expect(supabase.from).not.toHaveBeenCalled();
+
+    const signedOut = setup({ user: null });
+    await expect(
+      findRecipeBySourceUrl('https://example.com/cake'),
+    ).resolves.toBeNull();
+    expect(signedOut.from).not.toHaveBeenCalled();
+  });
 });
 
 describe('getRecipeForDisplay', () => {

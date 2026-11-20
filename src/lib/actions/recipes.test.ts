@@ -2,6 +2,7 @@
 import { revalidatePath } from 'next/cache';
 
 import { uploadImageFromUrl } from '@/lib/actions/images';
+import { findRecipeBySourceUrl } from '@/lib/supabase/queries/recipes';
 import { getUser } from '@/lib/supabase/queries/user';
 import { createClient } from '@/lib/supabase/server';
 import { InstructionSection, RecipeIngredientSectionsEditable } from '@/types';
@@ -25,6 +26,9 @@ jest.mock('next/navigation', () => ({
 }));
 jest.mock('@/lib/actions/images', () => ({ uploadImageFromUrl: jest.fn() }));
 jest.mock('@/lib/supabase/server', () => ({ createClient: jest.fn() }));
+jest.mock('@/lib/supabase/queries/recipes', () => ({
+  findRecipeBySourceUrl: jest.fn(),
+}));
 jest.mock('@/lib/supabase/queries/user', () => ({
   ...jest.requireActual('@/lib/supabase/queries/user'),
   getUser: jest.fn(),
@@ -36,6 +40,7 @@ const imageUrl = (file: string) =>
 
 const mockGetUser = getUser as jest.Mock;
 const mockUpload = uploadImageFromUrl as jest.Mock;
+const mockFindBySourceUrl = findRecipeBySourceUrl as jest.Mock;
 
 const USER = { id: 'user-1', app_metadata: {} };
 const OTHER_USER = { id: 'user-2', app_metadata: {} };
@@ -55,6 +60,7 @@ const setup = (
   });
   (createClient as jest.Mock).mockResolvedValue(supabase);
   mockGetUser.mockResolvedValue(user);
+  mockFindBySourceUrl.mockResolvedValue(null);
   return { supabase, remove };
 };
 
@@ -178,6 +184,74 @@ describe('recipe actions', () => {
         error: 'User not found',
       });
       expect(supabase.from).not.toHaveBeenCalled();
+    });
+
+    it('rejects a URL the user already imported, linking to the existing recipe', async () => {
+      const { supabase } = setup(tables());
+      mockFindBySourceUrl.mockResolvedValue({ id: 'old-id', name: 'Pancakes' });
+
+      await expect(run()).resolves.toEqual({
+        success: false,
+        error: 'You already have a recipe from this URL',
+        existingId: 'old-id',
+        existingName: 'Pancakes',
+      });
+      expect(mockFindBySourceUrl).toHaveBeenCalledWith(
+        'https://example.com/pancakes',
+      );
+      expect(supabase.from).not.toHaveBeenCalledWith('recipe');
+    });
+
+    it('stores a normalized source URL, and null when blank', async () => {
+      const { supabase } = setup(tables());
+
+      await expect(
+        run({ sourceUrl: ' https://Example.com/pancakes/?utm_source=x#top ' }),
+      ).rejects.toThrow(redirectTo('/recipes/new-id'));
+
+      expect(
+        builderFor(supabase, 'recipe', 'insert')?.insert,
+      ).toHaveBeenCalledWith(
+        expect.objectContaining({ source_url: 'https://example.com/pancakes' }),
+      );
+
+      const blank = setup(tables());
+      mockFindBySourceUrl.mockClear();
+      await expect(run({ sourceUrl: '' })).rejects.toThrow(
+        redirectTo('/recipes/new-id'),
+      );
+      expect(mockFindBySourceUrl).not.toHaveBeenCalled();
+      expect(
+        builderFor(blank.supabase, 'recipe', 'insert')?.insert,
+      ).toHaveBeenCalledWith(expect.objectContaining({ source_url: null }));
+    });
+
+    it('maps a unique violation on insert to the duplicate error with the existing id', async () => {
+      setup({
+        recipe: [{ data: null, error: { code: '23505', message: 'dup' } }],
+      });
+      // Not found by the pre-check (race), but found once the insert collides
+      mockFindBySourceUrl
+        .mockResolvedValueOnce(null)
+        .mockResolvedValueOnce({ id: 'old-id', name: 'Pancakes' });
+
+      await expect(run()).resolves.toEqual({
+        success: false,
+        error: 'You already have a recipe from this URL',
+        existingId: 'old-id',
+        existingName: 'Pancakes',
+      });
+    });
+
+    it('omits the existing id when it cannot be found', async () => {
+      setup({
+        recipe: [{ data: null, error: { code: '23505', message: 'dup' } }],
+      });
+
+      await expect(run()).resolves.toEqual({
+        success: false,
+        error: 'You already have a recipe from this URL',
+      });
     });
 
     it('creates the recipe, ingredients and equipment, then redirects', async () => {
@@ -384,6 +458,25 @@ describe('recipe actions', () => {
         null,
         makeFormData(formFields),
       );
+
+    it('returns the duplicate error with the existing id when the new URL is taken', async () => {
+      setup(
+        tables({
+          recipe: [
+            existing(),
+            { data: null, error: { code: '23505', message: 'dup' } },
+          ],
+        }),
+      );
+      mockFindBySourceUrl.mockResolvedValue({ id: 'other-id', name: 'Pie' });
+
+      await expect(run()).resolves.toEqual({
+        success: false,
+        error: 'You already have a recipe from this URL',
+        existingId: 'other-id',
+        existingName: 'Pie',
+      });
+    });
 
     it('fails when signed out', async () => {
       const { supabase } = setup(tables(), null);

@@ -1,4 +1,5 @@
 import { PAGE_SIZE, SortOption } from '@/constants';
+import { normalizeSourceUrl } from '@/lib/utils/url';
 import {
   RecipeDisplay,
   RecipeIngredientSections,
@@ -15,6 +16,38 @@ import {
   transformRecipe,
   transformRecipeForEdit,
 } from '../transforms';
+import { getUser } from './user';
+
+/**
+ * Finds the signed-in user's recipe imported from this URL, if any. Compares
+ * against the normalized URL (tracking params, hash and trailing slash ignored).
+ *
+ * Filters on user_id explicitly: recipes are readable by everyone, and other
+ * users' imports of the same URL are deliberately not considered duplicates.
+ */
+export async function findRecipeBySourceUrl(
+  url: string,
+): Promise<{ id: string; name: string } | null> {
+  const normalized = normalizeSourceUrl(url);
+  if (!normalized) {
+    return null;
+  }
+
+  const user = await getUser();
+  if (!user) {
+    return null;
+  }
+
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from('recipe')
+    .select('id, name')
+    .eq('user_id', user.id)
+    .eq('source_url', normalized)
+    .maybeSingle();
+
+  return data ?? null;
+}
 
 export async function getRecipeForDisplay(
   id: string,
